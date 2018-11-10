@@ -1,0 +1,25 @@
+## geek1011's custom modifications
+
+# Changed strings
+Rename new home screen footer:
+  - Enabled: no
+  - Description: "Make sure the strings are the same length as the original."
+  - FindReplaceString: {Find: "Find your next great read", Replace: "Patrick's Kobo           "}
+  - FindReplaceString: {Find: "Buy, borrow, or preview books", Replace: "Patrick's Kobo               "}
+
+# Changed timeout from 5 to 2
+Clock display duration:
+  - Enabled: no
+  - Description: |
+      When the reading footer menu is opened a clock is displayed at the top left
+      for 3 seconds before being replaced with the reading progress percentage.
+      This patch changes the length of time the clock is displayed to 5 seconds.
+  - ReplaceBytes: {Offset: 0x9E7E18, FindH: 40 F6 B8 31, ReplaceH: 03 21 89 02}
+  - ReplaceInt: {Offset: 0x9E7E18, Find: 3, Replace: 2} # Replacement value: Clock display duration in seconds
+
+Manipulate reading stats:
+  - Enabled: no
+  - Description: Always add 10 hours to the reading time every time you close a book.
+  # in EventEngine::endReadingSession(*Volume) when recording end of reading session stats, change QDateTime::secsTo calls to a fixed value
+  - ReplaceBytes: {Offset: 0x4D99A0, FindH: 4F F7 22 EB, ReplaceH: 4F F6 FF 70} # MOV  r0, #65535
+  - ReplaceBytes: {Offset: 0x4D99C0, FindH: 4F F7 12 EB, ReplaceH: 4F F6 FF 70} # MOV  r0, #65535

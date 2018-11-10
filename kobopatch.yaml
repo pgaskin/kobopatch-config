@@ -1,0 +1,89 @@
+version: 4.11.11980
+in: src/kobo-update-4.11.11980.zip
+out: KoboRoot.tgz
+log: log.txt
+
+patchFormat: kobopatch
+
+patches:
+  src/nickel.yaml: usr/local/Kobo/nickel
+  src/libadobe.so.yaml: usr/local/Kobo/libadobe.so
+  src/libnickel.so.1.0.0.yaml: usr/local/Kobo/libnickel.so.1.0.0
+  src/libnickel.so.1.0.0_custom.yaml: usr/local/Kobo/libnickel.so.1.0.0
+  src/librmsdk.so.1.0.0.yaml: usr/local/Kobo/librmsdk.so.1.0.0
+
+overrides:
+  src/nickel.yaml:
+    Custom menubar - reduce height by 33%: yes
+    Fix reading stats/author name cut off when series is showing: yes
+    Show all games: yes
+    Increase the cover size in library: yes
+    Increase the view details container size: yes
+    Increase size of kepub chapter progress chart: yes
+    Custom synopsis/details line spacing: yes
+    Remove forgot pin button from lock screen: yes
+    Change pop-up footnote font-family: yes
+    Remove recommendations (row1col2) from home screen: yes
+
+  src/libadobe.so.yaml:
+#    Remove PDF map widget shown during panning: yes
+
+  src/libnickel.so.1.0.0.yaml:
+    Custom font sizes: yes
+    Freedom to advanced fonts control: yes
+    Custom Sleep/Power-off timeouts: yes
+    Fix three KePub fullScreenReading bugs: yes
+    Always display chapter name on navigation menu: yes
+    Custom kepub default margins: yes
+    Enable rotation on all devices: yes
+    Set slide to unlock: yes
+    Both page turn buttons go next: yes
+    Rename settings: yes
+    My 24 line spacing values: yes
+
+  src/libnickel.so.1.0.0_custom.yaml:
+    Rename new home screen footer: yes
+    Clock display duration: yes
+
+  src/librmsdk.so.1.0.0.yaml:
+
+files:
+  fonts/IBMPlexSans-BoldItalic.ttf: mnt/onboard/fonts/IBMPlexSans-BoldItalic.ttf
+  fonts/IBMPlexSans-Bold.ttf: mnt/onboard/fonts/IBMPlexSans-Bold.ttf
+  fonts/IBMPlexSans-Italic.ttf: mnt/onboard/fonts/IBMPlexSans-Italic.ttf
+  fonts/IBMPlexSans-Regular.ttf: mnt/onboard/fonts/IBMPlexSans-Regular.ttf
+  fonts/IBMPlexSerif-BoldItalic.ttf: mnt/onboard/fonts/IBMPlexSerif-BoldItalic.ttf
+  fonts/IBMPlexSerif-Bold.ttf: mnt/onboard/fonts/IBMPlexSerif-Bold.ttf
+  fonts/IBMPlexSerif-Italic.ttf: mnt/onboard/fonts/IBMPlexSerif-Italic.ttf
+  fonts/IBMPlexSerif-Regular.ttf: mnt/onboard/fonts/IBMPlexSerif-Regular.ttf
+  fonts/IBMPlexSerif-TextItalic.ttf: mnt/onboard/fonts/IBMPlexSerif-TextItalic.ttf
+  fonts/IBMPlexSerif-Text.ttf: mnt/onboard/fonts/IBMPlexSerif-Text.ttf
+  fonts/Literata-BoldItalic.otf: mnt/onboard/fonts/Literata-BoldItalic.otf
+  fonts/Literata-Bold.otf: mnt/onboard/fonts/Literata-Bold.otf
+  fonts/Literata-Italic.otf: mnt/onboard/fonts/Literata-Italic.otf
+  fonts/Literata-Regular.otf: mnt/onboard/fonts/Literata-Regular.otf
+  fonts/MinionPro-BoldIt.otf: mnt/onboard/fonts/MinionPro-BoldIt.otf
+  fonts/MinionPro-Bold.otf: mnt/onboard/fonts/MinionPro-Bold.otf
+  fonts/MinionPro-It.otf: mnt/onboard/fonts/MinionPro-It.otf
+  fonts/MinionPro-Regular.otf: mnt/onboard/fonts/MinionPro-Regular.otf
+  fonts/NotoSerif-BoldItalic.ttf: mnt/onboard/fonts/NotoSerif-BoldItalic.ttf
+  fonts/NotoSerif-Bold.ttf: mnt/onboard/fonts/NotoSerif-Bold.ttf
+  fonts/NotoSerif-Italic.ttf: mnt/onboard/fonts/NotoSerif-Italic.ttf
+  fonts/NotoSerif-Regular.ttf: mnt/onboard/fonts/NotoSerif-Regular.ttf
+  fonts/OpenSans-BoldItalic.ttf: mnt/onboard/fonts/OpenSans-BoldItalic.ttf
+  fonts/OpenSans-Bold.ttf: mnt/onboard/fonts/OpenSans-Bold.ttf
+  fonts/OpenSans-Italic.ttf: mnt/onboard/fonts/OpenSans-Italic.ttf
+  fonts/OpenSans-Regular.ttf: mnt/onboard/fonts/OpenSans-Regular.ttf
+  fonts/PTSerif-BoldItalic.ttf: mnt/onboard/fonts/PTSerif-BoldItalic.ttf
+  fonts/PTSerif-Bold.ttf: mnt/onboard/fonts/PTSerif-Bold.ttf
+  fonts/PTSerif-Italic.ttf: mnt/onboard/fonts/PTSerif-Italic.ttf
+  fonts/PTSerif-Regular.ttf: mnt/onboard/fonts/PTSerif-Regular.ttf
+
+  # dropbear is built with the toolchain from kobolabs/Kobo-Reader
+  # ./configure --host=arm-linux-gnueabihf --disable-zlib --enable-static --disable-lastlog
+  # make PROGRAMS='dropbear dropbearkey scp' MULTI=1
+  # sftp-server is from koreader
+  dropbear/etc/inittab: etc/inittab
+  dropbear/usr/local/geek1011/dropbear.sh: usr/local/geek1011/dropbear.sh
+  dropbear/usr/local/geek1011/dropbearmulti: usr/local/geek1011/dropbearmulti
+  dropbear/usr/libexec/sftp-server: usr/libexec/sftp-server
