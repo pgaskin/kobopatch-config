@@ -11,8 +11,7 @@ install:
 script:
   - mv "$HOME/kobo-update-4.11.11980.zip" "src/kobo-update-4.11.11980.zip"
   - kobopatch
-  - curl -F "file=@KoboRoot.tgz" https://file.io
-  - echo -en "travis_fold:start:logs\\r"
-  - echo "Logs"
+  - curl -sF "file=@KoboRoot.tgz" https://file.io | grep -Eo 'https://[^"]+'
+  - echo -en "travis_fold:start:logs\\rLogs\n"
   - cat log.txt
   - echo -en "travis_fold:end:logs\\r"
