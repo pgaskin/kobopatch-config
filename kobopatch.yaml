@@ -1,5 +1,5 @@
-version: 4.11.11980
-in: src/kobo-update-4.11.11980.zip
+version: 4.11.11982
+in: src/kobo-update-4.11.11982.zip
 out: KoboRoot.tgz
 log: log.txt
 
@@ -39,7 +39,7 @@ overrides:
     Set slide to unlock: yes
     Both page turn buttons go next: yes
     Rename settings: yes
-    My 24 line spacing values: yes
+    My 10 line spacing values: yes
     Replace adobe page numbers toggle with invert screen: yes
 
   src/libnickel.so.1.0.0_custom.yaml:

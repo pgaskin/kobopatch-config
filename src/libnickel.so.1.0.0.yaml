@@ -13,8 +13,8 @@ Set slide to unlock:
       you to enable/disable swipe to unlock for any device.
   # In the subroutine where the AbstractPowerView (used for swipe to unlock) is instantiated:
   # change Device::isFrost() to a MOV instruction to set true/false
-  - ReplaceBytes: {Offset: 0x9D9C9E, FindH: 3B F6 08 E1, ReplaceH: 4F F0 01 00}
-  - ReplaceBytes: {Offset: 0x9D9CA0, FindH: 01, ReplaceH: 00} # 00 to disable, 01 to enable
+  - ReplaceBytes: {Offset: 0x9D9C26, FindH: 3B F6 C0 E0, ReplaceH: 4F F0 01 00}
+  - ReplaceBytes: {Offset: 0x9D9C28, FindH: 01, ReplaceH: 00} # 00 to disable, 01 to enable
 
 Enable rotation on all devices:
   - Enabled: no
@@ -27,7 +27,7 @@ Enable rotation on all devices:
   # NOTE: when updating this patch, make sure this doesn't try and enable the MMA8652 sensor
   #       as of 4.11.11980, there is an additional check where the sensor is enabled, and this
   #       will fail gracefully, removing the auto-rotate option from the status bar menu.
-  - ReplaceBytes: {Offset: 0x96F438, FindH: A5 F6 3A E5, ReplaceH: 4F F0 01 00}
+  - ReplaceBytes: {Offset: 0x96F328, FindH: A5 F6 3E E5, ReplaceH: 4F F0 01 00}
 
 Both page turn buttons go next:
   - Enabled: no
@@ -35,7 +35,7 @@ Both page turn buttons go next:
       Might make both page turn buttons on the Forma go next in the reader.
   # In ReadingView::keyPressEvent(QKeyEvent*):
   # nop the possible branch to prev page, falling through to the next page no matter what.
-  - ReplaceBytes: {Offset: 0x9E378A, FindH: 2E B1, ReplaceH: 00 46}
+  - ReplaceBytes: {Offset: 0x9E3622, FindH: 2E B1, ReplaceH: 00 46}
 
 Rename settings:
   - Enabled: no
@@ -60,12 +60,12 @@ Replace adobe page numbers toggle with invert screen:
   # Note: https://gist.githubusercontent.com/jeremy-allen-cs/c93bd333b5b585c2b840/raw/772efa2851189d1fd0fd41a2dfd95b688bd7d96e/arm_blx_encode.py is useful when changing these instructions.
   # in a subroutine of N3SettingsReadingView::setupUi(Widget) (found backwards from FeatureSettings::getShowAdobePageNumbers()):
   # change ReadingSettings::getShowAdobePageNumbers() to FeatureSettings::invertScreen()
-  - ReplaceBytes: {Offset: 0x84AD58, FindH: C7 F7 A0 E6, ReplaceH: D3 F7 DE E1}
+  - ReplaceBytes: {Offset: 0x84AC48, FindH: C7 F7 A4 E6, ReplaceH: D3 F7 E2 E1}
   # in N3SettingsReadingController::showAdobePageNumbersToggled():
   # change ReadingSettings::getShowAdobePageNumbers() to FeatureSettings::invertScreen()
-  - ReplaceBytes: {Offset: 0x849396, FindH: C9 F7 82 E3, ReplaceH: D4 F7 C0 E6}
+  - ReplaceBytes: {Offset: 0x849286, FindH: C9 F7 86 E3, ReplaceH: D4 F7 C4 E6}
   # and ReadingSettings::setShowAdobePageNumbers(bool) to FeatureSettings::setInvertScreen(bool)
-  - ReplaceBytes: {Offset: 0x8493A2, FindH: CE F7 E2 E4, ReplaceH: D4 F7 EA E2}
+  - ReplaceBytes: {Offset: 0x849292, FindH: CE F7 E6 E4, ReplaceH: D4 F7 EE E2}
   # then change the text in the settings page
   - FindReplaceString: {Find: "Show Adobe EPUB page numbers", Replace: "Invert screen"}
 
@@ -87,13 +87,13 @@ My 10 line spacing values:
       much narrower spacing values to be set.
     # Bypass code-constructed values 1.0, 1.2, 1.5, 2.0, 3.0
     # These are all the appends not loaded using adr.
-  - ReplaceBytes: {Offset: 0x660534, FindH: BD F5 8C E8, ReplaceH: 00 46 00 46}
-  - ReplaceBytes: {Offset: 0x66058A, FindH: BD F5 62 E8, ReplaceH: 00 46 00 46}
-  - ReplaceBytes: {Offset: 0x6605B4, FindH: BD F5 4C E8, ReplaceH: 00 46 00 46}
-  - ReplaceBytes: {Offset: 0x6605F0, FindH: BD F5 2E E8, ReplaceH: 00 46 00 46}
-  - ReplaceBytes: {Offset: 0x660656, FindH: BC F5 FC EF, ReplaceH: 00 46 00 46}
+  - ReplaceBytes: {Offset: 0x66042C, FindH: BD F5 8C E8, ReplaceH: 00 46 00 46}
+  - ReplaceBytes: {Offset: 0x660482, FindH: BD F5 62 E8, ReplaceH: 00 46 00 46}
+  - ReplaceBytes: {Offset: 0x6604AC, FindH: BD F5 4C E8, ReplaceH: 00 46 00 46}
+  - ReplaceBytes: {Offset: 0x6604E8, FindH: BD F5 2E E8, ReplaceH: 00 46 00 46}
+  - ReplaceBytes: {Offset: 0x66054E, FindH: BC F5 FC EF, ReplaceH: 00 46 00 46}
     # 10 values for replacement, change these replace_float values to suit:
-  - BaseAddress: 0x6606F0
+  - BaseAddress: 0x6605E8
   - ReplaceFloat: {Offset: 0x00,  Find: 1.05, Replace: 0.8}
   - ReplaceFloat: {Offset: 0x08,  Find: 1.07, Replace: 0.85}
   - ReplaceFloat: {Offset: 0x10,  Find: 1.1,  Replace: 0.875}
@@ -105,94 +105,7 @@ My 10 line spacing values:
   - ReplaceFloat: {Offset: 0x40,  Find: 2.6,  Replace: 1.05}
   - ReplaceFloat: {Offset: 0x48,  Find: 2.8,  Replace: 1.1}
 
-My 24 line spacing values:
-  - Enabled: no
-  - PatchGroup: Line spacing values alternatives
-  - Description: |
-      This patch changes the values on the line spacing adjustment slider,
-      increasing the number of spacing options from 15 to 24, and allowing
-      much narrower spacing values to be set.
-    # save r5, initialise loop counter
-  - ReplaceBytes: {Offset: 0x660534, FindH: BD F5 8C E8 6D A3, ReplaceH: A9 46 00 25 ED 00}
-    # loop to load 14 vals from new table
-  - ReplaceBytes: {Offset: 0x66053A, FindH: D3 E9 00 23 07 F1, ReplaceH: 20 46 04 A1 29 44}
-  - ReplaceBytes: {Offset: 0x660540, FindH: 80 01 20 46,       ReplaceH: BD F5 86 E8}
-  - ReplaceBytes: {Offset: 0x660544, FindH: 61 E9 1C 23 BD F5, ReplaceH: 08 35 70 2D F7 D1}
-    # jump over new table
-  - ReplaceBytes: {Offset: 0x66054A, FindH: 82 E8 6A A3 D3 E9, ReplaceH: 7C E0 00 BF 00 BF}
-    # new table: 14 8-aligned doubles
-  - BaseAddress: 0x660550
-  - ReplaceBytes: {Offset: 0x00, FindH: 00 23 07 F1 80 01 20 46, ReplaceH: 00 00 00 00 00 00 F0 3F}
-  - ReplaceBytes: {Offset: 0x08, FindH: 61 E9 1A 23 BD F5 78 E8, ReplaceH: 00 00 00 00 00 00 F0 3F}
-  - ReplaceBytes: {Offset: 0x10, FindH: 67 A3 D3 E9 00 23 07 F1, ReplaceH: 00 00 00 00 00 00 F0 3F}
-  - ReplaceBytes: {Offset: 0x18, FindH: 80 01 20 46 61 E9 18 23, ReplaceH: 00 00 00 00 00 00 F0 3F}
-  - ReplaceBytes: {Offset: 0x20, FindH: BD F5 6E E8 43 F2 33 33, ReplaceH: 00 00 00 00 00 00 F0 3F}
-  - ReplaceBytes: {Offset: 0x28, FindH: 4F F0 33 32 C3 F6 F3 73, ReplaceH: 00 00 00 00 00 00 F0 3F}
-  - ReplaceBytes: {Offset: 0x30, FindH: 07 F1 80 01 20 46 61 E9, ReplaceH: 00 00 00 00 00 00 F0 3F}
-  - ReplaceBytes: {Offset: 0x38, FindH: 16 23 BD F5 62 E8 5E A3, ReplaceH: 00 00 00 00 00 00 F0 3F}
-  - ReplaceBytes: {Offset: 0x40, FindH: D3 E9 00 23 07 F1 80 01, ReplaceH: 00 00 00 00 00 00 F0 3F}
-  - ReplaceBytes: {Offset: 0x48, FindH: 20 46 61 E9 14 23 BD F5, ReplaceH: 00 00 00 00 00 00 F0 3F}
-  - ReplaceBytes: {Offset: 0x50, FindH: 58 E8 00 23 00 22 C3 F6, ReplaceH: 00 00 00 00 00 00 F0 3F}
-  - ReplaceBytes: {Offset: 0x58, FindH: F8 73 07 F1 80 01 20 46, ReplaceH: 00 00 00 00 00 00 F0 3F}
-  - ReplaceBytes: {Offset: 0x60, FindH: 61 E9 12 23 BD F5 4C E8, ReplaceH: 00 00 00 00 00 00 F0 3F}
-  - ReplaceBytes: {Offset: 0x68, FindH: 55 A3 D3 E9 00 23 07 F1, ReplaceH: 00 00 00 00 00 00 F0 3F}
-  - BaseAddress: 0
-    # initialise loop counter
-  - ReplaceBytes: {Offset: 0x660644, FindH: 00 23 00 22, ReplaceH: 00 BF 00 25}
-    # loop to load 10 vals from old table
-  - ReplaceBytes: {Offset: 0x660648, FindH: C4 F2 08 03 07 F1, ReplaceH: 20 46 29 A1 29 44}
-  - ReplaceBytes: {Offset: 0x66064E, FindH: 80 01 20 46, ReplaceH: BD F5 00 E8}
-  - ReplaceBytes: {Offset: 0x660652, FindH: 61 E9 02 23 BC F5, ReplaceH: 08 35 50 2D F7 D1}
-    # restore r5
-  - ReplaceBytes: {Offset: 0x660658, FindH: FC EF, ReplaceH: 4D 46}
-    # continue at 66065A
-    #
-    # Replacement value: the number of initial line spacing values to exclude from
-    # the line spacing slider; minimum 0, maximum 13. E.g. 9 will result in a
-    # slider with 15 positions, starting from the 10th replace_float value below.
-  - ReplaceInt: {Offset: 0x660536, Find: 0, Replace: 0}
-    # 24 replacement line spacing values: change these replace_float values to suit
-    # your device and preferences:
-  - BaseAddress: 0x660550
-  - ReplaceFloat: {Offset: 0x00, Find: 1.0, Replace: 0.75}
-  - ReplaceFloat: {Offset: 0x08, Find: 1.0, Replace: 0.78}
-  - ReplaceFloat: {Offset: 0x10, Find: 1.0, Replace: 0.8}
-  - ReplaceFloat: {Offset: 0x18, Find: 1.0, Replace: 0.82}
-  - ReplaceFloat: {Offset: 0x20, Find: 1.0, Replace: 0.84}
-  - ReplaceFloat: {Offset: 0x28, Find: 1.0, Replace: 0.86}
-  - ReplaceFloat: {Offset: 0x30, Find: 1.0, Replace: 0.88}
-  - ReplaceFloat: {Offset: 0x38, Find: 1.0, Replace: 0.9}
-  - ReplaceFloat: {Offset: 0x40, Find: 1.0, Replace: 0.92}
-  - ReplaceFloat: {Offset: 0x48, Find: 1.0, Replace: 0.94}
-  - ReplaceFloat: {Offset: 0x50, Find: 1.0, Replace: 0.96}
-  - ReplaceFloat: {Offset: 0x58, Find: 1.0, Replace: 0.98}
-  - ReplaceFloat: {Offset: 0x60, Find: 1.0, Replace: 1.0}
-  - ReplaceFloat: {Offset: 0x68, Find: 1.0, Replace: 1.02}
-  - BaseAddress: 0x6606F0
-  - ReplaceFloat: {Offset: 0x00, Find: 1.05, Replace: 1.05}
-  - ReplaceFloat: {Offset: 0x08, Find: 1.07, Replace: 1.07}
-  - ReplaceFloat: {Offset: 0x10, Find: 1.1,  Replace: 1.1}
-  - ReplaceFloat: {Offset: 0x18, Find: 1.35, Replace: 1.15}
-  - ReplaceFloat: {Offset: 0x20, Find: 1.7,  Replace: 1.2}
-  - ReplaceFloat: {Offset: 0x28, Find: 1.8,  Replace: 1.25}
-  - ReplaceFloat: {Offset: 0x30, Find: 2.2,  Replace: 1.3}
-  - ReplaceFloat: {Offset: 0x38, Find: 2.4,  Replace: 1.35}
-  - ReplaceFloat: {Offset: 0x40, Find: 2.6,  Replace: 1.4}
-  - ReplaceFloat: {Offset: 0x48, Find: 2.8,  Replace: 1.5}
-    # The first 14 replace_float values above should allow the line spacing to be
-    # adjusted in increments of one pixel when using a medium sized font on a high
-    # resolution device. If you use a smaller font size and/or a lower resolution
-    # device you might find that increasing the slider one step at a time doesn't
-    # always result in a line spacing increase at each step. In that case, you
-    # might want to use replacement values that are not quite so close together.
-    #
-    # For example: (I use these values on my 758x1024 Glo)
-    #
-    #  0.7 0.725 0.75 0.775 0.8 0.825 0.85 0.875 0.9 0.925 0.95 0.975 1.0 1.025 ...
-    #
-    # or: (these might better suit the 600x800 Touch)
-    #
-    #  0.6 0.633 0.667 0.7 0.733 0.767 0.8 0.833 0.867 9.0 9.33 9.67 1.0 1.025 ...
+# waiting for GeoffR to update: My 24 line spacing values
 
 Custom left & right margins:
   - Enabled: no
@@ -239,21 +152,21 @@ Custom font sizes:
     #  Touch/Mini:    12px - 80px (48 sizes)
     #
     # Start with this font size: (AuraOne/Forma, GloHD/ClaraHD, Others)
-  - ReplaceInt: {Offset: 0x847DC6, Find: 18, Replace: 18}
-  - ReplaceInt: {Offset: 0x847C80, Find: 14, Replace: 14}
-  - ReplaceInt: {Offset: 0x847DA0, Find: 12, Replace: 12}
+  - ReplaceInt: {Offset: 0x847CB6, Find: 18, Replace: 18}
+  - ReplaceInt: {Offset: 0x847B70, Find: 14, Replace: 14}
+  - ReplaceInt: {Offset: 0x847C90, Find: 12, Replace: 12}
     #
-  - ReplaceInt: {Offset: 0x847CA8, Find: 21, Replace: 43} # Add font sizes in increments of 1 until this size exceeded}
-  - ReplaceInt: {Offset: 0x847CAE, Find: 22, Replace: 44} # Continue from this font size}
-  - ReplaceInt: {Offset: 0x847CBE, Find: 49, Replace: 67} # Add font sizes in increments of 2 until this size exceeded}
-  - ReplaceInt: {Offset: 0x847CC8, Find: 50, Replace: 68} # Continue from this font size}
+  - ReplaceInt: {Offset: 0x847B98, Find: 21, Replace: 43} # Add font sizes in increments of 1 until this size exceeded}
+  - ReplaceInt: {Offset: 0x847B9E, Find: 22, Replace: 44} # Continue from this font size}
+  - ReplaceInt: {Offset: 0x847BAE, Find: 49, Replace: 67} # Add font sizes in increments of 2 until this size exceeded}
+  - ReplaceInt: {Offset: 0x847BB8, Find: 50, Replace: 68} # Continue from this font size}
     #
     # Add font sizes in increments of 4 until this size exceeded:
     # (AuraOne/Forma, AuraHD/H2O/GloHD/ClaraHD, Glo/Aura, Touch/Mini)
-  - ReplaceInt: {Offset: 0x847DCA, Find: 195, Replace: 132}
-  - ReplaceInt: {Offset: 0x847C90, Find: 150, Replace: 108}
-  - ReplaceInt: {Offset: 0x847DE8, Find: 122, Replace: 88}
-  - ReplaceInt: {Offset: 0x847DE4, Find: 90,  Replace: 80}
+  - ReplaceInt: {Offset: 0x847CBA, Find: 195, Replace: 132}
+  - ReplaceInt: {Offset: 0x847B80, Find: 150, Replace: 108}
+  - ReplaceInt: {Offset: 0x847CD8, Find: 122, Replace: 88}
+  - ReplaceInt: {Offset: 0x847CD4, Find: 90,  Replace: 80}
 
 Freedom to advanced fonts control:
   - Enabled: no
@@ -268,104 +181,13 @@ Freedom to advanced fonts control:
     #
     # N3FontTypeUtil.setupMonotypeDropdown(b,c)
     # --> N3FontTypeUtil.setupDropdown(UNDEFINED,b,c)
-  - ReplaceBytes: {Offset: 0x8437C4, FindH: 59 46 50 46, ReplaceH: 5A 46 51 46}
-  - ReplaceBytes: {Offset: 0x8437C8, FindH: C1 F7 18 E5, ReplaceH: D9 F7 B2 E6}
+  - ReplaceBytes: {Offset: 0x8436B4, FindH: 59 46 50 46, ReplaceH: 5A 46 51 46}
+  - ReplaceBytes: {Offset: 0x8436B8, FindH: C1 F7 1C E5, ReplaceH: D9 F7 B6 E6}
     # N3FontTypeController.setupAdvancedOption(...) --> NOP
-  - ReplaceBytes: {Offset: 0x9F8786, FindH: 28 F6 72 E0, ReplaceH: 00 46 00 46}
-  - ReplaceBytes: {Offset: 0x9F9D6C, FindH: 26 F6 7E E5, ReplaceH: 00 46 00 46}
+  - ReplaceBytes: {Offset: 0x9F861E, FindH: 28 F6 A2 E0, ReplaceH: 00 46 00 46}
+  - ReplaceBytes: {Offset: 0x9F9C04, FindH: 26 F6 AE E5, ReplaceH: 00 46 00 46}
 
-ePub fixed/adjustable top/bottom margins:
-  - Enabled: no
-  - PatchGroup: ePub padding-bottom alternatives
-  - Description: |
-      This patch sets the @page margin sizes in epubs, overriding any @page margin
-      set in the book's CSS stylesheet (but not in the XPGT stylesheet, see below).
-      
-      By default the top and bottom margins are set to be adjustable, their size
-      similar to the left/right margin size set by the adjustment slider. There
-      are options to set the top and/or bottom margin to a fixed size instead.
-      
-      Note that @page margins are seperate from (and overlap) both the body margins
-      set in the book and the left/right margins set from the adjustment slider,
-      and are added to any page margins set in the Adobe XPGT stylesheet if the
-      book has one (e.g. page-template.xpgt). For this reason you might want to
-      consider using the Modify ePub Calibre plugin to remove any body margins and
-      XPGT stylesheet margins before sideloading the book, or perhaps enabling the
-      `Ignore ePub Adobe XPGT stylesheet (page-template.xpgt)` patch.
-      
-      Also note that a side-effect of this patch is that the body padding-bottom is
-      removed from the built-in stylesheet, which means that there will no longer
-      be a blank line added automatically at the end of chapters.
-      
-      See at the bottom of the patch for replacement values that can be used to
-      tune the size of the margins to suit different devices and reading modes.
-    # Push an extra 8 bytes of scratch space onto the stack
-  - ReplaceBytes: {Offset: 0x48BAD8, FindH: C9 B0, ReplaceH: CB B0}
-  - ReplaceBytes: {Offset: 0x48BADC, FindH: 02 AF, ReplaceH: 04 AF}
-    # Save this value for the third stack argument of the following QString.arg call
-  - ReplaceBytes: {Offset: 0x48BE70, FindH: AD F8 04 20, ReplaceH: 02 92 01 92}
-    # getReadingLineHeight(...) --> getReadingLeftMargin(...)
-  - ReplaceBytes: {Offset: 0x48BEC4, FindH: AA F7 0C EB, ReplaceH: 8B F7 9C E9}
-    # (Setup call to QString.arg)
-  - ReplaceBytes: {Offset: 0x48BEC8, FindH: 20 22 4F F0 FF 33, ReplaceH: 00 23 01 22 0A 21}
-  - ReplaceBytes: {Offset: 0x48BECE, FindH: 07 F1 70 0A, ReplaceH: 00 93 01 91}
-  - ReplaceBytes: {Offset: 0x48BED2, FindH: AD F8 04 20 00 93, ReplaceH: 42 43 92 08 01 3A}
-  - ReplaceBytes: {Offset: 0x48BED8, FindH: 50 46 67 23, ReplaceH: B8 BF 00 22}
-  - ReplaceBytes: {Offset: 0x48BEDC, FindH: 00 22 49 46, ReplaceH: 20 A8 49 46}
-    # QString.arg(double, ...) --> QString.arg(int64, ...)
-  - ReplaceBytes: {Offset: 0x48BEE0, FindH: 96 F7 B6 EC, ReplaceH: 8A F7 04 ED}
-    #
-    # (There wasn't room to load sl above)
-    # mov r1,sl; --> adds r1,sp,#128
-  - ReplaceBytes: {Offset: 0x48BEE4, FindH: 51 46, ReplaceH: 20 A9}
-    # (Remember to pop scratch space if necessary)
-    #
-    #      padding-bottom: %1em !important;\n
-    # --> }@page{margin:%1px 00px %1px}body{
-  - FindReplaceString:
-      Find: "\x20padding-bottom: %1em !important;\n"
-      Replace: "}@page{margin:%1px 00px %1px}body{"
-    #
-    #
-    # *** Replacement values start here, don't change anything above ***
-    #
-    # Optional replacement value: Uncomment for a FIXED TOP MARGIN size in px,
-    # default 25px. Replacement value is margin size, two digits:
-    # (Leave commented out for an adjustable top margin.)
-# - ReplaceString: {Offset: 0x0E, Find: "%1", Replace: "25"}
-    #
-    # Optional replacement value: Uncomment for a FIXED BOTTOM MARGIN size in px,
-    # default 00px. Replacement value is margin size, two digits:
-    # (Leave commented out for an adjustable bottom margin.)
-# - ReplaceString: {Offset: 0x18, Find: "%1", Replace: "00"}
-    #
-    # Optional replacement value: Uncomment to set the minimum LEFT/RIGHT MARGIN
-    # size in px, default 15px. (This margin will overlap the left/right margin
-    # set with the adjustment slider, not add to it.) Replacement value is margin
-    # size, two digits
-# - ReplaceString: {Offset: 0x13, Find: "00", Replace: "15"}
-    #
-  - BaseAddress: 0
-    #
-    # Replacement value: Sets the step-size of the ADJUSTABLE top/bottom margin
-    # (if any) in quarter-pixels. These suggested values should be very close to
-    # the 1% step size of the left/right margins set by the slider. Larger values
-    # will make the top/bottom margins larger than the left/right margins.
-    # Suggested values:
-    #   24 (Touch/Mini)
-    #   30 (Glo/Aura/Aura2ed)
-    #   43 (AuraHD/H2O/GloHD/ClaraHD)
-    #   56 (Aura One)
-    #   57 (Forma)
-  - ReplaceInt: {Offset: 0x48BECA, Find: 1, Replace: 57}
-    #
-    # Replacement value: Set this to the size of the device's built-in top margin,
-    # in pixels. This value is subtracted from the adjustable top/bottom margin
-    # (if any) to compensate for any unremovable built-in top margin.
-    # Suggested values are:
-    #  42 Clara
-    #  50 Forma
-  - ReplaceInt: {Offset: 0x48BED6, Find: 1, Replace: 50}
+# waiting for GeoffR to update: ePub fixed/adjustable top/bottom margins
 
 ePub fixed top/bottom margins:
   - Enabled: no
@@ -414,11 +236,11 @@ Custom kepub default margins:
       Sets the built-in minimum margin for KePub books and Pocket articles to
       zero, the same as it is in ePub books. This only affects left/right margins
       in normal reading mode, but all four margins in full-screen mode.
-  - ReplaceInt: {Offset: 0x5E037C, Find: 60, Replace: 0} # Device = AuraOne, Type = Japanese kepub
-  - ReplaceInt: {Offset: 0x5E037E, Find: 32, Replace: 0} # Device = AuraOne, Type = pocket article or non-Japanese kepub
-  - ReplaceInt: {Offset: 0x5E0382, Find: 20, Replace: 0} # Device = Touch/Mini, Type = Any
-  - ReplaceInt: {Offset: 0x5E035C, Find: 45, Replace: 0} # Device = Other, Type = Japanese kepub
-  - ReplaceInt: {Offset: 0x5E035E, Find: 25, Replace: 0} # Device = Other, Type = pocket article or non-Japanese kepub
+  - ReplaceInt: {Offset: 0x5E0274, Find: 60, Replace: 0} # Device = AuraOne, Type = Japanese kepub
+  - ReplaceInt: {Offset: 0x5E0276, Find: 32, Replace: 0} # Device = AuraOne, Type = pocket article or non-Japanese kepub
+  - ReplaceInt: {Offset: 0x5E027A, Find: 20, Replace: 0} # Device = Touch/Mini, Type = Any
+  - ReplaceInt: {Offset: 0x5E0254, Find: 45, Replace: 0} # Device = Other, Type = Japanese kepub
+  - ReplaceInt: {Offset: 0x5E0256, Find: 25, Replace: 0} # Device = Other, Type = pocket article or non-Japanese kepub
 
 Block WiFi firmware upgrade:
   - Enabled: no
@@ -453,7 +275,7 @@ Custom Sleep/Power-off timeouts:
       Changes the Sleep/Power-off timeout menu options from 5,10,15,30,45,60
       minutes to 10,20,30,60,120,240 minutes.
     # Values displayed on both menus
-  - BaseAddress: 0xD30648
+  - BaseAddress: 0xD304F8
   - ReplaceString: {Offset: 0x0, Find: "5 mins\0", Replace: "10 mins"}
   - ReplaceString: {Offset: 0x8, Find: "10 mins", Replace: "20 mins"}
   - ReplaceString: {Offset: 0x8, Find: "15 mins", Replace: "30 mins"}
@@ -462,19 +284,19 @@ Custom Sleep/Power-off timeouts:
   - ReplaceString: {Offset: 0x8, Find: "60 mins", Replace: "4 hours"}
     # Actual values used for sleep menu
   - BaseAddress: 0
-  - ReplaceInt: {Offset: 0xA8FE4C, Find: 5,  Replace: 10}
-  - ReplaceInt: {Offset: 0xA8FEA4, Find: 10, Replace: 20}
-  - ReplaceInt: {Offset: 0xA8FEE0, Find: 15, Replace: 30}
-  - ReplaceInt: {Offset: 0xA8FF1C, Find: 30, Replace: 60}
-  - ReplaceInt: {Offset: 0xA8FF58, Find: 45, Replace: 120}
-  - ReplaceInt: {Offset: 0xA8FF94, Find: 60, Replace: 240}
+  - ReplaceInt: {Offset: 0xA8FCE4, Find: 5,  Replace: 10}
+  - ReplaceInt: {Offset: 0xA8FD3C, Find: 10, Replace: 20}
+  - ReplaceInt: {Offset: 0xA8FD78, Find: 15, Replace: 30}
+  - ReplaceInt: {Offset: 0xA8FDB4, Find: 30, Replace: 60}
+  - ReplaceInt: {Offset: 0xA8FDF0, Find: 45, Replace: 120}
+  - ReplaceInt: {Offset: 0xA8FE2C, Find: 60, Replace: 240}
     # Actual values used for power menu
-  - ReplaceInt: {Offset: 0xA90012, Find: 5,  Replace: 10}
-  - ReplaceInt: {Offset: 0xA9004E, Find: 10, Replace: 20}
-  - ReplaceInt: {Offset: 0xA90088, Find: 15, Replace: 30}
-  - ReplaceInt: {Offset: 0xA900C2, Find: 30, Replace: 60}
-  - ReplaceInt: {Offset: 0xA900FC, Find: 45, Replace: 120}
-  - ReplaceInt: {Offset: 0xA90134, Find: 60, Replace: 240}
+  - ReplaceInt: {Offset: 0xA8FEAA, Find: 5,  Replace: 10}
+  - ReplaceInt: {Offset: 0xA8FEE6, Find: 10, Replace: 20}
+  - ReplaceInt: {Offset: 0xA8FF20, Find: 15, Replace: 30}
+  - ReplaceInt: {Offset: 0xA8FF5A, Find: 30, Replace: 60}
+  - ReplaceInt: {Offset: 0xA8FF94, Find: 45, Replace: 120}
+  - ReplaceInt: {Offset: 0xA8FFCC, Find: 60, Replace: 240}
 
 Set KePub hyphenation:
   - Enabled: no
@@ -485,8 +307,8 @@ Set KePub hyphenation:
       will always be turned on, regardless of justification button setting.
       
       (The publisher can still turn hyphenation off/on in the book's stylesheet.)
-  - ReplaceBytes: {Offset: 0x9EFA14, FindH: 36 F6 0E E3, ReplaceH: 01 20 01 20} # Alternative 1: Always turn KePub hyphenation on
-# - ReplaceBytes: {Offset: 0x9EFA14, FindH: 36 F6 0E E3, ReplaceH: 00 20 00 20} # Alternative 2: Never turn KePub hyphenation on
+  - ReplaceBytes: {Offset: 0x9EF8AC, FindH: 36 F6 3E E3, ReplaceH: 01 20 01 20} # Alternative 1: Always turn KePub hyphenation on
+# - ReplaceBytes: {Offset: 0x9EF8AC, FindH: 36 F6 3E E3, ReplaceH: 00 20 00 20} # Alternative 2: Never turn KePub hyphenation on
 
 Fix three KePub fullScreenReading bugs:
   - Enabled: no
@@ -669,7 +491,7 @@ Always display chapter name on navigation menu:
       progress is selected as well. Works for both ePub and KePub books.
     # in ReadingMenuScrubberController::setChapterAndProgressText(...)
     #  progressTypeIsBookBased(...) --> False
-  - ReplaceBytes: {Offset: 0xA022D4, FindH: 1D F6 6C E2, ReplaceH: 00 20 00 20}
+  - ReplaceBytes: {Offset: 0xA0216C, FindH: 1D F6 9C E2, ReplaceH: 00 20 00 20}
 
 Un-Force user font-family in KePubs:
   - Enabled: no
@@ -755,9 +577,9 @@ Change dicthtml strings to micthtml:
   - Description: |
       This patch is used for something to do with syncing and custom dictionaries.
       If you don't know what it does, then you probably don't need it.
-  - ReplaceString: {Offset: 0xCC88B4, Find: "%1/dicthtml%2", Replace: "%1/micthtml%2"}
-  - ReplaceString: {Offset: 0xCC88C4, Find: "dicthtml", Replace: "micthtml"}
-  - ReplaceString: {Offset: 0xCC890C, Find: "/mnt/onboard/.kobo/dict/dicthtml%1", Replace: "/mnt/onboard/.kobo/dict/micthtml%1"}
+  - ReplaceString: {Offset: 0xCC8754, Find: "%1/dicthtml%2", Replace: "%1/micthtml%2"}
+  - ReplaceString: {Offset: 0xCC8764, Find: "dicthtml", Replace: "micthtml"}
+  - ReplaceString: {Offset: 0xCC87AC, Find: "/mnt/onboard/.kobo/dict/dicthtml%1", Replace: "/mnt/onboard/.kobo/dict/micthtml%1"}
 
 Allow searches on Extra dictionaries:
   - Enabled: no
@@ -785,8 +607,8 @@ Clock display duration:
       When the reading footer menu is opened a clock is displayed at the top left
       for 3 seconds before being replaced with the reading progress percentage.
       This patch changes the length of time the clock is displayed to 5 seconds.
-  - ReplaceBytes: {Offset: 0x9E7E18, FindH: 40 F6 B8 31, ReplaceH: 03 21 89 02}
-  - ReplaceInt: {Offset: 0x9E7E18, Find: 3, Replace: 5} # Replacement value: Clock display duration in seconds
+  - ReplaceBytes: {Offset: 0x9E7CB0, FindH: 40 F6 B8 31, ReplaceH: 03 21 89 02}
+  - ReplaceInt: {Offset: 0x9E7CB0, Find: 3, Replace: 5} # Replacement value: Clock display duration in seconds
 
 Keyboard template (Mini/Touch/Glo/Aura):
   - Enabled: no
@@ -800,9 +622,9 @@ Keyboard template (Mini/Touch/Glo/Aura):
     ## the appropriate list of Extended Latin keys.
     #
     # Enable uppercase for `ß` (sharp s) key
-  - ReplaceBytes: {Offset: 0x8FFDA0, FindH: 00 24, ReplaceH: 01 24}
+  - ReplaceBytes: {Offset: 0x8FFC90, FindH: 00 24, ReplaceH: 01 24}
     # Enable uppercase for `ƒ` (script f) key
-  - ReplaceBytes: {Offset: 0x8FFDF6, FindH: 80 F0 01 00, ReplaceH: 01 20 01 20}
+  - ReplaceBytes: {Offset: 0x8FFCE6, FindH: 80 F0 01 00, ReplaceH: 01 20 01 20}
     # Replace layout sign
   - FindBaseAddressString: "ÉÀÇ"
   - ReplaceString: {Offset: 0, Find: "ÉÀÇ", Replace: "ÉÀÇ"}
@@ -866,7 +688,7 @@ Keyboard template (AuraHD/H2O):
     ## the appropriate list of Extended Latin keys.
     #
     # Enable uppercase for `ß` (sharp s) key
-  - ReplaceBytes: {Offset: 0x8FFDA0, FindH: 00 24, ReplaceH: 01 24}
+  - ReplaceBytes: {Offset: 0x8FFC90, FindH: 00 24, ReplaceH: 01 24}
     # Replace layout sign
   - FindBaseAddressString: "ÉÀÇ"
   - ReplaceString: {Offset: 0, Find: "ÉÀÇ", Replace: "ÉÀÇ"}
@@ -922,7 +744,7 @@ Keyboard template (GloHD/ClaraHD/AuraOne/H2O2):
     ## the appropriate list of Extended Latin keys.
     #
     # Enable uppercase for `ß` (sharp s) key
-  - ReplaceBytes: {Offset: 0x8FFDA0, FindH: 00 24, ReplaceH: 01 24}
+  - ReplaceBytes: {Offset: 0x8FFC90, FindH: 00 24, ReplaceH: 01 24}
     # Replace layout sign
   - FindBaseAddressString: "ÉÀÇ"
   - ReplaceString: {Offset: 0, Find: "ÉÀÇ", Replace: "ÉÀÇ"}
@@ -981,7 +803,7 @@ Cyrillic keyboard (Mini/Touch/Glo/Aura/AuraHD/H2O):
     ## the appropriate list of Extended Latin keys.
     #
     # Enable uppercase for `ß` (sharp s) key
-  - ReplaceBytes: {Offset: 0x8FFDA0, FindH: 00 24, ReplaceH: 01 24}
+  - ReplaceBytes: {Offset: 0x8FFC90, FindH: 00 24, ReplaceH: 01 24}
     # Replace layout sign
   - FindBaseAddressString: "ÉÀÇ"
   - ReplaceString: {Offset: 0, Find: "ÉÀÇ", Replace: "абв"}
