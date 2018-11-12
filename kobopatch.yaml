@@ -40,6 +40,7 @@ overrides:
     Both page turn buttons go next: yes
     Rename settings: yes
     My 24 line spacing values: yes
+    Replace adobe page numbers toggle with invert screen: yes
 
   src/libnickel.so.1.0.0_custom.yaml:
     Rename new home screen footer: yes
