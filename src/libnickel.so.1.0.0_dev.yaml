@@ -1,0 +1,23 @@
+Add orientation dropdown to developer options on all devices:
+  - Enabled: yes
+  - Description: |
+      Developer Options (search devmodeon, then go to Device Information) has a section with a dropdown
+      allowing changing the rotation to all options, including the inverted ones. This patch shows it on
+      devices without a sensor. DOES NOT STICK.
+  # In N3SettingsDeveloperOptionsView::N3SettingsDeveloperOptionsView(QWidget*):
+  # replace the call to Device::hasOrientationSensor() to MOV r0, #0x1
+  - ReplaceBytes: {Offset: 0xA6F504, FindH: AA F5 9C E6, ReplaceH: 4F F0 01 00}
+
+Use inverted portrait in rotation popup:
+  - Enabled: yes
+  - Description: |
+      Changes the landscape rotation lock in the popup to inverted landscape.
+  # Note that 0=auto, 1=portrait, 2=landscape, 4=invertedportrait, 8=invertedlandscape
+  - ReplaceInt: {Offset: 0xA2305C, Find: 1, Replace: 4}
+
+Use inverted landscape in rotation popup:
+  - Enabled: yes
+  - Description: |
+      Changes the landscape rotation lock in the popup to inverted landscape.
+  # Note that 0=auto, 1=portrait, 2=landscape, 4=invertedportrait, 8=invertedlandscape
+  - ReplaceInt: {Offset: 0xA23114, Find: 2, Replace: 8}
