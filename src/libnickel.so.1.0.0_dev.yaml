@@ -1,5 +1,5 @@
 Add orientation dropdown to developer options on all devices:
-  - Enabled: yes
+  - Enabled: no
   - Description: |
       Developer Options (search devmodeon, then go to Device Information) has a section with a dropdown
       allowing changing the rotation to all options, including the inverted ones. This patch shows it on
@@ -9,7 +9,7 @@ Add orientation dropdown to developer options on all devices:
   - ReplaceBytes: {Offset: 0xA6F504, FindH: AA F5 9C E6, ReplaceH: 4F F0 01 00}
 
 Use inverted portrait in rotation popup:
-  - Enabled: yes
+  - Enabled: no
   - Description: |
       Changes the landscape rotation lock in the popup to inverted landscape.
   # Note that 0=auto, 1=portrait, 2=landscape, 4=invertedportrait, 8=invertedlandscape

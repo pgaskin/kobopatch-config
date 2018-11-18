@@ -25,6 +25,7 @@ overrides:
     Remove forgot pin button from lock screen: yes
     Change pop-up footnote font-family: yes
     Remove recommendations (row1col2) from home screen: yes
+    New home screen increasing cover size: yes
 
   src/libadobe.so.yaml:
 #    Remove PDF map widget shown during panning: yes
