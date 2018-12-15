@@ -21,5 +21,5 @@ Manipulate reading stats:
   - Enabled: no
   - Description: Always add 10 hours to the reading time every time you close a book.
   # in EventEngine::endReadingSession(*Volume) when recording end of reading session stats, change QDateTime::secsTo calls to a fixed value
-  - ReplaceBytes: {Offset: 0x4D53A0, FindH: 4F F7 66 EF, ReplaceH: 4F F6 FF 70} # MOV  r0, #65535
-  - ReplaceBytes: {Offset: 0x4D53C0, FindH: 4F F7 56 EF, ReplaceH: 4F F6 FF 70} # MOV  r0, #65535
+  - ReplaceBytes: {Offset: 0x4D53A0, FindBLX: 0x425270, ReplaceH: 4F F6 FF 70} # MOV  r0, #65535
+  - ReplaceBytes: {Offset: 0x4D53C0, FindBLX: 0x425270, ReplaceH: 4F F6 FF 70} # MOV  r0, #65535
