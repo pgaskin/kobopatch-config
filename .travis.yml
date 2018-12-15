@@ -4,7 +4,7 @@ language: minimal
 
 install:
   - mkdir -p "$HOME/bin/"
-  - wget -O "$HOME/bin/kobopatch" "https://github.com/geek1011/kobopatch/releases/download/v0.11.0/kobopatch-linux-64bit"
+  - wget -O "$HOME/bin/kobopatch" "https://github.com/geek1011/kobopatch/releases/download/v0.12.0/kobopatch-linux-64bit"
   - chmod +x "$HOME/bin/kobopatch"
   - wget -O "$HOME/kobo-update-4.12.12111.zip" "https://kbdownload1-a.akamaihd.net/firmwares/kobo6/Dec2018/kobo-update-4.12.12111.zip"
 
