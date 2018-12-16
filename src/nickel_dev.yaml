@@ -1,0 +1,18 @@
+Set QuickTurn slider height:
+  - Enabled: yes
+  # Touch/Mini
+  - FindBaseAddressString: "QuickTurnSlider[qApp_deviceIsTrilogy=true]"
+  - ReplaceString: {Offset: 0x39, Find: "24px", Replace: "12px"}
+  - ReplaceString: {Offset: 0x4F, Find: "24px", Replace: "12px"}
+  # Glo/Aura/Aura2
+  - FindBaseAddressString: "QuickTurnSlider[qApp_deviceIsPhoenix=true]"
+  - ReplaceString: {Offset: 0x39, Find: "32px", Replace: "16px"}
+  - ReplaceString: {Offset: 0x4F, Find: "32px", Replace: "16px"}
+  # AuraHD/H2O/GloHD/Clara
+  - FindBaseAddressString: "QuickTurnSlider[qApp_deviceIsDragon=true]"
+  - ReplaceString: {Offset: 0x38, Find: "44px", Replace: "22px"}
+  - ReplaceString: {Offset: 0x4E, Find: "44px", Replace: "22px"}
+  # AuraOne/Forma
+  - FindBaseAddressString: "QuickTurnSlider[qApp_deviceIsDaylight=true]"
+  - ReplaceString: {Offset: 0x3A, Find: "56px", Replace: "28px"}
+  - ReplaceString: {Offset: 0x50, Find: "56px", Replace: "28px"}

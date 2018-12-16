@@ -7,6 +7,7 @@ patchFormat: kobopatch
 
 patches:
   src/nickel.yaml: usr/local/Kobo/nickel
+  src/nickel_dev.yaml: usr/local/Kobo/nickel
   src/libadobe.so.yaml: usr/local/Kobo/libadobe.so
   src/libnickel.so.1.0.0.yaml: usr/local/Kobo/libnickel.so.1.0.0
   src/libnickel.so.1.0.0_custom.yaml: usr/local/Kobo/libnickel.so.1.0.0
@@ -84,6 +85,10 @@ files:
   fonts/PTSerif-Bold.ttf: mnt/onboard/fonts/PTSerif-Bold.ttf
   fonts/PTSerif-Italic.ttf: mnt/onboard/fonts/PTSerif-Italic.ttf
   fonts/PTSerif-Regular.ttf: mnt/onboard/fonts/PTSerif-Regular.ttf
+
+  # fbink
+  fbink/bin/fbink: usr/local/geek1011/fbink
+  fbink/bin/button_scan: usr/local/geek1011/button_scan
 
   # dropbear is built with the toolchain from kobolabs/Kobo-Reader
   # ./configure --host=arm-linux-gnueabihf --disable-zlib --enable-static --disable-lastlog
