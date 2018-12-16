@@ -86,9 +86,15 @@ files:
   fonts/PTSerif-Italic.ttf: mnt/onboard/fonts/PTSerif-Italic.ttf
   fonts/PTSerif-Regular.ttf: mnt/onboard/fonts/PTSerif-Regular.ttf
 
+  # general stuff
+  src/envsetup.sh: usr/local/geek1011/envsetup.sh
+
   # fbink
   fbink/bin/fbink: usr/local/geek1011/fbink
   fbink/bin/button_scan: usr/local/geek1011/button_scan
+  fbink/lib/libfbink.so.1.0.0: usr/local/geek1011/libfbink.so.1.0.0
+  fbink/lib/libfbink.so.1: usr/local/geek1011/libfbink.so.1
+  fbink/lib/libfbink.so: usr/local/geek1011/libfbink.so
 
   # dropbear is built with the toolchain from kobolabs/Kobo-Reader
   # ./configure --host=arm-linux-gnueabihf --disable-zlib --enable-static --disable-lastlog
