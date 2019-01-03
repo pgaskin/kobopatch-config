@@ -50,11 +50,3 @@ Set sleepcover enabled:
   # change PowerSettings::getSleepAccessoryEnabled() (to override [PowerSettings] -> SleepAccessoryEnabled)
   - ReplaceBytes: {Offset: 0x963B8A, FindBLX: 0x4101F4, ReplaceH: 4F F0 01 00}
   - ReplaceBytes: {Offset: 0x963B8C, FindH: 01, ReplaceH: 01} # 00 to disable, 01 to enable
-
-Use old keyboard on all devices:
-  - Enabled: yes
-  - Description: |
-      Uses the old-style keyboard on all devices.
-  # In Device::useNewKeyboard():
-  # short-circuit the first device check (which controls a branch to the end of the function, which returns false)
-  - ReplaceBytes: {Offset: 0x5E21C0, FindBLX: 0x419708, ReplaceH: 4F F0 01 00}

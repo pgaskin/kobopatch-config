@@ -47,6 +47,8 @@ overrides:
     Replace adobe page numbers toggle with invert screen: yes
     Always show confirmation dialog before upgrading: yes
     Set reading footer height: yes
+    Use old keyboard on all devices: yes
+    Remove beta features not supported text: yes
 
   src/libnickel.so.1.0.0_custom.yaml:
     Rename new home screen footer: yes
