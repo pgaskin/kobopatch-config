@@ -8,3 +8,53 @@ Add orientation dropdown to developer options on all devices:
   # replace the call to Device::hasOrientationSensor() to MOV r0, #0x1
   - ReplaceBytes: {Offset: 0xA6F504, FindH: AA F5 9C E6, ReplaceH: 4F F0 01 00}
   # TODO: update offset
+
+Old kepub fullscreen mode:
+  - Enabled: no
+  - Description: |
+      Emulates the old kepub fullscreen mode. TODO - replace the show title toggle, adjustable margins.
+  # In KepubBookReader::setFullScreen():
+  # replace the BNE to the part which hides header/footer (or else shows) with a B.
+  # The KepubBookReader::hideHeaderAndFooter() call is the same which is used when displaying
+  # covers. This allows the content to go right to the top/bottom of the screen (and QuickTurn
+  # still works)!
+  - ReplaceBytes: {Offset: 0x9E45B4, FindH: 56 D1, ReplaceH: 56 E0}
+  # Note for updating: D1 to E0 are all that needs changing, as the opcode for b (1101) and cond
+  # are the first 8 bytes (swapped to last for thumb).
+
+Replace sleepcover setting with screenshots:
+  - Enabled: no
+  - Description: |
+      Replaces the sleepcover setting with a toggle to enable/disable screenshots. Note that due to limitations in
+      the way I am patching this, the sleepcover will be enabled/disabled along with this too (or use the patch below
+      to override it). I'll try to figure out a better way to do this later (maybe try putting some code in an empty
+      part of the binary?).
+  # In PowerKeyFilter::filter(QObject*, KeyEvent*):
+  # replace the BL call to the subroutine which loads the Screenshots setting with a BLX to
+  # PowerSettings::getSleepAccessoryEnabled():
+  # Note: When updating, make sure the subroutine still does the same thing.
+# - ReplaceBytes: {Offset: 0x96C764, FindH: DF F4 C4 FE, ReplaceBLX: 0x4101F4}
+  - ReplaceBytes: {Offset: 0x96C764, FindH: DF F4 C4 FE, ReplaceH: A3 F6 46 E5} # TODO: why does this always seem to be true?
+  # then change the title in the power settings page:
+  - FindReplaceString: {Find: "SLEEPCOVER", Replace: "SCREENSHOT"}
+  # and the label:
+  - FindReplaceString: {Find: "Automatically sleep and wake up:", Replace: "Take screenshots:"}
+  # and the description:
+  - FindReplaceString: {Find: "The Kobo SleepCover (sold separately) automatically puts your eReader to sleep when you close it and wakes it up when you open it.", Replace: "The power button is able to take screenshots when you press it instead of sleeping."}
+
+Set sleepcover enabled:
+  - Enabled: no
+  - Description: |
+      Overrides the sleepcover setting. This is only meant to be used with `Replace sleepcover setting with screenshots`.
+  # In the subroutine where the hall (magnet) sensor is instantiated:
+  # change PowerSettings::getSleepAccessoryEnabled() (to override [PowerSettings] -> SleepAccessoryEnabled)
+  - ReplaceBytes: {Offset: 0x963B8A, FindBLX: 0x4101F4, ReplaceH: 4F F0 01 00}
+  - ReplaceBytes: {Offset: 0x963B8C, FindH: 01, ReplaceH: 01} # 00 to disable, 01 to enable
+
+Use old keyboard on all devices:
+  - Enabled: yes
+  - Description: |
+      Uses the old-style keyboard on all devices.
+  # In Device::useNewKeyboard():
+  # short-circuit the first device check (which controls a branch to the end of the function, which returns false)
+  - ReplaceBytes: {Offset: 0x5E21C0, FindBLX: 0x419708, ReplaceH: 4F F0 01 00}
