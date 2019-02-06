@@ -6,8 +6,22 @@ Remove PDF map widget shown during panning:
   - ReplaceBytesAtSymbol: {Symbol: "N3AdobeReader::showMapWidget()", Offset: 9, FindH: 28 B1, ReplaceH: 00 20}
 
 Remove PDF page turn arrows:
-  - Enabled: yes
+  - Enabled: no
   - Description: |
       Removes the PDF page turn arrows which show on the sides when zoomed in.
   # In the function which shows the arrows, NOP the CBZ to end it on all conditions.
   - ReplaceBytesAtSymbol: {Symbol: "N3AdobeReader::showPageArrowsAsNeeded()", Offset: 13, FindH: 30 B1, ReplaceH: 00 20}
+
+Keep PDF pan position:
+  - Enabled: yes
+  - Description: |
+      Prevents the pan from being reset when going to the next/previous page. TODO - find a way to make it work
+### NOT WORKING:
+# # The attempt below this didn't work, so this is the more hacky way to do it (returning (BX LR) early from resetPan).
+# # This has the side effect of not resetting when rotating the screen either.
+# - ReplaceBytesAtSymbol: {Symbol: "AdobeReader::resetPan()", Offset: 3, FindH: C0 F8, ReplaceH: 70 47}
+### NOT WORKING:
+# # At the end of the function, it branches to the code to reset the pan with a CBZ. This skips the actual
+# # call (with LDR) to AdobeReader::resetPan():
+# - ReplaceBytesAtSymbol: {Symbol: "AdobeReader::goToNextPage()", Offset: 147, FindH: 17 4B, ReplaceH: 00 20}
+# - ReplaceBytesAtSymbol: {Symbol: "AdobeReader::goToPrevPage()", Offset: 141, FindH: 17 4B, ReplaceH: 00 20}
