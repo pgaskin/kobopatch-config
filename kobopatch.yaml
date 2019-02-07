@@ -26,12 +26,11 @@ overrides:
     Custom synopsis/details line spacing: yes
     Remove forgot pin button from lock screen: yes
     Change pop-up footnote font-family: yes
-#   Remove recommendations (row1col2) from home screen: yes
     Remove footer (row3) and increase cover size on new home screen: yes
     Custom reading footer style: yes
 
   src/libadobe.so.yaml:
-#   Remove PDF map widget shown during panning: yes
+    Keep PDF pan position: yes
 
   src/libnickel.so.1.0.0.yaml:
     Custom font sizes: yes
