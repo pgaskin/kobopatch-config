@@ -15,13 +15,16 @@ Remove PDF page turn arrows:
 Keep PDF pan position:
   - Enabled: yes
   - Description: |
-      Prevents the pan from being reset when going to the next/previous page. TODO - find a way to make it work
-### NOT WORKING:
-# # The attempt below this didn't work, so this is the more hacky way to do it (returning (BX LR) early from resetPan).
-# # This has the side effect of not resetting when rotating the screen either.
-# - ReplaceBytesAtSymbol: {Symbol: "AdobeReader::resetPan()", Offset: 3, FindH: C0 F8, ReplaceH: 70 47}
-### NOT WORKING:
-# # At the end of the function, it branches to the code to reset the pan with a CBZ. This skips the actual
-# # call (with LDR) to AdobeReader::resetPan():
-# - ReplaceBytesAtSymbol: {Symbol: "AdobeReader::goToNextPage()", Offset: 147, FindH: 17 4B, ReplaceH: 00 20}
-# - ReplaceBytesAtSymbol: {Symbol: "AdobeReader::goToPrevPage()", Offset: 141, FindH: 17 4B, ReplaceH: 00 20}
+      Prevents the pan from being reset when going to the next/previous page.
+
+  # Immediately call BX LR to exit function without doing anything.
+  - ReplaceBytesAtSymbol: {Symbol: "AdobeReader::resetPan()", Offset: -1, FindH: 00 23, ReplaceH: 70 47}
+  # NOP the additional reset embedded in the page turns (idk why yet) (str x as 0, add to sp, store y as 0, update sp):
+  # TODO: this segfaults due to something about the stack pointer
+  - ReplaceBytesAtSymbol: {Symbol: "AdobeReader::goToNextPage()", Offset: 159, FindH: C5 F8 80 60 20 37 C5 F8 84 60 BD 46, ReplaceH: 00 20 00 20 00 20 00 20 00 20 00 20}
+  - ReplaceBytesAtSymbol: {Symbol: "AdobeReader::goToPrevPage()", Offset: 153, FindH: C5 F8 80 60 20 37 C5 F8 84 60 BD 46, ReplaceH: 00 20 00 20 00 20 00 20 00 20 00 20}
+
+# # Test (WORKS!): always 255, 255 pan
+# - ReplaceBytes: {Offset: 0x2579C, FindH: 07 D1, ReplaceH: FF 26}
+# - ReplaceBytes: {Offset: 0x25892, FindH: 07 D1, ReplaceH: FF 26}
+# - ReplaceBytesAtSymbol: {Symbol: "AdobeReader::resetPan()", Offset: -1, FindH: 00 23, ReplaceH: FF 23}
