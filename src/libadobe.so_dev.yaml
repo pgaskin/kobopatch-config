@@ -16,13 +16,16 @@ Keep PDF pan position:
   - Enabled: yes
   - Description: |
       Prevents the pan from being reset when going to the next/previous page.
-
-  # Immediately call BX LR to exit function without doing anything.
+  # Immediately call BX LR to exit function without doing anything:
   - ReplaceBytesAtSymbol: {Symbol: "AdobeReader::resetPan()", Offset: -1, FindH: 00 23, ReplaceH: 70 47}
-  # NOP the additional reset embedded in the page turns (idk why yet) (str x as 0, add to sp, store y as 0, update sp):
-  # TODO: this segfaults due to something about the stack pointer
-  - ReplaceBytesAtSymbol: {Symbol: "AdobeReader::goToNextPage()", Offset: 159, FindH: C5 F8 80 60 20 37 C5 F8 84 60 BD 46, ReplaceH: 00 20 00 20 00 20 00 20 00 20 00 20}
-  - ReplaceBytesAtSymbol: {Symbol: "AdobeReader::goToPrevPage()", Offset: 153, FindH: C5 F8 80 60 20 37 C5 F8 84 60 BD 46, ReplaceH: 00 20 00 20 00 20 00 20 00 20 00 20}
+  # Skip over the additional reset in the function (idk why it's there, as it seems to do the same thing as AdobeReader::resetPan):
+  # Do this by making the CMP always NE (CMP r5, #0).
+  - ReplaceBytesAtSymbol: {Symbol: "AdobeReader::goToNextPage()", Offset: 155, FindH: 9A 42, ReplaceH: 00 2A}
+  - ReplaceBytesAtSymbol: {Symbol: "AdobeReader::goToPrevPage()", Offset: 149, FindH: 9A 42, ReplaceH: 00 2A}
+  # Note: This patch took a while to figure out, as I initially overlooked the second reset, and then once
+  # I noticed it, I kept messing up the SP (and causing segfaults) when doing this a more complex way. I
+  # eventually tried using a fixed pan and seeing if I got everything, then I did this patch again from
+  # scratch.
 
 # # Test (WORKS!): always 255, 255 pan
 # - ReplaceBytes: {Offset: 0x2579C, FindH: 07 D1, ReplaceH: FF 26}
