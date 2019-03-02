@@ -52,7 +52,7 @@ Set sleepcover enabled:
   - ReplaceBytes: {Offset: 0x963B8C, FindH: 01, ReplaceH: 01} # 00 to disable, 01 to enable
 
 Set visible SmartLink:
-  - Enabled: no
+  - Enabled: yes
   - PatchGroup: SmartLink
   - Description: |
       Sets the currently visible smartlink (does not override priority messages).
@@ -79,9 +79,10 @@ Set visible SmartLink:
   # 16 - SuperPoints     - participating in super points && points > 2400      - KOBO SUPER POINTS: You have %0 Super Points to redeem            - kobo store
   # 17 - PocketUser      - unread pocket articles > 0                          - POCKET: Catch up on the %n article(s) you added recently         - library -> pocket
   #
-  # in ActivityManager::smartLinkGeneralMessage(ActivityManager *this, const Device *a2):
-  # change the default SmartLink (you can set this to your preference based on the previous list,
-  # or you could use one of the below presets):
-  ## TODO
-  # jump to end of function (or maybe just replace return value if easier):
-  ## TODO
+  # in SmartLinkWidget::showRotationMessage, which is the only caller of ActivityManager::smartLinkGeneralMessage:
+  # change the result of the call to ActivityManager::smartLinkGeneralMessage:
+  - ReplaceBytes: {Offset: 0x8DBA68, FindBLX: 0x42744C, ReplaceH: 4F F0 04 00}
+  # set the new SmartLink to show (you can set this to your preference based on the
+  # previous list, but it MUST be one of the above options, or you may need to
+  # factory reset):
+  - ReplaceInt: {Offset: 0x8DBA6A, Find: 4, Replace: 15}

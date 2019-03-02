@@ -26,7 +26,7 @@ overrides:
     Custom synopsis/details line spacing: yes
     Remove forgot pin button from lock screen: yes
     Change pop-up footnote font-family: yes
-    Remove footer (row3) and increase cover size on new home screen: yes
+    New home screen increasing cover size: yes
     Custom reading footer style: yes
 
   src/libadobe.so.yaml:
