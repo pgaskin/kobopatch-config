@@ -26,7 +26,6 @@ overrides:
     Custom synopsis/details line spacing: yes
     Remove forgot pin button from lock screen: yes
     Change pop-up footnote font-family: yes
-    New home screen increasing cover size: yes
     Custom reading footer style: yes
 
   src/libadobe.so.yaml:
@@ -51,6 +50,7 @@ overrides:
     Remove beta features not supported text: yes
     Disable all tutorial dialogs: yes
     Hide browser from beta features: yes
+    Only show stats SmartLink: yes
 
   src/libnickel.so.1.0.0_custom.yaml:
     Rename new home screen footer: yes
