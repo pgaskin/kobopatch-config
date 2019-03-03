@@ -54,3 +54,41 @@ Set sleepcover enabled:
 Enable OverDrive:
   - Enabled: yes
   - ReplaceBytesAtSymbol: {Symbol: "OverDriveCardManager::isOverDriveEnabled()", Offset: 123, FindH: 4F F0 00 08, ReplaceH: 4F F0 01 08}
+
+Show time in footer:
+  - Enabled: yes
+  - Description: |
+      Shows the reading time in the footer instead of Page %1 <i>of</i> %1.
+  # In ReadingView::onFooterEvent:
+  # sacrifice the non book-based progress in the page number view
+  # for getting the time instead
+  # NOP the code:
+  - ReplaceBytes: {Offset: 0x9DF2C6, FindBLX: 0x423878, ReplaceH: 00 46 00 46}  # int r0 = ReadingView::currentPage(r0)
+  - ReplaceBytes: {Offset: 0x9DF2CA, FindH: 82 46, ReplaceH: 00 46}             # int r10 = r0
+  - ReplaceBytes: {Offset: 0x9DF2CC, FindH: 20 46, ReplaceH: 00 46}             # ReadingView r0 = r4 (this)
+  - ReplaceBytes: {Offset: 0x9DF2CE, FindBLX: 0x419FD0, ReplaceH: 00 46 00 46}  # int r0 = ReadingView::totalPages(r0)
+  - ReplaceBytes: {Offset: 0x9DF2D2, FindH: 83 46, ReplaceH: 00 46}             # int r11 = r0
+  - ReplaceBytes: {Offset: 0x9DF2D4, FindH: D4 F8 88 00, ReplaceH: 00 46 00 46} # BookProgressType r0 = *(r1 + 0x88)
+  - ReplaceBytes: {Offset: 0x9DF2D8, FindBLX: 0x41BB38, ReplaceH: 00 46 00 46}  # bool r0 = progressTypeIsBookBased(r0)
+  - ReplaceBytes: {Offset: 0x9DF2DC, FindH: 58 B3, ReplaceH: 00 46}             # if (!r0) goto ###
+    # afterwards is the code which loads the arguments for ReadingFooter::update and calls it (r10 is arg3, r11 is arg4, if not, below needs to be updated)
+  # New code:
+# - ReplaceBytes: {Offset: 0x9DF2C6, FindH: 00 46 00 46, ReplaceBLX: 0x3FFE28}
+  - ReplaceBytes: {Offset: 0x9DF2C6, FindH: 00 46 00 46, ReplaceH: 20 F6 B0 E5} # QTime r0 = QTime::currentTime()
+  - ReplaceBytes: {Offset: 0x9DF2CA, FindH: 00 46, ReplaceH: 83 46}             # QTime r11 = r0
+  
+  # TESTING: fix to 1 and 24
+  - ReplaceBytes: {Offset: 0x9DF2CC, FindH: 00 46 00 46, ReplaceH: 4FF0010A}
+  - ReplaceBytes: {Offset: 0x9DF2D0, FindH: 00 46 00 46, ReplaceH: 4FF0180B}
+
+  # TODO: why does this segfault?
+## - ReplaceBytes: {Offset: 0x9DF2CC, FindH: 00 46 00 46, ReplaceBLX: 0x428358}
+#  - ReplaceBytes: {Offset: 0x9DF2CC, FindH: 00 46 00 46, ReplaceH: 49 F6 44 E0} # int r0 = QTime::hour(r0)
+#  - ReplaceBytes: {Offset: 0x9DF2D0, FindH: 00 46, ReplaceH: 82 46}             # int r10 = r0
+#  - ReplaceBytes: {Offset: 0x9DF2D2, FindH: 00 46, ReplaceH: 58 46}             # QTime r0 = r11
+## - ReplaceBytes: {Offset: 0x9DF2D4, FindH: 00 46 00 46, ReplaceBLX: 0x41E298}
+#  - ReplaceBytes: {Offset: 0x9DF2D4, FindH: 00 46 00 46, ReplaceH: 3E F6 E0 E7} # int r0 = QTime::minute(r0)
+#  - ReplaceBytes: {Offset: 0x9DF2D8, FindH: 00 46, ReplaceH: 83 46}             # int r11 = r0
+
+  # and now make it show %1:%2 instead of Page %1 <i>of</i> %1 (loaded to the var from ReadingFooter::ReadingFooter):
+# TODO
