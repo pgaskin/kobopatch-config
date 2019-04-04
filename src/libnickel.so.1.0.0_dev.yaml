@@ -96,3 +96,7 @@ Freedom to advanced fonts control:
   # In ReadingMenuFontSettingsController::setupAdvancedOption:
   # set N3FontTypeUtil::isMonotypeFont to true
   - ReplaceBytes: {Offset: 0x9FA3E0, FindBLX: 0x4131B8, ReplaceH: 4F F0 01 00}
+
+Disable wishlist:
+  - Enabled: yes
+  - ReplaceBytesAtSymbol: {Symbol: "OneStoreServiceSettings::wishlistEnabled()", Offset: 53, FindBLX: 0x406BE0, ReplaceH: 4F F0 00 00}
