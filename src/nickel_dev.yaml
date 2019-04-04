@@ -24,3 +24,14 @@ Decrease MediumVertSpacer:
   - ReplaceZlib: {Offset: 0, Find: "MediumVertSpacer[qApp_deviceIsPhoenix=true] {\n  min-height: 32px;\n  max-height: 32px;\n}", Replace: "MediumVertSpacer[qApp_deviceIsPhoenix=true] {\n  min-height: 16px;\n  max-height: 22px;\n}"}
   - ReplaceZlib: {Offset: 0, Find: "MediumVertSpacer[qApp_deviceIsDragon=true] {\n  min-height: 44px;\n  max-height: 44px;\n}", Replace: "MediumVertSpacer[qApp_deviceIsDragon=true] {\n  min-height: 22px;\n  max-height: 28px;\n}"}
   - ReplaceZlib: {Offset: 0, Find: "MediumVertSpacer[qApp_deviceIsDaylight=true] {\n  min-height: 56px;\n  max-height: 56px;\n}", Replace: "MediumVertSpacer[qApp_deviceIsDaylight=true] {\n  min-height: 28px;\n  max-height: 38px;\n}"}
+
+Remove extra padding on selection menu:
+  - Enabled: yes
+  - Description: As of firmware 4.13.12638, the share button has been removed from the selection menu, but the space it took up is still there (and ugly).
+  - FindZlib: "#SelectionMenuView"
+  - ReplaceZlibGroup:
+      Replacements:
+        - {Find: "width: 195px;", Replace: "width: 149px;"} # Trilogy: -46
+        - {Find: "width: 230px;", Replace: "width: 174px;"} # Phoenix: -56
+        - {Find: "width: 280px;", Replace: "width: 210px;"} # Dragon: -70
+        - {Find: "width: 366px;", Replace: "width: 276px;"} # Daylight: -90
