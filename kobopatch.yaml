@@ -1,5 +1,5 @@
-version: 4.12.12111
-in: src/kobo-update-4.12.12111.zip
+version: 4.13.12638
+in: src/kobo-update-4.13.12638.zip
 out: KoboRoot.tgz
 log: log.txt
 
@@ -9,7 +9,6 @@ patches:
   src/nickel.yaml: usr/local/Kobo/nickel
   src/nickel_dev.yaml: usr/local/Kobo/nickel
   src/libadobe.so.yaml: usr/local/Kobo/libadobe.so
-  src/libadobe.so_dev.yaml: usr/local/Kobo/libadobe.so
   src/libnickel.so.1.0.0.yaml: usr/local/Kobo/libnickel.so.1.0.0
   src/libnickel.so.1.0.0_custom.yaml: usr/local/Kobo/libnickel.so.1.0.0
   src/libnickel.so.1.0.0_dev.yaml: usr/local/Kobo/libnickel.so.1.0.0
@@ -26,14 +25,14 @@ overrides:
     Custom synopsis/details line spacing: yes
     Remove forgot pin button from lock screen: yes
     Change pop-up footnote font-family: yes
-    Custom reading footer style: yes
+    #Custom reading footer style: yes
 
   src/libadobe.so.yaml:
     Keep PDF pan position: yes
 
   src/libnickel.so.1.0.0.yaml:
     Custom font sizes: yes
-    Freedom to advanced fonts control: yes
+    #Freedom to advanced fonts control: yes
     Custom Sleep/Power-off timeouts: yes
     Fix three KePub fullScreenReading bugs: yes
     Always display chapter name on navigation menu: yes

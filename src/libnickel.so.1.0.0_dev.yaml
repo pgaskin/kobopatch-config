@@ -4,23 +4,11 @@ Add orientation dropdown to developer options on all devices:
       Developer Options (search devmodeon, then go to Device Information) has a section with a dropdown
       allowing changing the rotation to all options, including the inverted ones. This patch shows it on
       devices without a sensor. DOES NOT STICK.
+  # NOTE: not updated since 4.12.12111
   # In N3SettingsDeveloperOptionsView::N3SettingsDeveloperOptionsView(QWidget*):
   # replace the call to Device::hasOrientationSensor() to MOV r0, #0x1
   - ReplaceBytes: {Offset: 0xA6F504, FindH: AA F5 9C E6, ReplaceH: 4F F0 01 00}
   # TODO: update offset
-
-Old kepub fullscreen mode:
-  - Enabled: no
-  - Description: |
-      Emulates the old kepub fullscreen mode. TODO - replace the show title toggle, adjustable margins.
-  # In KepubBookReader::setFullScreen():
-  # replace the BNE to the part which hides header/footer (or else shows) with a B.
-  # The KepubBookReader::hideHeaderAndFooter() call is the same which is used when displaying
-  # covers. This allows the content to go right to the top/bottom of the screen (and QuickTurn
-  # still works)!
-  - ReplaceBytes: {Offset: 0x9E45B4, FindH: 56 D1, ReplaceH: 56 E0}
-  # Note for updating: D1 to E0 are all that needs changing, as the opcode for b (1101) and cond
-  # are the first 8 bytes (swapped to last for thumb).
 
 Replace sleepcover setting with screenshots:
   - Enabled: no
@@ -29,6 +17,7 @@ Replace sleepcover setting with screenshots:
       the way I am patching this, the sleepcover will be enabled/disabled along with this too (or use the patch below
       to override it). I'll try to figure out a better way to do this later (maybe try putting some code in an empty
       part of the binary?).
+  # NOTE: not updated since 4.12.12111
   # In PowerKeyFilter::filter(QObject*, KeyEvent*):
   # replace the BL call to the subroutine which loads the Screenshots setting with a BLX to
   # PowerSettings::getSleepAccessoryEnabled():
@@ -42,23 +31,15 @@ Replace sleepcover setting with screenshots:
   # and the description:
   - FindReplaceString: {Find: "The Kobo SleepCover (sold separately) automatically puts your eReader to sleep when you close it and wakes it up when you open it.", Replace: "The power button is able to take screenshots when you press it instead of sleeping."}
 
-Set sleepcover enabled:
-  - Enabled: no
-  - Description: |
-      Overrides the sleepcover setting. This is only meant to be used with `Replace sleepcover setting with screenshots`.
-  # In the subroutine where the hall (magnet) sensor is instantiated:
-  # change PowerSettings::getSleepAccessoryEnabled() (to override [PowerSettings] -> SleepAccessoryEnabled)
-  - ReplaceBytes: {Offset: 0x963B8A, FindBLX: 0x4101F4, ReplaceH: 4F F0 01 00}
-  - ReplaceBytes: {Offset: 0x963B8C, FindH: 01, ReplaceH: 01} # 00 to disable
-
 Enable OverDrive:
   - Enabled: yes
   - ReplaceBytesAtSymbol: {Symbol: "OverDriveCardManager::isOverDriveEnabled()", Offset: 123, FindH: 4F F0 00 08, ReplaceH: 4F F0 01 08}
 
 Show time in footer:
-  - Enabled: yes
+  - Enabled: no
   - Description: |
       Shows the reading time in the footer instead of Page %1 <i>of</i> %1.
+  # NOTE: not updated since 4.12.12111
   # In ReadingView::onFooterEvent:
   # sacrifice the non book-based progress in the page number view
   # for getting the time instead
@@ -92,3 +73,26 @@ Show time in footer:
 
   # and now make it show %1:%2 instead of Page %1 <i>of</i> %1 (loaded to the var from ReadingFooter::ReadingFooter):
 # TODO
+
+####################
+
+Freedom to advanced fonts control:
+  - Enabled: no
+  - Description: |
+      This patch allows the advanced font options (weight/sharpness adjustments)
+      to work with sideloaded fonts too. (KEPUB: OTF and TTF. EPUB: TTF only.)
+  #
+  # The following passes a junk pointer to N3FontTypeUtil::setupDropdown, but it
+  # seems the pointer is only passed on to ReadingSettings::getDefaultFontFamily
+  # where it is discarded without being dereferenced, so it should be safe?
+  # BEWARE: check whether this still holds in future firmware versions.
+  #
+  # N3FontTypeUtil.setupMonotypeDropdown(b,c)
+  # --> N3FontTypeUtil.setupDropdown(UNDEFINED,b,c)
+  - ReplaceBytes: {Offset: 0x8432E4, FindH: 59 46 50 46, ReplaceH: 5A 46 51 46}
+  - ReplaceBLX: {Offset: 0x8432E8, Find: 0x4073B8, Replace: 0x41F440}
+  
+  # THIS SEGFAULTS BELOW:
+  # In ReadingMenuFontSettingsController::setupAdvancedOption:
+  # set N3FontTypeUtil::isMonotypeFont to true
+  - ReplaceBytes: {Offset: 0x9FA3E0, FindBLX: 0x4131B8, ReplaceH: 4F F0 01 00}
