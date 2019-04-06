@@ -75,28 +75,3 @@ Show time in footer:
 # TODO
 
 ####################
-
-Freedom to advanced fonts control:
-  - Enabled: no
-  - Description: |
-      This patch allows the advanced font options (weight/sharpness adjustments)
-      to work with sideloaded fonts too. (KEPUB: OTF and TTF. EPUB: TTF only.)
-  #
-  # The following passes a junk pointer to N3FontTypeUtil::setupDropdown, but it
-  # seems the pointer is only passed on to ReadingSettings::getDefaultFontFamily
-  # where it is discarded without being dereferenced, so it should be safe?
-  # BEWARE: check whether this still holds in future firmware versions.
-  #
-  # N3FontTypeUtil.setupMonotypeDropdown(b,c)
-  # --> N3FontTypeUtil.setupDropdown(UNDEFINED,b,c)
-  - ReplaceBytes: {Offset: 0x8432E4, FindH: 59 46 50 46, ReplaceH: 5A 46 51 46}
-  - ReplaceBLX: {Offset: 0x8432E8, Find: 0x4073B8, Replace: 0x41F440}
-  
-  # THIS SEGFAULTS BELOW:
-  # In ReadingMenuFontSettingsController::setupAdvancedOption:
-  # set N3FontTypeUtil::isMonotypeFont to true
-  - ReplaceBytes: {Offset: 0x9FA3E0, FindBLX: 0x4131B8, ReplaceH: 4F F0 01 00}
-
-Disable wishlist:
-  - Enabled: yes
-  - ReplaceBytesAtSymbol: {Symbol: "OneStoreServiceSettings::wishlistEnabled()", Offset: 53, FindBLX: 0x406BE0, ReplaceH: 4F F0 00 00}

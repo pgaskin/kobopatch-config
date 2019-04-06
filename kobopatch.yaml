@@ -25,14 +25,14 @@ overrides:
     Custom synopsis/details line spacing: yes
     Remove forgot pin button from lock screen: yes
     Change pop-up footnote font-family: yes
-    #Custom reading footer style: yes
+    Custom reading footer style: yes
 
   src/libadobe.so.yaml:
     Keep PDF pan position: yes
 
   src/libnickel.so.1.0.0.yaml:
     Custom font sizes: yes
-    #Freedom to advanced fonts control: yes
+    Freedom to advanced fonts control: yes
     Custom Sleep/Power-off timeouts: yes
     Fix three KePub fullScreenReading bugs: yes
     Always display chapter name on navigation menu: yes
@@ -50,6 +50,7 @@ overrides:
     Disable all tutorial dialogs: yes
     Hide browser from beta features: yes
     Only show stats SmartLink: yes
+    Disable wishlist: yes
 
   src/libnickel.so.1.0.0_custom.yaml:
     Rename new home screen footer: yes
