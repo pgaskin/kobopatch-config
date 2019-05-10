@@ -15,12 +15,12 @@ Clock display duration:
       When the reading footer menu is opened a clock is displayed at the top left
       for 3 seconds before being replaced with the reading progress percentage.
       This patch changes the length of time the clock is displayed to 5 seconds.
-  - ReplaceBytes: {Offset: 0x9EB7CA, FindH: 40 F6 B8 31, ReplaceH: 03 21 89 02}
-  - ReplaceInt: {Offset: 0x9EB7CA, Find: 3, Replace: 2} # Replacement value: Clock display duration in seconds
+  - ReplaceBytes: {Offset: 0xA17C8A, FindH: 40 F6 B8 31, ReplaceH: 03 21 89 02}
+  - ReplaceInt: {Offset: 0xA17C8A, Find: 3, Replace: 2} # Replacement value: Clock display duration in seconds
 
 Manipulate reading stats:
   - Enabled: no
   - Description: Always add 10 hours to the reading time every time you close a book.
   # in EventEngine::endReadingSession(*Volume) when recording end of reading session stats, change QDateTime::secsTo calls to a fixed value
-  - ReplaceBytes: {Offset: 0x4DB92C, FindBLX: 0x42AF78, ReplaceH: 4F F6 FF 70} # MOV  r0, #65535
-  - ReplaceBytes: {Offset: 0x4DB94C, FindBLX: 0x42AF78, ReplaceH: 4F F6 FF 70} # MOV  r0, #65535
+  - ReplaceBytes: {Offset: 0x4EDF70, FindBLX: 0x43AF70, ReplaceH: 4F F6 FF 70} # MOV  r0, #65535
+  - ReplaceBytes: {Offset: 0x4EDF90, FindBLX: 0x43AF70, ReplaceH: 4F F6 FF 70} # MOV  r0, #65535

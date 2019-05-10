@@ -1,5 +1,5 @@
-version: 4.13.12638
-in: src/kobo-update-4.13.12638.zip
+version: 4.14.12777
+in: src/kobo-update-4.14.12777.zip
 out: KoboRoot.tgz
 log: log.txt
 
@@ -50,7 +50,7 @@ overrides:
     Disable all tutorial dialogs: yes
     Hide browser from beta features: yes
     Only show stats SmartLink: yes
-    Disable wishlist: yes
+    Remove recommendations (row1col2) from home screen: yes
 
   src/libnickel.so.1.0.0_custom.yaml:
     Rename new home screen footer: yes

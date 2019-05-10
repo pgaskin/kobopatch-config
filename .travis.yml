@@ -6,10 +6,10 @@ install:
   - mkdir -p "$HOME/bin/"
   - wget -O "$HOME/bin/kobopatch" "https://github.com/geek1011/kobopatch/releases/download/v0.13.0/kobopatch-linux-64bit"
   - chmod +x "$HOME/bin/kobopatch"
-  - wget -O "$HOME/kobo-update-4.13.12638.zip" "https://kbdownload1-a.akamaihd.net/firmwares/kobo6/Apr2019/kobo-update-4.13.12638.zip"
+  - wget -O "$HOME/kobo-update-4.14.12777.zip" "https://kbdownload1-a.akamaihd.net/firmwares/kobo6/May2019/kobo-update-4.14.12777.zip"
 
 script:
-  - mv "$HOME/kobo-update-4.13.12638.zip" "src/kobo-update-4.13.12638.zip"
+  - mv "$HOME/kobo-update-4.14.12777.zip" "src/kobo-update-4.14.12777.zip"
   - kobopatch
   - curl -sF "file=@KoboRoot.tgz" https://file.io | grep -Eo 'https://[^"]+'
   - echo -en "travis_fold:start:logs\\rLogs\n"

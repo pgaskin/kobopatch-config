@@ -1,14 +1,20 @@
-Add orientation dropdown to developer options on all devices:
-  - Enabled: no
-  - Description: |
-      Developer Options (search devmodeon, then go to Device Information) has a section with a dropdown
-      allowing changing the rotation to all options, including the inverted ones. This patch shows it on
-      devices without a sensor. DOES NOT STICK.
-  # NOTE: not updated since 4.12.12111
-  # In N3SettingsDeveloperOptionsView::N3SettingsDeveloperOptionsView(QWidget*):
-  # replace the call to Device::hasOrientationSensor() to MOV r0, #0x1
-  - ReplaceBytes: {Offset: 0xA6F504, FindH: AA F5 9C E6, ReplaceH: 4F F0 01 00}
-  # TODO: update offset
+Replace help item in menu:
+  - Enabled: yes
+  # the only difference between most opening things is the number in r2 before the
+  # qt call:
+  #   10 help
+  #    9 settings
+  #    8 activity
+  #    7 wishlist
+  #    6 ?
+  #    5 recommended
+  #    4 kobo store
+  #    3 articles
+  #    2 collections
+  #    1 books
+  #    0 home
+  # note: each view (settings, menu, etc) has its own set of options.
+  - ReplaceInt: {Offset: 0xC4B59E, Find: 10, Replace: 2}
 
 Replace sleepcover setting with screenshots:
   - Enabled: no
