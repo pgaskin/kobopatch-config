@@ -1,5 +1,6 @@
 Replace help item in menu:
-  - Enabled: yes
+  - Enabled: no
+  # NOTE: not updated since 4.14.12777
   # the only difference between most opening things is the number in r2 before the
   # qt call:
   #   10 help
