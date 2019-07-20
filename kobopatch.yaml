@@ -1,7 +1,9 @@
-version: 4.15.12920
-in: src/kobo-update-4.15.12920.zip
+version: 4.16.13162
+in: src/kobo-update-4.16.13162.zip
 out: KoboRoot.tgz
 log: log.txt
+
+patchFormat: kobopatch
 
 patches:
   src/nickel.yaml: usr/local/Kobo/nickel
@@ -23,6 +25,8 @@ overrides:
     Custom synopsis/details line spacing: yes
     Remove forgot pin button from lock screen: yes
     Change pop-up footnote font-family: yes
+  
+  src/nickel_dev.yaml:
     Custom reading footer style: yes
 
   src/libadobe.so.yaml:
@@ -43,7 +47,6 @@ overrides:
     Replace adobe page numbers toggle with invert screen: yes
     Always show confirmation dialog before upgrading: yes
     Set reading footer height: yes
-    Use old keyboard on all devices: yes
     Remove beta features not supported text: yes
     Disable all tutorial dialogs: yes
     Hide browser from beta features: yes

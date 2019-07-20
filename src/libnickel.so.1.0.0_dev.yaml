@@ -82,3 +82,10 @@ Show time in footer:
 # TODO
 
 ####################
+
+Hide parental controls icon from status bar:
+  - Enabled: no
+  # NOT TOTALLY WORKING YET, last updated for 4.15.12920
+  # in StatusBarController::loadView():
+  # always pass false to StatusBarView::setParentalControlVisibility()
+  - ReplaceBytes: {Offset: 0xB0735C, FindH: 01 46, ReplaceH: 00 21}
