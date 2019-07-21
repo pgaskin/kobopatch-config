@@ -58,6 +58,11 @@ overrides:
     Rename new home screen footer: yes
     Clock display duration: yes
 
+  src/libnickel.so.1.0.0_dev.yaml:
+    Enable OverDrive: yes
+    X-Kobo-Accept-Preview: yes
+    Allow showing info panel when using random screensaver: yes
+
   src/librmsdk.so.1.0.0.yaml:
 
 files:
@@ -91,6 +96,9 @@ files:
   fonts/PTSerif-Bold.ttf: mnt/onboard/fonts/PTSerif-Bold.ttf
   fonts/PTSerif-Italic.ttf: mnt/onboard/fonts/PTSerif-Italic.ttf
   fonts/PTSerif-Regular.ttf: mnt/onboard/fonts/PTSerif-Regular.ttf
+
+  # screensaver
+  src/black.png: mnt/onboard/.kobo/screensaver/black.png
 
   # general stuff
   src/envsetup.sh: usr/local/geek1011/envsetup.sh

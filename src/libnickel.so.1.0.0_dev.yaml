@@ -1,3 +1,20 @@
+Enable OverDrive:
+  - Enabled: no
+  - ReplaceBytesAtSymbol: {Symbol: "OverDriveCardManager::isOverDriveEnabled()", Offset: 123, FindH: 4F F0 00 08, ReplaceH: 4F F0 01 08}
+
+X-Kobo-Accept-Preview:
+  - Enabled: no
+  # Should make a log message like "Beta flag set."
+  - ReplaceBytes: {Offset: 0x680DBE, FindBLX: 0x41C23C, ReplaceH: 4F F0 01 00}
+
+Allow showing info panel when using random screensaver:
+  - Enabled: no
+  - Description: |
+      See https://www.mobileread.com/forums/showthread.php?t=321609. This patch
+      allows showing the info panel even when using a random screensaver image
+      from .kobo/screensaver.
+  - ReplaceBytesNOP: {Offset: 0xA17E9C, FindBLX: 0x44D564}
+
 Replace help item in menu:
   - Enabled: no
   # NOTE: not updated since 4.14.12777
@@ -37,10 +54,6 @@ Replace sleepcover setting with screenshots:
   - FindReplaceString: {Find: "Automatically sleep and wake up:", Replace: "Take screenshots:"}
   # and the description:
   - FindReplaceString: {Find: "The Kobo SleepCover (sold separately) automatically puts your eReader to sleep when you close it and wakes it up when you open it.", Replace: "The power button is able to take screenshots when you press it instead of sleeping."}
-
-Enable OverDrive:
-  - Enabled: yes
-  - ReplaceBytesAtSymbol: {Symbol: "OverDriveCardManager::isOverDriveEnabled()", Offset: 123, FindH: 4F F0 00 08, ReplaceH: 4F F0 01 08}
 
 Show time in footer:
   - Enabled: no
