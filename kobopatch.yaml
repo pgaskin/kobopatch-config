@@ -49,10 +49,14 @@ overrides:
     Set reading footer height: yes
     Remove beta features not supported text: yes
     Disable all tutorial dialogs: yes
-    Hide browser from beta features: yes
+#   Hide browser from beta features: yes
     Only show stats SmartLink: yes
     Remove recommendations (row1col2) from home screen: yes
     Increase TOC level indentation and fix extra indentation bug: yes
+    FeatureSettings - BookSpecificStats: yes
+    FeatureSettings - MyWords: yes
+    FeatureSettings - ExportHighlights: yes
+#   DeveloperSettings - AutoUsbGadget: yes
 
   src/libnickel.so.1.0.0_custom.yaml:
     Rename new home screen footer: yes

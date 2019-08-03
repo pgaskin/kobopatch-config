@@ -1,3 +1,13 @@
+Always use dark variant of sleep/power off:
+  - Enabled: no
+  - Description: |
+      TODO: description, make it apply to full screen info panel too
+  # Always use the power-off variant in the FramedDragonPowerView CSS.
+  # Currently applies to FramedDragonPowerView, batteryStatus, statusLabel,
+  # titleLabel, and progressLabel background and color.
+  - FindZlib: "#FramedDragonPowerView[powerOffView=true]"
+  - ReplaceZlib: {Find: "[powerOffView=true]", Replace: ""}
+
 # Modified for only Touch/Mini/Glo/Aura/Aura2E to fit properly in 4.16.13162.
 Custom reading footer style:
   - Enabled: no
