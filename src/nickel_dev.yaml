@@ -7,17 +7,3 @@ Always use dark variant of sleep/power off:
   # titleLabel, and progressLabel background and color.
   - FindZlib: "#FramedDragonPowerView[powerOffView=true]"
   - ReplaceZlib: {Find: "[powerOffView=true]", Replace: ""}
-
-# Modified for only Touch/Mini/Glo/Aura/Aura2E to fit properly in 4.16.13162.
-Custom reading footer style:
-  - Enabled: no
-  - PatchGroup: Reading footer alternatives
-  - FindZlib: "ReadingFooter {\n  qproperty-footerMargin: 105;\n}\n"
-  - ReplaceZlibGroup:
-      Replacements:
-      - Find:    "ReadingFooter {\n  qproperty-footerMargin: 105;\n}\nReadingFooter[qApp_deviceIsDragon=true] {\n  qproperty-footerMargin: 170;\n}\nReadingFooter[qApp_deviceIsDaylight=true] {\n  qproperty-footerMargin: 221;\n}\n#caption[qApp_deviceIsTrilogy=true] {\n  font-size: 19px;\n}\n#caption[qApp_deviceIsPhoenix=true] {\n  font-size: 23px;\n}\n#caption[qApp_deviceIsDragon=true] {\n  font-size: 29px;\n}\n#caption[qApp_deviceIsAlyssum=true] {\n  font-size: 32px;\n}\n#caption[qApp_deviceIsNova=true] {\n  font-size: 32px;\n}\n#caption[qApp_deviceIsDaylight=true] {\n  font-size: 37px;\n}\n#caption[localeName=\"ja\"] {\n  font-family: Sans-SerifJP, sans-serif;\n  font-style: normal;\n}\n#caption[localeName=\"zh\"] {\n  font-family: Sans-SerifZH-Traditional, sans-serif;\n  font-style: normal;\n}\n#caption[localeName=\"zh-HK\"] {\n  font-family: Sans-SerifZH-Traditional, sans-serif;\n  font-style: normal;\n}\n#caption[localeName=\"zh-TW\"] {\n  font-family: Sans-SerifZH-Traditional, sans-serif;\n  font-style: normal;\n}"
-        Replace: "ReadingFooter{qproperty-footerMargin:105;min-height:70px;max-height:70px}#caption{font-size:19px;margin-top:+00px}#caption[qApp_deviceIsPhoenix=true]{font-size:23px}#caption[localeName=\"ja\"]{font-family:Sans-SerifJP,sans-serif;font-style:normal}#caption[localeName=\"zh\"],#caption[localeName=\"zh-TW\"]{font-family:Sans-SerifZH-Traditional,sans-serif;font-style:normal}"
-      - {Find: "min-height:70px", Replace: "min-height:40px"}
-      - {Find: "max-height:70px", Replace: "max-height:40px"}
-      - {Find: "font-size:19px", Replace: "font-size:16px"}
-      - {Find: "margin-top:+00px", Replace: "margin-top:-05px"}
