@@ -1,6 +1,6 @@
 # The following patch(es) are by geek1011
 
-Rename new home screen footer: # TODO17:TEST (ensure that these are all the rotations)
+Rename new home screen footer:
   - Enabled: no
   - FindReplaceString: {Find: "Find your next great read", Replace: "Find your next great read"}
   - FindReplaceString: {Find: "Buy, borrow, or preview books", Replace: "Buy, borrow, or preview books"}
@@ -15,7 +15,7 @@ Both page turn buttons go next: # TODO17:TEST (make sure this works and turns in
   # force the possible branch to next page, never fall through to prev page.
   - ReplaceBytes: {Offset: 0xA30504, FindH: 28 B9, ReplaceH: 05 E0} # CBNZ R0, #0xE -> B #0xE
 
-Both page turn sides go next: # TODO17:TEST (make sure this doesn't segfault, as I had to change the registers)
+Both page turn sides go next:
   - Enabled: no
   - Description: Make both page turn sides go next in the reader.
   # In ReadingView::processTap(TapGesture*):
@@ -28,7 +28,7 @@ Both page turn sides go next: # TODO17:TEST (make sure this doesn't segfault, as
   # This patch could have also been done later on where the tap point is checked against different
   # QRects, but that's a lot more complicated due to the use of QHash s of pointers to functions.
 
-Replace adobe page numbers toggle with invert screen: # TODO17:TEST (make sure this works, doesn't segfault, and is persistent)
+Replace adobe page numbers toggle with invert screen:
   - Enabled: no
   - Description: |
       Replaces the adobe page numbers toggle in reading settings with an invert
@@ -103,7 +103,7 @@ Disable all tutorial dialogs:
   - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::eReaderBooksManagementFTEShown()", Offset: 53, FindBLX: 0x4218BC, ReplaceH: 4F F0 01 00}
   - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::libraryCuratedListsDialogShown()", Offset: 53, FindBLX: 0x4218BC, ReplaceH: 4F F0 01 00}
 
-Set visible SmartLink: # TODO17:TEST (ensure this table is up-to-date with the assembly)
+Set visible SmartLink:
   - Enabled: no
   - PatchGroup: SmartLink
   - Description: Sets the currently visible smartlink (does not override priority messages).
@@ -149,7 +149,7 @@ Only show Pocket SmartLink:
   - FindReplaceString: {Find: "Catch up on the %n article(s) you added recently", Replace: "My Articles"}
 # - FindReplaceString: {Find: "Catch up on the %n article(s) you added recently", Replace: "My Articles (%n unread)"}
 
-Only show stats SmartLink: # TODO17:TEST (ensure the number is up-to-date)
+Only show stats SmartLink:
   - Enabled: no
   - PatchGroup: SmartLink
   - Description: Only show the stats SmartLink on the home screen.
@@ -157,7 +157,7 @@ Only show stats SmartLink: # TODO17:TEST (ensure the number is up-to-date)
   # change the result of the call to ActivityManager::smartLinkGeneralMessage to 15 (0x0F):
   - ReplaceBytes: {Offset: 0x929948, FindBLX: 0x448D18, ReplaceH: 4F F0 0F 00}
 
-Never show Kobo Plus, wishlist, and points SmartLinks: # TODO17:TEST (ensure they don't rotate in)
+Never show Kobo Plus, wishlist, and points SmartLinks:
   - Enabled: no
   - PatchGroup: SmartLink
   - Description: Removes Kobo Plus, wishlist, and points SmartLinks from the rotation.
@@ -219,6 +219,26 @@ Allow showing info panel on random screensaver:
       from .kobo/screensaver (note that full-screen covers needs to be enabled
       for the screensaver to show).
   - ReplaceBytesNOP: {Offset: 0xA28228, FindBLX: 0x452DC4}
+
+Remove title from reading header/footer:
+  - Enabled: no
+  - Description: Removes the chapter/book title from the new reading header/footer.
+  # In the longest form of ReadingFooter::update (the others are wrappers with
+  # the args being set to the current value), the first one is the title. The
+  # final string is created by starting with the title, then appending the "-",
+  # then the page number / percentage / etc text.
+  #
+  # This one is slightly unusual in that the reading header also shares the
+  # ReadingFooter code (ReadingView::updateProgressHeader only has the page text,
+  # and it ends with a branch to ReadingFooter::update). This means we only have
+  # to patch one place, but it also means you can't have the title in one, but
+  # not the other.
+  #
+  # We'll patch this in a slightly hacky and inefficient, but simple and easy-to-update
+  # way by replacing the first QString::append (the dash) with a QString::resize
+  # to zero (I would have done a QString::clear, but that symbol isn't imported):
+  - ReplaceBytes: {Offset: 0xB6D00E, FindH: F9 68, ReplaceH: 00 21} # replace LDR r1, [...] with MOV r1, #0 (the LDR doesn't matter, but will need to be updated)
+  - ReplaceBLX: {Offset: 0xB6D012, Find: 0x4503D8, Replace: 0x430DC8}
 
 # The following patches allow you to enable a config file option with a patch.
 
@@ -323,7 +343,7 @@ Custom left & right margins:
 
 # Waiting (GeoffR): Custom font sizes # TODO17
 
-Freedom to advanced fonts control: # TODO17:TEST (make sure this doesn't segfault)
+Freedom to advanced fonts control:
   - Enabled: no
   - Description: |
       This patch allows the advanced font options (weight/sharpness adjustments)
@@ -471,7 +491,7 @@ Force user line spacing in KePubs:
       cause problems with the spacing of paragraphs that begin with a raise-cap.
     # body, p { line-height: %1 ... }  -->  body *  { line-height: %1 ... }
   - FindBaseAddressString: "body, p { line-height: %1"
-  - ReplaceString: {Offset: 0, Find: "body, p {", Replace: "body *  {", MustMatchLength: yes}
+  - ReplaceString: {Find: "body, p {", Replace: "body *  {", MustMatchLength: yes}
     #
     # Option: Comment out the replace_string line above and uncomment the one below
     # for a less forceful version of this patch that has fewer side effects and
@@ -479,7 +499,7 @@ Force user line spacing in KePubs:
     # has set the line-height at <span> level.
     #
     # body, p { line-height: %1 ... }  -->  body,div,p{line-height:%1 ... }
-# - ReplaceString: {Offset: 0, Find: "body, p { line-height: %", Replace: "body,div,p{line-height:%"}
+# - ReplaceString: {Find: "body, p { line-height: %", Replace: "body,div,p{line-height:%"}
 
 Force user line spacing in ePubs (part 1 of 2):
   - Enabled: no
@@ -500,7 +520,7 @@ Un-force font-family override p tags (std epubs):
     #     body, p { font-family: -ua-default !important; }
     # --> body    { font-family: -ua-default !important; }
   - FindBaseAddressString: "body, p { font-family: -ua"
-  - ReplaceString: {Offset: 0, Find: "body, p", Replace: "body  \x20", MustMatchLength: yes}
+  - ReplaceString: {Find: "body, p", Replace: "body  \x20", MustMatchLength: yes}
 
 Force user font-family in ePubs (Part 1 of 2):
   - Enabled: no
@@ -511,15 +531,15 @@ Force user font-family in ePubs (Part 1 of 2):
       being recognised. It might spoil the style of books which use multiple fonts,
       but will ensure that the font-family set from the device menu takes effect.
   - FindBaseAddressString: "font-family: -ua-default; font-style: normal; font-weight: normal;"
-  - ReplaceString: {Offset: 0, Find: "f", Replace: "_"}
+  - ReplaceString: {Find: "f", Replace: "_"}
   - FindBaseAddressString: "font-family: -ua-default; font-style: italic; font-weight: normal;"
-  - ReplaceString: {Offset: 0, Find: "f", Replace: "_"}
+  - ReplaceString: {Find: "f", Replace: "_"}
   - FindBaseAddressString: "font-family: -ua-default; font-style: italic; font-weight: bold;"
-  - ReplaceString: {Offset: 0, Find: "f", Replace: "_"}
+  - ReplaceString: {Find: "f", Replace: "_"}
   - FindBaseAddressString: "font-family: -ua-default; font-style: normal; font-weight: bold;"
-  - ReplaceString: {Offset: 0, Find: "f", Replace: "_"}
+  - ReplaceString: {Find: "f", Replace: "_"}
   - FindBaseAddressString: "font-family: -ua-default !important;"
-  - ReplaceString: {Offset: 0, Find: "f", Replace: "_"}
+  - ReplaceString: {Find: "f", Replace: "_"}
 
 ePub constant font sharpness:
   - Enabled: no
@@ -558,7 +578,6 @@ Un-Force user text-align in div,p tags in KePubs:
     # --> body   { text-align: %1 !important; }
   - FindBaseAddressString: "div, p { text-align: %1"
   - ReplaceString: 
-      Offset: 0
       Find:    "div, p {"
       Replace: "body   {"
       MustMatchLength: yes
@@ -579,7 +598,6 @@ Un-Force user font-family in KePubs:
     #     * { font-family: %1 !important; }\n
     # --> div,p{font-family:%1!important; }\n
   - ReplaceString:
-      Offset: 0
       Find: "* { font-family: %1 !important; }\n"
       Replace: "div,p{font-family:%1!important; }\n"
       MustMatchLength: yes
@@ -700,9 +718,83 @@ Set font scale factor:
 # Waiting (GeoffR): Hebrew keyboard (GloHD/ClaraHD/AuraOne/H2O2)
 # Waiting (GeoffR): Greek Keyboard (GloHD/ClaraHD/AuraOne/H2O2)
 
-# The following patch(es) are ported from jackie_w's patches
+# The following patch(es) were made by jackie_w
 
-# Dictionary text font-family/font-size/line-height - beta: # TODO17:UPDATE (jackie_w is making some changes and taking it out of beta)
+Dictionary text font-family/font-size/line-height:
+  - Enabled: no
+  - Description: |
+      See https://www.mobileread.com/forums/showpost.php?p=3521137&postcount=48
+      This patch allows you to to customise the appearance of the text 
+      in the dictionary pop-up widget and full-screen dictionary page.
+
+      You can change one or more of the following attributes
+      - font-family
+      - font-size
+      - line-height
+
+      These are the Kobo defaults
+                Glo - Georgia  23px  1.4em
+                H2O - Georgia  29px  1.4em
+              GloHD - Georgia  32px  1.4em
+            AuraONE - Georgia  42px  1.4em
+
+      fw 4.17 - improved to also reduce the blank lines displayed in many 
+                sideloaded custom dictionaries which contain <blockquote>.
+                See (link TBA) for screenshots
+  #
+  # Stage 1: Change DictionaryView to remove %variables
+  # from:
+  #    * { font: %1px %2; line-height: %5em; }
+  #    div.descriptionFont { font-family: %3; }
+  #    ol { font-size: %1px; font-weight: bold; margin-left: %4em; margin-top: 0px; }
+  #    ol p { font-size: %1px; font-weight:normal; }
+  # to:
+  #    * { font-size: %1px; line-height: 1.40em;font-family: Georgia                      ;}
+  
+  #    ol {margin-left:1em; margin-top:0}
+  #    blockquote {margin:0.3em 0 0.3em 1em} blockquote>blockquote {margin:-0.3em 0 0 2em}
+  #
+  # ##### N.B. Do not change the next 4 lines #####
+  - FindReplaceString:
+      Find:    "* { font: %1px %2; line-height: %5em; }\ndiv.descriptionFont { font-family: %3; }\nol { font-size: %1px; font-weight: bold; margin-left: %4em; margin-top: 0px; }\nol p { font-size: %1px; font-weight:normal; }\n"
+      Replace: "* { font-size: %1px; line-height: 1.40em;font-family: Georgia                      ;}\n\nol {margin-left:1em; margin-top:0}\nblockquote {margin:0.3em 0 0.3em 1em} blockquote>blockquote {margin:-0.3em 0 0 2em}\n"
+      MustMatchLength: yes
+  # ##### N.B. Do not change anything above this line #####
+  #
+  # Stage 2: N.B. You MUST keep old and new strings EXACTLY the same length
+  # Un-comment ONE ONLY of the following replace_string examples 
+  #   to change dictionary font-family from default Georgia:
+  #   - to a different built-in font
+  #   - to one of your sideloaded custom fonts
+  #
+  # Notes for changing font-family:
+  #   1.  Pad the shorter of the old/new strings with spaces to 
+  #       keep same length for both strings (see examples below)
+  #
+  #   2.  If the new font-family name (max. 29 chars) contains any spaces it 
+  #       should be wrapped in 'single quotes' (see examples 2, 3)
+  #
+  #   3.  To change from Georgia to the Kobo default sans-serif font, Avenir, 
+  #       use either one of the following to achieve the same result:
+  #       - sans-serif
+  #       - 'Avenir Next Medium'
+  # 
+  # Examples for customising font-family:
+# - ReplaceString: {Offset: 54, Find: "Georgia   ", Replace: "sans-serif", MustMatchLength: yes}
+# - ReplaceString: {Offset: 54, Find: "Georgia    ", Replace: "'Gill Sans'", MustMatchLength: yes}
+# - ReplaceString: {Offset: 54, Find: "Georgia      ", Replace: "'Kobo Nickel'", MustMatchLength: yes}
+# - ReplaceString: {Offset: 54, Find: "Georgia ", Replace: "Bookerly", MustMatchLength: yes}
+  #
+  # Un-comment and edit next line to change font-size
+# - ReplaceString: {Offset: 15, Find: "%1px", Replace: "32px", MustMatchLength: yes}
+  #
+  # Un-comment and edit next line to change line spacing
+# - ReplaceString: {Offset: 34, Find: "1.40em", Replace: "1.30em", MustMatchLength: yes}
+
+Custom header/footer page number text:
+  - Enabled: no
+  - Description: Changes the page number text format in the reading header & footer
+  - FindReplaceString: {Find: "%1 OF %2", Replace: "%1 / %2"}
 
 # The following patch(es) are ported from jcn363's patches
 
