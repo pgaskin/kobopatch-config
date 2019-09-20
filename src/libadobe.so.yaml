@@ -19,6 +19,6 @@ Keep PDF pan position:
   - ReplaceBytesAtSymbol: {Symbol: "AdobeReader::resetPan()", Offset: -1, FindH: 00 23, ReplaceH: 70 47}
   # Skip over the additional reset in the function (idk why it's there, as it seems to do the same thing as AdobeReader::resetPan):
   # Making the CMP always NE (CMP r5, #0).
-  - ReplaceBytesAtSymbol: {Symbol: "AdobeReader::goToNextPage()", Offset: 161, FindH: 9A 42, ReplaceH: 00 2A}
-  - ReplaceBytesAtSymbol: {Symbol: "AdobeReader::goToPrevPage()", Offset: 151, FindH: 9A 42, ReplaceH: 00 2A}
+  - ReplaceBytesAtSymbol: {Symbol: "AdobeReader::goToNextPage()", Offset: 155, FindH: 9A 42, ReplaceH: 00 2A}
+  - ReplaceBytesAtSymbol: {Symbol: "AdobeReader::goToPrevPage()", Offset: 149, FindH: 9A 42, ReplaceH: 00 2A}
 
