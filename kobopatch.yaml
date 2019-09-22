@@ -23,6 +23,8 @@ overrides:
     Custom synopsis details line spacing: yes
     Remove forgot pin button from lock screen: yes
     Change pop-up footnote font-family: yes
+    Reduce new header/footer height: yes
+    Reduce top/bottom page spacer: yes
   
   src/nickel_dev.yaml:
 

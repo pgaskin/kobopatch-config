@@ -46,6 +46,7 @@ Replace adobe page numbers toggle with invert screen:
 
 Always show confirmation dialog before upgrading:
   - Enabled: no
+  - PatchGroup: Firmware upgrade options
   - Description: This patch makes the confirmation dialog always show before upgrading.
   # In UpgradeManager::requestUpgradeConfirmation(UpgradeType, QString const&):
   # replace the check for if UpgradeType is optional to be always true (CMP r4, r4)
@@ -423,6 +424,7 @@ Custom kepub default margins:
 
 Block WiFi firmware upgrade:
   - Enabled: no
+  - PatchGroup: Firmware upgrade options
   - Description: |
       WARNING! THIS IS A DANGEROUS PATCH! READ THE INFORMATION BELOW CAREFULLY!
       
@@ -712,24 +714,24 @@ Set font scale factor:
 Dictionary text font-family/font-size/line-height:
   - Enabled: no
   - Description: |
-      See https://www.mobileread.com/forums/showpost.php?p=3521137&postcount=48
       This patch allows you to to customise the appearance of the text 
-      in the dictionary pop-up widget and full-screen dictionary page.
-
-      You can change one or more of the following attributes
+      in the pop-up and full-screen dictionary widgets.
+      4.17.13651: improved to also reduce the blank lines displayed in many 
+                  sideloaded custom dictionaries which contain <blockquote>.
+      .
+      See https://www.mobileread.com/forums/showpost.php?p=3521137&postcount=48
+      for screenshots
+      .
+      You can change one or more of the following properties:
       - font-family
       - font-size
       - line-height
-
+      .
       These are the Kobo defaults
                 Glo - Georgia  23px  1.4em
                 H2O - Georgia  29px  1.4em
               GloHD - Georgia  32px  1.4em
             AuraONE - Georgia  42px  1.4em
-
-      fw 4.17 - improved to also reduce the blank lines displayed in many 
-                sideloaded custom dictionaries which contain <blockquote>.
-                See (link TBA) for screenshots
   #
   # Stage 1: Change DictionaryView to remove %variables
   # from:
@@ -739,7 +741,6 @@ Dictionary text font-family/font-size/line-height:
   #    ol p { font-size: %1px; font-weight:normal; }
   # to:
   #    * { font-size: %1px; line-height: 1.40em;font-family: Georgia                      ;}
-  
   #    ol {margin-left:1em; margin-top:0}
   #    blockquote {margin:0.3em 0 0.3em 1em} blockquote>blockquote {margin:-0.3em 0 0 2em}
   #
@@ -751,10 +752,6 @@ Dictionary text font-family/font-size/line-height:
   # ##### N.B. Do not change anything above this line #####
   #
   # Stage 2: N.B. You MUST keep old and new strings EXACTLY the same length
-  # Un-comment ONE ONLY of the following replace_string examples 
-  #   to change dictionary font-family from default Georgia:
-  #   - to a different built-in font
-  #   - to one of your sideloaded custom fonts
   #
   # Notes for changing font-family:
   #   1.  Pad the shorter of the old/new strings with spaces to 
@@ -768,26 +765,35 @@ Dictionary text font-family/font-size/line-height:
   #       - sans-serif
   #       - 'Avenir Next Medium'
   # 
-  # Examples for customising font-family:
-# - ReplaceString: {Offset: 54, Find: "Georgia   ", Replace: "sans-serif", MustMatchLength: yes}
-# - ReplaceString: {Offset: 54, Find: "Georgia    ", Replace: "'Gill Sans'", MustMatchLength: yes}
-# - ReplaceString: {Offset: 54, Find: "Georgia      ", Replace: "'Kobo Nickel'", MustMatchLength: yes}
-# - ReplaceString: {Offset: 54, Find: "Georgia ", Replace: "Bookerly", MustMatchLength: yes}
+  # Un-comment ONE ONLY of the following ReplaceString examples 
+  #   to change dictionary font-family from default Georgia:
+  #     - to a different built-in font
+  #     - to one of your sideloaded custom fonts
+  #
+  #- ReplaceString: {Offset: 54, Find: "Georgia   ", Replace: "sans-serif", MustMatchLength: yes}
+  #- ReplaceString: {Offset: 54, Find: "Georgia    ", Replace: "'Gill Sans'", MustMatchLength: yes}
+  #- ReplaceString: {Offset: 54, Find: "Georgia      ", Replace: "'Kobo Nickel'", MustMatchLength: yes}
+  #- ReplaceString: {Offset: 54, Find: "Georgia ", Replace: "Bookerly", MustMatchLength: yes}
   #
   # Un-comment and edit next line to change font-size
-# - ReplaceString: {Offset: 15, Find: "%1px", Replace: "32px", MustMatchLength: yes}
+  #- ReplaceString: {Offset: 15, Find: "%1px", Replace: "32px", MustMatchLength: yes}
   #
   # Un-comment and edit next line to change line spacing
-# - ReplaceString: {Offset: 34, Find: "1.40em", Replace: "1.30em", MustMatchLength: yes}
+  #- ReplaceString: {Offset: 34, Find: "1.40em", Replace: "1.30em", MustMatchLength: yes}
 
 Custom header/footer page number text:
   - Enabled: no
   - Description: Changes the page number text format in the reading header & footer
   - FindReplaceString: {Find: "%1 OF %2", Replace: "%1 / %2"}
 
+Custom navigation menu page number text:
+  - Enabled: no
+  - Description: Changes the page number text format in the reading navigation menu
+  - FindReplaceString: {Find: "Page %1 of %2", Replace: "%1 / %2"}
+
 # The following patch(es) are ported from jcn363's patches
 
-Dictionary, remove long winded closest match notification:
+Shorten dictionary entry not found message:
   - Enabled: no
   - Description: |
       Idea by pakoe
@@ -796,7 +802,7 @@ Dictionary, remove long winded closest match notification:
         Find:    "Your search for &ldquo;%1&rdquo; did not match any words in the dictionary. The closest match was &ldquo;%2&rdquo;."
         Replace: "No match for &ldquo;%1&rdquo;, closest match was &ldquo;%2&rdquo;."
 
-Wikipedia Search language:
+Change Wikipedia search language:
   - Enabled: no
   - Description: |
       The patch set the search language in Wikipedia.
