@@ -40,8 +40,8 @@ Make book header/footer lowercase:
   # In ReadingView::getChapterTitle (header), replace QString::toUpper call with
   # QString::trimmed (to copy the string, and not need to add a mov instruction
   # and NOP the destructor):
-  - ReplaceBLX: {Offset: 0xA366EC, FindBLX: 0x440474, ReplaceBLX: 0x451410}
+  - ReplaceBLX: {Offset: 0xA366EC, Find: 0x440474, Replace: 0x451410}
   # In ReadingView::updateFooter, do the same:
-  - ReplaceBLX: {Offset: 0xA39C36, FindBLX: 0x440474, ReplaceBLX: 0x451410}
+  - ReplaceBLX: {Offset: 0xA39C36, Find: 0x440474, Replace: 0x451410}
   # Page number text
   - FindReplaceString: {Find: "%1 OF %2", Replace: "%1 of %2"}
