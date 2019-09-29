@@ -36,7 +36,7 @@ overrides:
     Freedom to advanced fonts control: yes
     Custom Sleep/Power-off timeouts: yes
     Custom kepub default margins: yes
-    DeveloperSettings - ForceAllowLandscape: yes
+#   DeveloperSettings - ForceAllowLandscape: yes
     Both page turn buttons go next: yes
     My 10 line spacing values: yes
     Replace adobe page numbers toggle with invert screen: yes
@@ -57,6 +57,8 @@ overrides:
     Rename new home screen footer: yes
 
   src/libnickel.so.1.0.0_dev.yaml:
+    Allow rotation on all devices: yes
+    Make book header/footer lowercase: yes
 
   src/librmsdk.so.1.0.0.yaml:
 

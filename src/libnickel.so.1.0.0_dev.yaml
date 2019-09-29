@@ -5,3 +5,41 @@
 #  # in EventEngine::endReadingSession(*Volume) when recording end of reading session stats, change QDateTime::secsTo calls to a fixed value
 #  - ReplaceBytes: {Offset: 0x4F429C, FindBLX: 0x441348, ReplaceH: 4F F6 FF 70} # MOV  r0, #65535
 #  - ReplaceBytes: {Offset: 0x4F42BC, FindBLX: 0x441348, ReplaceH: 4F F6 FF 70} # MOV  r0, #65535
+
+Allow rotation on all devices:
+  - Enabled: no
+  - Description: |
+      Enables rotation on all devices. This shows a rotation icon in the status
+      bar, which shows a menu allowing you to choose between portrait and landscape
+      when pressed. This icon is only shown on rotateable views (like the reader).
+      Unlike just the DeveloperSettings ForceAllowLandscape option, this patch
+      also makes the rotation icon show on the reader as well.
+  # Always return true for ForceAllowLandscape:
+  - ReplaceBytes: {Offset: 0x687A4E, FindBLX: 0x423224, ReplaceH: 4F F0 01 00}
+  # In ReadingMenuView::ReadingMenuView, replace the value of Device::hasOrientationSensor,
+  # which is passed to a function to hide/show the rotate icon:
+  - ReplaceBytes: {Offset: 0xA5A0A4, FindBLX: 0x4391FC, ReplaceH: 4F F0 01 00}
+  # Also fix positioning of popup by doing the same in RotatePopup::RotatePopup:
+  - ReplaceBytes: {Offset: 0xA759DE, FindBLX: 0x4391FC, ReplaceH: 4F F0 01 00}
+
+Invert locked rotation:
+  - Enabled: no
+  # Qt::ScreenOrientation - 1 (Portrait), 2 (Landscape), 3 (InvertedPortrait), 4 (InvertedLandscape)
+  - ReplaceBytesAtSymbol: {Symbol: "RotatePopup::portraitSelected()",  Offset: 5, FindH: 01, ReplaceH: 04}
+  - ReplaceBytesAtSymbol: {Symbol: "RotatePopup::landscapeSelected()", Offset: 5, FindH: 02, ReplaceH: 08}
+
+Send analytics to my server:
+  - Enabled: no
+  - FindReplaceString:
+      Find:    "https://ssl.google-analytics.com/collect"
+      Replace: "https://srv02.geek1011.net:8085/collect"
+
+Make book header/footer lowercase:
+  - Enabled: no
+  - PatchGroup: Header/footer page number text
+  # In ReadingView::getChapterTitle (header), NOP QString::toUpper call:
+  - ReplaceBytesNOP: {Offset: 0xA366EC, FindBLX: 0x440474}
+  # In ReadingView::updateFooter, NOP QString::toUpper call:
+  - ReplaceBytesNOP: {Offset: 0xA39C36, FindBLX: 0x440474}
+  # Page number text
+  - FindReplaceString: {Find: "%1 OF %2", Replace: "%1 of %2"}
