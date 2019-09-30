@@ -1,5 +1,5 @@
-version: 4.17.13694
-in: src/kobo-update-4.17.13694.zip
+version: 4.18.13737
+in: src/kobo-update-4.18.13737.zip
 out: KoboRoot.tgz
 log: log.txt
 
@@ -36,7 +36,7 @@ overrides:
     Freedom to advanced fonts control: yes
     Custom Sleep/Power-off timeouts: yes
     Custom kepub default margins: yes
-#   DeveloperSettings - ForceAllowLandscape: yes
+    Allow rotation on all devices: yes
     Both page turn buttons go next: yes
     My 10 line spacing values: yes
     Replace adobe page numbers toggle with invert screen: yes
@@ -52,13 +52,12 @@ overrides:
     FeatureSettings - ExportHighlights: yes
 #   DeveloperSettings - AutoUsbGadget: yes
     Allow showing info panel on random screensaver: yes
+    Make book header/footer lowercase: yes
 
   src/libnickel.so.1.0.0_custom.yaml:
     Rename new home screen footer: yes
 
   src/libnickel.so.1.0.0_dev.yaml:
-    Allow rotation on all devices: yes
-    Make book header/footer lowercase: yes
 
   src/librmsdk.so.1.0.0.yaml:
 

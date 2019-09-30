@@ -11,11 +11,7 @@ Disable orphans/widows avoidance:
     # Beware that this patch might(?) intefere with related CSS properties such as
     # page-break-after:avoid; or page-break-inside:avoid;. A better solution would
     # be to edit the book's stylesheet to set orphans:1; widows:1;.
-    #
-    # (This patch was previously named `Fix page breaks bug`, but that bug [the long
-    # paragraph bug] was fixed in firmware version 3.5.0.)
-  - ReplaceBytes: {Offset: 0x295EA4, FindH: E6 D0, ReplaceH: E6 E7}
-# - ReplaceBytes: {Offset: 0x295EA4, FindH: E6 D0, ReplaceH: 00 46} # Alternative method
+  - ReplaceBytes: {Offset: 0x295EB4, FindH: E6 D0, ReplaceH: E6 E7}
 
 Default ePub monospace font (Courier):
   - Enabled: no
