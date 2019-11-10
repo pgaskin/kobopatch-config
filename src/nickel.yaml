@@ -304,39 +304,90 @@ Reduce new header/footer height:
       - Find:    "QWidget[newNavHeight=true][qApp_deviceIsStorm=true] {\n  min-height: 118px;\n  max-height: 118px;\n}"
         Replace: "QWidget[newNavHeight=true][qApp_deviceIsStorm=true] {\n  min-height: 78px;\n  max-height: 78px;\n}"
 
-# Waiting (jackie_w) (zlib doesn't fit with default config): Custom new header/footer font
+Custom new header/footer font:
+  - Enabled: no
+  - Description: |
+        This patch allows you to change font-family and/or font-size in the 
+        new header/footer. They will automatically be a matched pair. Full details & screenshots at 
+        https://www.mobileread.com/forums/showpost.php?p=3897175&postcount=4
+        N.B: This patch is not suitable for Japanese/Chinese locale users
+
+  - FindZlib: "ReadingFooter"
+  - ReplaceZlibGroup:
+      Replacements:
+        # Part 1. Customise font-family (built-in or sideloaded font)
+        #         Please see notes at
+        #         https://www.mobileread.com/forums/showpost.php?p=3896190&postcount=2
+        #         for general considerations whenever you change font-family in the Kobo GUI
+        
+        # #caption[newHeader=true] and #caption[newFooter=true]
+        # N.B: If new font-family contains spaces wrap in 'single quotes', e.g. 'Kobo Nickel'
+        
+        # Un-comment and edit replacement font-family to change header/footer font
+        #- {Find: "font-family: Avenir;", Replace: "font-family:Avenir;"}
+
+
+        # Part 2. 
+        #   2a. Customise font-size for header/footer
+        #   2b. (optional) Fine-tune footer text position to avoid cutting bottom progressbar
+        #       (optional) Fine-tune header text position to avoid possible shadow from top bezel
+        #       May be useful to those who have also enabled patch 'Reduce new header/footer height'
+        #       and have customised it to aggressively reduce header/footer height.
+        
+        # 2a. Change font-size for models other than Touch/Mini (header & footer simultaneously)
+        # #caption[newHeader=true] & #caption[newFooter=true]
+          # Glo/Aura/Aura2E (Phoenix)
+        - Find:    "[qApp_deviceIsPhoenix=true] {\n  font-size: 16px;\n}"
+          Replace: "[qApp_deviceIsPhoenix=true] {\n  font-size: 16px;\n}"
+          # AuraHD/H2O (Dragon)
+        - Find:    "[qApp_deviceIsDragon=true] {\n  font-size: 21px;\n}"
+          Replace: "[qApp_deviceIsDragon=true] {\n  font-size: 21px;\n}"
+          # GloHD (Alyssum)
+        - Find:    "[qApp_deviceIsAlyssum=true] {\n  font-size: 23px;\n}"
+          Replace: "[qApp_deviceIsAlyssum=true] {\n  font-size: 23px;\n}"
+          # ClaraHD (Nova)
+        - Find:    "[qApp_deviceIsNova=true] {\n  font-size: 23px;\n}"
+          Replace: "[qApp_deviceIsNova=true] {\n  font-size: 23px;\n}"
+          # LibraH2O (Storm)
+        - Find:    "[qApp_deviceIsStorm=true] {\n  font-size: 25px;\n}"
+          Replace: "[qApp_deviceIsStorm=true] {\n  font-size: 25px;\n}"
+          # AuraOne/Forma (Daylight)
+        - Find:    "[qApp_deviceIsDaylight=true] {\n  font-size: 27px;\n}"
+          Replace: "[qApp_deviceIsDaylight=true] {\n  font-size: 27px;\n}"
+          
+        # N.B: If you do not have a Touch/Mini and your header/footer 
+        #      positions are exactly as you like them you do not need the
+        #      next 2 Find/Replace pairs.
+        #      Leave them as-is or comment them out entirely and forget about them.
+
+        # 2a. Touch/Mini users only: Adjust footer font-size as required.
+        # 2b. All models (optional): Fine-tune footer position by adjusting margin-top value
+        #     A negative margin-top (e.g -10px) moves the footer text slightly upwards
+        #     further from the bottom bezel/progressbar, closer to the page content
+        - Find:    "#caption[newFooter=true][qApp_deviceIsTrilogy=true] {\n  font-size: 13px;\n}"
+          Replace: "#caption[newFooter=true] {\n  font-size: 13px; margin-top: 0px;}"
+        
+        # 2a. Touch/Mini users only: Adjust header font-size as required.
+        # 2b. All models (optional): Fine-tune header position by adjusting margin-bottom value.
+        #     A negative margin-bottom (e.g -10px) moves the header text slightly downwards
+        #     further from the top bezel, closer to the page content
+        - Find:    "#caption[newHeader=true][qApp_deviceIsTrilogy=true] {\n  font-size: 13px;\n}"
+          Replace: "#caption[newHeader=true] {\n  font-size: 13px; margin-bottom: 0px;}"
+
+        # Don't change anything below. It exists to free up some space for
+        # your changes above by removing Japanese/Chinese-specific CSS code blocks
+        # so that kobopatch will run without giving some kind of 'too long' error message.
+        - {Find: "#caption[localeName=\"ja\"] {\n  font-family: Sans-SerifJP, sans-serif;\n  font-style: normal;\n}", Replace: "\n"}
+        - {Find: "#caption[localeName=\"zh\"] {\n  font-family: Sans-SerifZH-Traditional, sans-serif;\n  font-style: normal;\n}", Replace: "\n"}
+        - {Find: "#caption[localeName=\"zh-HK\"] {\n  font-family: Sans-SerifZH-Traditional, sans-serif;\n  font-style: normal;\n}", Replace: "\n"}
+        - {Find: "#caption[localeName=\"zh-TW\"] {\n  font-family: Sans-SerifZH-Traditional, sans-serif;\n  font-style: normal;\n}", Replace: "\n"}
 
 Custom page navigation scrubber:
   - Enabled: no
   - Description: |
-        This patch allows you to customise various parts of the new 'scrubber'.
-        The 'scrubber' is the navigation/progressbar which pops up at the bottom of the
-        screen when you tap to bring up the in-book menus.
-        .
-        It will be of most use for those who read books in languages not officially 
-        supported by Kobo, e.g. Russian, Vietnamese, where Kobo's default Avenir font
-        is a poor choice for displaying the necessary unicode characters for chapter names.
-        .
-        Can also be used by those who just want to change the scrubber's cosmetic appearance.
-        .
-        Part 1: Customise these 3 buttons:
-                - Left & Right 'Back to page nnn'
-                - Current chapter name (bottom left, next to TOC icon)
-            1a. Change font-size
-            1b. Change other font properties, e.g. font-family, bold, italic
-                and anything else you can do with CSS
-        .
-        Part 2: Customise central 'Page x of y' label
-            2a. Change font-size
-            2b. Change other font properties, similar to 1b.
-        .
-        Part 3: Provided to help you free up some space if your Part 1/2 changes
-                cause the kobopatch program to fail with a 'too long' error.
-        N.B:
-          - If you customise any font-family, please see notes at
-            https://www.mobileread.com/forums/showpost.php?p=3896190&postcount=2
-            for general considerations whenever you change font-family in the Kobo GUI
-          - This patch not suitable for Japanese/Chinese locale users.
+        This patch allows you to customise various parts of the new 'scrubber'. Full details & screenshots at:
+        https://www.mobileread.com/forums/showpost.php?p=3897174&postcount=3
+        N.B: This patch is not suitable for Japanese/Chinese locale users
 
   - FindZlib: "#scrubberContainer"
   - ReplaceZlibGroup:
@@ -415,13 +466,13 @@ Custom page navigation scrubber:
         #  Replace: "#page {padding-left: 0px; font-family:Georgia; text-transform:none;}"
 
 
-        # Part 3. Free up some space by un-commenting 1-4 of the following
-        #         Japanese/Chinese-specific CSS code blocks until kobopatch runs without error.
-        #         If you don't need them leave them commented out.
-        #- {Find: "#revertLeft[localeName=\"ja\"],\n#revertRight[localeName=\"ja\"],\n#chapter[localeName=\"ja\"],\n#favourite[localeName=\"ja\"],\n#archive[localeName=\"ja\"],\n#deleteIt[localeName=\"ja\"],\n#buyButton[localeName=\"ja\"] {\n  font-family: Sans-SerifJP, sans-serif;\n  font-style: normal;\n}\n", Replace: "\n"}
-        #- {Find: "#revertLeft[localeName=\"zh\"],\n#revertRight[localeName=\"zh\"],\n#chapter[localeName=\"zh\"],\n#favourite[localeName=\"zh\"],\n#archive[localeName=\"zh\"],\n#deleteIt[localeName=\"zh\"],\n#buyButton[localeName=\"zh\"] {\n  font-family: Sans-SerifZH-Traditional, sans-serif;\n  font-style: normal;\n}\n", Replace: "\n"}
-        #- {Find: "#revertLeft[localeName=\"zh-HK\"],\n#revertRight[localeName=\"zh-HK\"],\n#chapter[localeName=\"zh-HK\"],\n#favourite[localeName=\"zh-HK\"],\n#archive[localeName=\"zh-HK\"],\n#deleteIt[localeName=\"zh-HK\"],\n#buyButton[localeName=\"zh-HK\"] {\n  font-family: Sans-SerifZH-Traditional, sans-serif;\n  font-style: normal;\n}\n", Replace: "\n"}
-        #- {Find: "#revertLeft[localeName=\"zh-TW\"],\n#revertRight[localeName=\"zh-TW\"],\n#chapter[localeName=\"zh-TW\"],\n#favourite[localeName=\"zh-TW\"],\n#archive[localeName=\"zh-TW\"],\n#deleteIt[localeName=\"zh-TW\"],\n#buyButton[localeName=\"zh-TW\"] {\n  font-family: Sans-SerifZH-Traditional, sans-serif;\n  font-style: normal;\n}\n", Replace: "\n"}
+        # Don't change anything below. It exists to free up some space for
+        # your changes above by removing Japanese/Chinese-specific CSS code blocks
+        # so that kobopatch will run without giving some kind of 'too long' error message.
+        - {Find: "#revertLeft[localeName=\"ja\"],\n#revertRight[localeName=\"ja\"],\n#chapter[localeName=\"ja\"],\n#favourite[localeName=\"ja\"],\n#archive[localeName=\"ja\"],\n#deleteIt[localeName=\"ja\"],\n#buyButton[localeName=\"ja\"] {\n  font-family: Sans-SerifJP, sans-serif;\n  font-style: normal;\n}\n", Replace: "\n"}
+        - {Find: "#revertLeft[localeName=\"zh\"],\n#revertRight[localeName=\"zh\"],\n#chapter[localeName=\"zh\"],\n#favourite[localeName=\"zh\"],\n#archive[localeName=\"zh\"],\n#deleteIt[localeName=\"zh\"],\n#buyButton[localeName=\"zh\"] {\n  font-family: Sans-SerifZH-Traditional, sans-serif;\n  font-style: normal;\n}\n", Replace: "\n"}
+        - {Find: "#revertLeft[localeName=\"zh-HK\"],\n#revertRight[localeName=\"zh-HK\"],\n#chapter[localeName=\"zh-HK\"],\n#favourite[localeName=\"zh-HK\"],\n#archive[localeName=\"zh-HK\"],\n#deleteIt[localeName=\"zh-HK\"],\n#buyButton[localeName=\"zh-HK\"] {\n  font-family: Sans-SerifZH-Traditional, sans-serif;\n  font-style: normal;\n}\n", Replace: "\n"}
+        - {Find: "#revertLeft[localeName=\"zh-TW\"],\n#revertRight[localeName=\"zh-TW\"],\n#chapter[localeName=\"zh-TW\"],\n#favourite[localeName=\"zh-TW\"],\n#archive[localeName=\"zh-TW\"],\n#deleteIt[localeName=\"zh-TW\"],\n#buyButton[localeName=\"zh-TW\"] {\n  font-family: Sans-SerifZH-Traditional, sans-serif;\n  font-style: normal;\n}\n", Replace: "\n"}
 
 # The following patch(es) are ported from oren64's patches
 
