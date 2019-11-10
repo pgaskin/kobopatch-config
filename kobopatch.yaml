@@ -52,7 +52,7 @@ overrides:
     FeatureSettings - ExportHighlights: yes
 #   DeveloperSettings - AutoUsbGadget: yes
     Allow showing info panel on random screensaver: yes
-    Make book header/footer lowercase: yes
+    Don't uppercase header/footer text: yes
 
   src/libnickel.so.1.0.0_custom.yaml:
     Rename new home screen footer: yes
