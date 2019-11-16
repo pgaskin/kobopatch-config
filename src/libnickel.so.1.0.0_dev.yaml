@@ -22,6 +22,17 @@ Invert page turn buttons:
   # In ReadingView::keyPressEvent(QKeyEvent*), invert the branch to next page:
   - ReplaceBytes: {Offset: 0xAD2824, FindH: 28 B9, ReplaceH: 28 B1} # CBNZ R0, #0xE -> CBZ R0, #0xE
 
+Allow USB storage even when device locked:
+  - Enabled: yes
+  - Description: |
+      Always allows USB storage even when the device is locked. When combined
+      with an enabled lock screen, this patch allows recovery from almost any
+      segfaulting patch without a factory reset, as most code isn't executed
+      until after the initial unlock. WARNING - this patches renders the lock
+      screen security completely useless!
+  # Never reject the permission request, even when the PIN entry dialog is showing:
+  - ReplaceBytesAtSymbol: {Symbol: "N3PowerWorkflowManager::onUSBPlugPermissionRequest(PermissionRequest*)", Offset: 35, FindH: 10 B1, ReplaceH: 02 E0} # cbz r0, #8 -> b #8
+
 ### Hide top-left menu items ###
 # This following patches take advantage of the parental controls feature, as
 # StatusBarMenuController::updateParentControlSensitiveMenuItems is always
