@@ -8,56 +8,10 @@
 
 Stuff: [Enabled: yes, ReplaceBytes: {Offset: 0x6A8632, FindH: FFF520EB, ReplaceH: 4FF00100}, ReplaceBytes: {Offset: 0x70CDC6, FindH: 89F582EB, ReplaceH: 4FF00100}, ReplaceBytes: {Offset: 0x7119C2, FindH: 84F584ED, ReplaceH: 4FF00100}]
 
-Customize ComfortLight settings:
-  - Enabled: no
-  - Description: |
-      Change the times available in the ComfortLight bedtime dropdown and the
-      start/end times for the color changes. All values in this patch are
-      customizable.
-
-      The default values for this patch give you 21 options between 5PM and 3AM
-      at 30 minute intervals, with the colour change starting at 4PM, and the
-      change back to blue between 5AM and 7AM. The firmware default is 13 options
-      between 9PM-3AM at 30 minute intervals, with the transition starting at 6PM.
-    #
-    # In an unnamed subroutine two layers into FrontLightPopupController::loadView
-    # (find it by going back from QTime::addSecs), the times for the dropdown are
-    # generated into a QVector<QPair<QString, QTime>> with a simple loop.
-    #
-  # Change the starting hour passed to the QTime constructor (mov r1, #21):
-  - ReplaceInt: {Offset: 0xA50E3E, Find: 21, Replace: 17} # 21:00 (9PM) -> 17:00 (5PM)
-  # Optional: Change the increment passed to QTime::addSecs (you need to use an
-  # ARM assembler to change this value):
-  - ReplaceBytes: {Offset: 0xA50EA2, FindH: 4F F4 E1 61, ReplaceH: 4F F4 E1 61} # mov.w r1, #1800: 30m
-  # Change the number of increments (movs r5, #13):
-  - ReplaceInt: {Offset: 0xA50E76, Find: 13, Replace: 21} # 13 [9PM..3AM]+30m -> 21 [5PM..3AM]+30m
-  # Change the number of pre-allocated elements (I don't think this is actually
-  # required, as Qt will realloc as necessary, but we might as well do this just
-  # in case) (mov r1, #21):
-  - ReplaceInt: {Offset: 0xA510DE, Find: 13, Replace: 21} # same as prev replacement
-    #
-    # The actual color adjustment is done in BedtimeManager::adjustTemperature.
-    # The color temperature is based on the current time, the bedtime, the hardcoded
-    # sunset, the hardcoded sunrise start, the hardcoded sunrise end, the daytime
-    # temperature, and the nighttime temperature.
-    #
-  # Change the sunset time (the transition to a warmer temperature starts here
-  # and transitions until the bedtime chosen) (this should be 1-3 hours before
-  # the minimum bedtime from the first replacement above) (mov r1, #18):
-  - ReplaceInt: {Offset: 0xA49A06, Find: 18, Replace: 16} # 18:00 (9PM-3=6PM) -> 16:00 (5PM-1=4PM)
-  # Optional: Change the sunrise start time (the transition back to a cooler
-  # temperature starts here) (this should be sometime after the last bedtime,
-  # but before the sunset time) (mov r1, #5):
-  - ReplaceInt: {Offset: 0xA49A28, Find: 5, Replace: 5} # 5AM
-  # Optional: Change the sunrise end time (the transition back to a cooler
-  # temperature ends here) (this should be 1-3 hours after the sunrise start but
-  # before the sunset time or bad things will happen with negative values) (mov r1, #7):
-  - ReplaceInt: {Offset: 0xA499F2, Find: 7, Replace: 7} # 5AM+2=7AM
-
 Show natural light menu on all devices:
-  - Enabled: no
+  - Enabled: yes
   - Description: |
-      Just for testing the previous patch, will show the slider and dropdown,
+      Just for testing the light memu, will show the slider and dropdown,
       but won't actually do anything other than change the config file.
   # Show slider in FrontLightPopupController::loadView:
   - ReplaceBytes: {Offset: 0xA51E8A, FindBLX: 0x4C8984, ReplaceH: 4F F0 01 00}
@@ -67,3 +21,30 @@ Invert page turn buttons:
   - Enabled: no
   # In ReadingView::keyPressEvent(QKeyEvent*), invert the branch to next page:
   - ReplaceBytes: {Offset: 0xAD2824, FindH: 28 B9, ReplaceH: 28 B1} # CBNZ R0, #0xE -> CBZ R0, #0xE
+
+Change Browse Kobo home screen link target:
+  - Enabled: yes
+  - Description: |
+      This patch allows you to change the target of the Browse Kobo link. To
+      rename the top description, use the rename home screen footer patch.
+  # The easy options for this patch are fairly limited, as BrowseKoboWidget::tapped
+  # just calls the superclass event, then the call to DiscoverNavMixin::storeFront
+  # in the PLT is tail-call optimized. This places a number of restrictions on the
+  # replacement target, namely: the branch must be a branch and exchange, but not
+  # link (lr must be unchanged to return correctly), which is implemented as a
+  # 32-bit branch to a bx pc (nop branch, but still switch instruction sets)
+  # immediately before a PLT entry to a nav mixin without any arguments (i.e.
+  # must be static). Note that the first branch is relative to pc. Also, note that
+  # in general, tbis requirement means anything called by StatusBarController (the
+  # menu) can be used as a replacement.
+  ##
+  # In BrowseKoboWidget::tapped, change the tail-call to the bx before
+  # ReadingLifeNavMixin::chooseActivity in the PLT, which opens the last-used
+  # tab in the Reading Life page:
+  - ReplaceBytes: {Offset: 0x9AB1BA, FindH: F2 F6 AB B2, ReplaceH: E8 F6 3F B6} # b.w sub_49d714 -> b.w sub_493e3c
+  # In the BrowseKoboWidget constructor, change which function is called to get
+  # the bottom text (Shop Kobo) from N3DeviceCharm::shopName (Shop Kobo / Walmart)
+  # to N3DeviceCharm::extrasName (Activity) (note that there isn't enough room to
+  # load an entirely different string here):
+  - ReplaceBLX: {Offset: 0x9AAB7A, Find: 0x4AF398, Replace: 0x4A29EC}
+  # For other options, ask geek1011.
