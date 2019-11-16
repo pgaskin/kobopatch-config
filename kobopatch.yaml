@@ -53,6 +53,12 @@ overrides:
 #   DeveloperSettings - AutoUsbGadget: yes
     Allow showing info panel on random screensaver: yes
     Don't uppercase header/footer text: yes
+    Allow USB storage even when device locked: yes
+    Change Browse Kobo home screen link target - Activity: yes
+    Hide top-left menu item - Dropbox: yes
+    Hide top-left menu item - Store: yes
+    Hide top-left menu item - Recommended: yes
+    Hide top-left menu item - Wishlist: yes
 
   src/libnickel.so.1.0.0_custom.yaml:
     Rename new home screen footer: yes
