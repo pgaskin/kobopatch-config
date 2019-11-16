@@ -36,9 +36,9 @@ Hide top-left menu items:
   - FindBaseAddressSymbol: "StatusBarMenuController::updateParentControlSensitiveMenuItems()"
   # Hide Dropbox:
   - ReplaceBytes: {Offset:  181, FindH: 51 46, ReplaceH: 00 21} # DropboxSeparator (sl=51) (sl:sb&r5)
-  - ReplaceBytes: {Offset:  203, FindH: 51 46, ReplaceH: 00 21} # DropboxSeparator (sl=51) (sl:sb&r5)
+  - ReplaceBytes: {Offset:  203, FindH: 51 46, ReplaceH: 00 21} # DropboxSeparator (sl=51)
   - ReplaceBytes: {Offset:  305, FindH: 49 46, ReplaceH: 00 21} # DropboxWidget (sb=49) (sb:sb&r5)
-  - ReplaceBytes: {Offset:  327, FindH: 49 46, ReplaceH: 00 21} # DropboxWidget (sb=49) (sb:sb&r5)
+  - ReplaceBytes: {Offset:  327, FindH: 49 46, ReplaceH: 00 21} # DropboxWidget (sb=49)
   # Hide Pocket:
   - ReplaceBytes: {Offset:  483, FindH: 29 46, ReplaceH: 00 21} # PocketSeparator (r5=29)
   - ReplaceBytes: {Offset:  505, FindH: 29 46, ReplaceH: 00 21} # PocketSeparator (r5=29)
@@ -54,6 +54,20 @@ Hide top-left menu items:
   - ReplaceBytes: {Offset: 1217, FindH: 29 46, ReplaceH: 00 21} # RecommendedSeparator (r5=29)
   - ReplaceBytes: {Offset: 1373, FindH: 29 46, ReplaceH: 00 21} # RecommendedWidget (r5=29)
   - ReplaceBytes: {Offset: 1395, FindH: 29 46, ReplaceH: 00 21} # RecommendedWidget (r5=29)
+  ## Note about updating: the following ones were mistakenly detected as outside
+  ## the procedure by Hopper, but this can be fixed by NOPing the DDs between and
+  ## recreating the procedure (press P at the start).
+  # Kobo Plus can also be hidden, but it's not needed as it won't show by default.
+  # Hide Wishlist:
+  - ReplaceBytes: {Offset: 5023, FindH: 59 46, ReplaceH: 00 21} # WishlistSeparator (fp=59) (fp:r8&r5)
+  - ReplaceBytes: {Offset: 5045, FindH: 59 46, ReplaceH: 00 21} # WishlistSeparator (fp=59)
+  - ReplaceBytes: {Offset: 5143, FindH: 41 46, ReplaceH: 00 21} # WishlistWidget (r8=41) (r8:r8&r5)
+  - ReplaceBytes: {Offset: 5165, FindH: 41 46, ReplaceH: 00 21} # WishlistWidget (r8=41)
+  # Hide Activity:
+  - ReplaceBytes: {Offset: 5653, FindH: 29 46, ReplaceH: 00 21} # ActivitySeparator (r5=29)
+  - ReplaceBytes: {Offset: 5675, FindH: 29 46, ReplaceH: 00 21} # ActivitySeparator (r5=29)
+  - ReplaceBytes: {Offset: 6029, FindH: 29 46, ReplaceH: 00 21} # ActivityWidget (r5=29)
+  - ReplaceBytes: {Offset: 6051, FindH: 29 46, ReplaceH: 00 21} # ActivityWidget (r5=29)
 
 Change Browse Kobo home screen link target:
   - Enabled: yes
