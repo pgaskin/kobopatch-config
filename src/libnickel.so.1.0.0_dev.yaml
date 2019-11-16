@@ -31,18 +31,19 @@ Hide top-left menu items:
   ##
   # You can comment out any of the following replacement groups to show an item:
   ##
+  - FindBaseAddressSymbol: "StatusBarMenuController::updateParentControlSensitiveMenuItems()"
   # Hide Dropbox:
-  - ReplaceBytes: {Offset: 0xA8EFC6, FindH: 51 46, ReplaceH: 00 21} # DropboxSeparator (sl=51)
-  - ReplaceBytes: {Offset: 0xA8F042, FindH: 49 46, ReplaceH: 00 21} # DropboxWidget (sb=49)
+  - ReplaceBytes: {Offset:  181, FindH: 51 46, ReplaceH: 00 21} # DropboxSeparator (sl=51)
+  - ReplaceBytes: {Offset:  305, FindH: 49 46, ReplaceH: 00 21} # DropboxWidget (sb=49)
   # Hide Pocket:
-  - ReplaceBytes: {Offset: 0xA8F0F4, FindH: 29 46, ReplaceH: 00 21} # PocketSeparator (r5=29)
-  - ReplaceBytes: {Offset: 0xA8F1A6, FindH: 29 46, ReplaceH: 00 21} # PocketWidget (r5=29)
+  - ReplaceBytes: {Offset:  483, FindH: 29 46, ReplaceH: 00 21} # PocketSeparator (r5=29)
+  - ReplaceBytes: {Offset:  661, FindH: 29 46, ReplaceH: 00 21} # PocketWidget (r5=29)
   # Hide Store:
-  - ReplaceBytes: {Offset: 0xA8F258, FindH: 29 46, ReplaceH: 00 21} # StoreSeparator (r5=29)
-  - ReplaceBytes: {Offset: 0xA8F30A, FindH: 29 46, ReplaceH: 00 21} # PocketWidget (r5=29)
+  - ReplaceBytes: {Offset:  839, FindH: 29 46, ReplaceH: 00 21} # StoreSeparator (r5=29)
+  - ReplaceBytes: {Offset: 1017, FindH: 29 46, ReplaceH: 00 21} # PocketWidget (r5=29)
   # Hide Recommended:
-  - ReplaceBytes: {Offset: 0xA8F3BC, FindH: 29 46, ReplaceH: 00 21} # RecommendedSeparator (r5=29)
-  - ReplaceBytes: {Offset: 0xA8F46E, FindH: 29 46, ReplaceH: 00 21} # RecommendedWidget (r5=29)
+  - ReplaceBytes: {Offset: 1195, FindH: 29 46, ReplaceH: 00 21} # RecommendedSeparator (r5=29)
+  - ReplaceBytes: {Offset: 1373, FindH: 29 46, ReplaceH: 00 21} # RecommendedWidget (r5=29)
 
 Change Browse Kobo home screen link target:
   - Enabled: yes
