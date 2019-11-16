@@ -28,22 +28,32 @@ Hide top-left menu items:
   # StatusBarMenuController::updateParentControlSensitiveMenuItems is always
   # called when setting them up. All that is needed to hide items is to hardcode
   # false before calling QAction::setVisible ([XX 46] mov r1, XX -> [00 21] movs r1, #0).
+  # To prevent ghost items, the value which stores the number of items to draw
+  # also needs to be fixed before the ldrex/strex just after the setVisible.
   ##
   # You can comment out any of the following replacement groups to show an item:
   ##
   - FindBaseAddressSymbol: "StatusBarMenuController::updateParentControlSensitiveMenuItems()"
   # Hide Dropbox:
-  - ReplaceBytes: {Offset:  181, FindH: 51 46, ReplaceH: 00 21} # DropboxSeparator (sl=51)
-  - ReplaceBytes: {Offset:  305, FindH: 49 46, ReplaceH: 00 21} # DropboxWidget (sb=49)
+  - ReplaceBytes: {Offset:  181, FindH: 51 46, ReplaceH: 00 21} # DropboxSeparator (sl=51) (sl:sb&r5)
+  - ReplaceBytes: {Offset:  203, FindH: 51 46, ReplaceH: 00 21} # DropboxSeparator (sl=51) (sl:sb&r5)
+  - ReplaceBytes: {Offset:  305, FindH: 49 46, ReplaceH: 00 21} # DropboxWidget (sb=49) (sb:sb&r5)
+  - ReplaceBytes: {Offset:  327, FindH: 49 46, ReplaceH: 00 21} # DropboxWidget (sb=49) (sb:sb&r5)
   # Hide Pocket:
   - ReplaceBytes: {Offset:  483, FindH: 29 46, ReplaceH: 00 21} # PocketSeparator (r5=29)
+  - ReplaceBytes: {Offset:  505, FindH: 29 46, ReplaceH: 00 21} # PocketSeparator (r5=29)
   - ReplaceBytes: {Offset:  661, FindH: 29 46, ReplaceH: 00 21} # PocketWidget (r5=29)
+  - ReplaceBytes: {Offset:  683, FindH: 29 46, ReplaceH: 00 21} # PocketWidget (r5=29)
   # Hide Store:
   - ReplaceBytes: {Offset:  839, FindH: 29 46, ReplaceH: 00 21} # StoreSeparator (r5=29)
-  - ReplaceBytes: {Offset: 1017, FindH: 29 46, ReplaceH: 00 21} # PocketWidget (r5=29)
+  - ReplaceBytes: {Offset:  861, FindH: 29 46, ReplaceH: 00 21} # StoreSeparator (r5=29)
+  - ReplaceBytes: {Offset: 1017, FindH: 29 46, ReplaceH: 00 21} # StoreWidget (r5=29)
+  - ReplaceBytes: {Offset: 1039, FindH: 29 46, ReplaceH: 00 21} # StoreWidget (r5=29)
   # Hide Recommended:
   - ReplaceBytes: {Offset: 1195, FindH: 29 46, ReplaceH: 00 21} # RecommendedSeparator (r5=29)
+  - ReplaceBytes: {Offset: 1217, FindH: 29 46, ReplaceH: 00 21} # RecommendedSeparator (r5=29)
   - ReplaceBytes: {Offset: 1373, FindH: 29 46, ReplaceH: 00 21} # RecommendedWidget (r5=29)
+  - ReplaceBytes: {Offset: 1395, FindH: 29 46, ReplaceH: 00 21} # RecommendedWidget (r5=29)
 
 Change Browse Kobo home screen link target:
   - Enabled: yes
