@@ -105,7 +105,6 @@ files:
   # my stuff
   geek1011/root/usr/local/geek1011/sftp-server: usr/local/geek1011/sftp-server
   geek1011/root/usr/local/geek1011/dropbearmulti: usr/local/geek1011/dropbearmulti
-  geek1011/root/usr/local/geek1011/dropbear.sh: usr/local/geek1011/dropbear.sh
   geek1011/root/usr/local/geek1011/init: usr/local/geek1011/init
   geek1011/root/etc/udev/rules.d/99-geek1011.rules: etc/udev/rules.d/99-geek1011.rules
   src/envsetup.sh: usr/local/geek1011/envsetup.sh

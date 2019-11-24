@@ -51,7 +51,10 @@ cd openssh-8.1p1
 cd ..
 
 cd dropbear-2019.78
-	CFLAGS="-DSFTPSERVER_PATH='\"$PREFIX/sftp-server\"'" \
+	echo "#define SFTPSERVER_PATH     \"$PREFIX/sftp-server\"" >> localoptions.h
+	echo "#define DSS_PRIV_FILENAME   \"$PREFIX/dss_key\""     >> localoptions.h
+	echo "#define RSA_PRIV_FILENAME   \"$PREFIX/rsa_key\""     >> localoptions.h
+	echo "#define ECDSA_PRIV_FILENAME \"$PREFIX/ecdsa_key\""   >> localoptions.h
 	./configure \
 		--host="$HOST" \
 		--enable-static \
@@ -75,24 +78,14 @@ cd ../root
 	mkdir -p ".$PREFIX/"
 	cp "$DESTDIR$PREFIX/dropbearmulti" ".$PREFIX/"
 	cp "$DESTDIR$PREFIX/sftp-server" ".$PREFIX/"
-	cat <<-EOF > ".$PREFIX/dropbear.sh"
-		#!/bin/sh
-		[ -f "$PREFIX/dss_key" ]   || "$PREFIX/dropbearmulti" dropbearkey -t dss   -f "$PREFIX/dss_key"
-		[ -f "$PREFIX/rsa_key" ]   || "$PREFIX/dropbearmulti" dropbearkey -t rsa   -f "$PREFIX/rsa_key"
-		[ -f "$PREFIX/ecdsa_key" ] || "$PREFIX/dropbearmulti" dropbearkey -t ecdsa -f "$PREFIX/ecdsa_key"
-		"$PREFIX/dropbearmulti" dropbear -BFEr "$PREFIX/dss_key" -r "$PREFIX/rsa_key" -r "$PREFIX/ecdsa_key"
-	EOF
-	chmod +x ".$PREFIX/dropbear.sh"
 	cat <<-EOF > ".$PREFIX/init"
 		#!/bin/sh
-		"$PREFIX/dropbear.sh" &
+		"$PREFIX/dropbearmulti" dropbear -BFER &
 	EOF
 	chmod +x ".$PREFIX/init"
-
 	mkdir -p "./etc/udev/rules.d/"
 	cat <<-EOF > "./etc/udev/rules.d/99-geek1011.rules"
 		KERNEL=="loop0", RUN+="$PREFIX/init"
 	EOF
-
 	find .
 cd ..

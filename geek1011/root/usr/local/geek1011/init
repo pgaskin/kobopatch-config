@@ -1,2 +1,2 @@
 #!/bin/sh
-"/usr/local/geek1011/dropbear.sh" &
+"/usr/local/geek1011/dropbearmulti" dropbear -BFER &
