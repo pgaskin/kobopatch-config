@@ -102,21 +102,12 @@ files:
   # screensaver
   src/black.png: mnt/onboard/.kobo/screensaver/black.png
 
-  # general stuff
+  # my stuff
+  geek1011/root/usr/local/geek1011/sftp-server: usr/local/geek1011/sftp-server
+  geek1011/root/usr/local/geek1011/dropbearmulti: usr/local/geek1011/dropbearmulti
+  geek1011/root/usr/local/geek1011/dropbear.sh: usr/local/geek1011/dropbear.sh
+  geek1011/root/usr/local/geek1011/init: usr/local/geek1011/init
+  geek1011/root/etc/udev/rules.d/99-geek1011.rules: etc/udev/rules.d/99-geek1011.rules
   src/envsetup.sh: usr/local/geek1011/envsetup.sh
-
-  # fbink
-  fbink/bin/fbink: usr/local/geek1011/fbink
-  fbink/bin/button_scan: usr/local/geek1011/button_scan
-  fbink/lib/libfbink.so.1.0.0: usr/local/geek1011/libfbink.so.1.0.0
-  fbink/lib/libfbink.so.1: usr/local/geek1011/libfbink.so.1
-  fbink/lib/libfbink.so: usr/local/geek1011/libfbink.so
-
-  # dropbear is built with the toolchain from kobolabs/Kobo-Reader
-  # ./configure --host=arm-linux-gnueabihf --disable-zlib --enable-static --disable-lastlog
-  # make PROGRAMS='dropbear dropbearkey scp' MULTI=1
-  # sftp-server is from koreader
-  dropbear/etc/inittab: etc/inittab
-  dropbear/usr/local/geek1011/dropbear.sh: usr/local/geek1011/dropbear.sh
-  dropbear/usr/local/geek1011/dropbearmulti: usr/local/geek1011/dropbearmulti
-  dropbear/usr/libexec/sftp-server: usr/libexec/sftp-server
+  geek1011/kobo-dotfile-hack_v0.1_6f452d1/usr/local/geek1011/libhidedir_kobo.so: usr/local/geek1011/libhidedir_kobo.so
+  geek1011/kobo-dotfile-hack_v0.1_6f452d1/etc/ld.so.preload: etc/ld.so.preload

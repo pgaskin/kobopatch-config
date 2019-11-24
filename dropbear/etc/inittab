@@ -1,8 +1,0 @@
-# This is run first except when booting in single-user mode.
-::sysinit:/etc/init.d/rcS
-::respawn:/sbin/getty -L ttymxc0 115200 vt100
-::ctrlaltdel:/sbin/reboot
-::shutdown:/bin/umount -a -r
-::restart:/sbin/init
-::respawn:/bin/sh -c '[ -f /usr/local/geek1011/dropbear.sh ] && /bin/sh /usr/local/geek1011/dropbear.sh || sleep 60'
-
