@@ -1,0 +1,9 @@
+version: 4.13.12638
+in: kobo7-update-4.13.12638.zip
+out: KoboRoot.tgz
+log: log.txt
+
+patchFormat: kobopatch
+
+patches:
+  libnickel.yaml: usr/local/Kobo/libnickel.so.1.0.0
