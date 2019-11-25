@@ -59,6 +59,7 @@ overrides:
     Hide top-left menu item - Store: yes
     Hide top-left menu item - Recommended: yes
     Hide top-left menu item - Wishlist: yes
+    Customize ComfortLight settings: yes
 
   src/libnickel.so.1.0.0_custom.yaml:
     Rename new home screen footer: yes
@@ -68,16 +69,6 @@ overrides:
   src/librmsdk.so.1.0.0.yaml:
 
 files:
-  fonts/IBMPlexSans-BoldItalic.ttf: mnt/onboard/fonts/IBMPlexSans-BoldItalic.ttf
-  fonts/IBMPlexSans-Bold.ttf: mnt/onboard/fonts/IBMPlexSans-Bold.ttf
-  fonts/IBMPlexSans-Italic.ttf: mnt/onboard/fonts/IBMPlexSans-Italic.ttf
-  fonts/IBMPlexSans-Regular.ttf: mnt/onboard/fonts/IBMPlexSans-Regular.ttf
-  fonts/IBMPlexSerif-BoldItalic.ttf: mnt/onboard/fonts/IBMPlexSerif-BoldItalic.ttf
-  fonts/IBMPlexSerif-Bold.ttf: mnt/onboard/fonts/IBMPlexSerif-Bold.ttf
-  fonts/IBMPlexSerif-Italic.ttf: mnt/onboard/fonts/IBMPlexSerif-Italic.ttf
-  fonts/IBMPlexSerif-Regular.ttf: mnt/onboard/fonts/IBMPlexSerif-Regular.ttf
-  fonts/IBMPlexSerif-TextItalic.ttf: mnt/onboard/fonts/IBMPlexSerif-TextItalic.ttf
-  fonts/IBMPlexSerif-Text.ttf: mnt/onboard/fonts/IBMPlexSerif-Text.ttf
   fonts/Literata-BoldItalic.otf: mnt/onboard/fonts/Literata-BoldItalic.otf
   fonts/Literata-Bold.otf: mnt/onboard/fonts/Literata-Bold.otf
   fonts/Literata-Italic.otf: mnt/onboard/fonts/Literata-Italic.otf
@@ -86,14 +77,14 @@ files:
   fonts/MinionPro-Bold.otf: mnt/onboard/fonts/MinionPro-Bold.otf
   fonts/MinionPro-It.otf: mnt/onboard/fonts/MinionPro-It.otf
   fonts/MinionPro-Regular.otf: mnt/onboard/fonts/MinionPro-Regular.otf
-  fonts/NotoSerif-BoldItalic.ttf: mnt/onboard/fonts/NotoSerif-BoldItalic.ttf
-  fonts/NotoSerif-Bold.ttf: mnt/onboard/fonts/NotoSerif-Bold.ttf
-  fonts/NotoSerif-Italic.ttf: mnt/onboard/fonts/NotoSerif-Italic.ttf
-  fonts/NotoSerif-Regular.ttf: mnt/onboard/fonts/NotoSerif-Regular.ttf
   fonts/OpenSans-BoldItalic.ttf: mnt/onboard/fonts/OpenSans-BoldItalic.ttf
   fonts/OpenSans-Bold.ttf: mnt/onboard/fonts/OpenSans-Bold.ttf
   fonts/OpenSans-Italic.ttf: mnt/onboard/fonts/OpenSans-Italic.ttf
   fonts/OpenSans-Regular.ttf: mnt/onboard/fonts/OpenSans-Regular.ttf
+  fonts/Bookerly-BoldItalic.ttf: mnt/onboard/fonts/Bookerly-BoldItalic.ttf
+  fonts/Bookerly-Bold.ttf: mnt/onboard/fonts/Bookerly-Bold.ttf
+  fonts/Bookerly-Italic.ttf: mnt/onboard/fonts/Bookerly-Italic.ttf
+  fonts/Bookerly-Regular.ttf: mnt/onboard/fonts/Bookerly-Regular.ttf
   fonts/PTSerif-BoldItalic.ttf: mnt/onboard/fonts/PTSerif-BoldItalic.ttf
   fonts/PTSerif-Bold.ttf: mnt/onboard/fonts/PTSerif-Bold.ttf
   fonts/PTSerif-Italic.ttf: mnt/onboard/fonts/PTSerif-Italic.ttf
@@ -103,10 +94,10 @@ files:
   src/black.png: mnt/onboard/.kobo/screensaver/black.png
 
   # my stuff
-  geek1011/root/usr/local/geek1011/sftp-server: usr/local/geek1011/sftp-server
-  geek1011/root/usr/local/geek1011/dropbearmulti: usr/local/geek1011/dropbearmulti
-  geek1011/root/usr/local/geek1011/init: usr/local/geek1011/init
-  geek1011/root/etc/udev/rules.d/99-geek1011.rules: etc/udev/rules.d/99-geek1011.rules
-  src/envsetup.sh: usr/local/geek1011/envsetup.sh
+  #geek1011/root/usr/local/geek1011/sftp-server: usr/local/geek1011/sftp-server
+  #geek1011/root/usr/local/geek1011/dropbearmulti: usr/local/geek1011/dropbearmulti
+  #geek1011/root/usr/local/geek1011/init: usr/local/geek1011/init
+  #geek1011/root/etc/udev/rules.d/99-geek1011.rules: etc/udev/rules.d/99-geek1011.rules
+  #src/envsetup.sh: usr/local/geek1011/envsetup.sh
   geek1011/kobo-dotfile-hack_v0.1_6f452d1/usr/local/geek1011/libhidedir_kobo.so: usr/local/geek1011/libhidedir_kobo.so
   geek1011/kobo-dotfile-hack_v0.1_6f452d1/etc/ld.so.preload: etc/ld.so.preload

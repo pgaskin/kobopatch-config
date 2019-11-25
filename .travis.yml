@@ -6,7 +6,7 @@ install:
   - mkdir -p "$HOME/bin/"
   - wget -O "$HOME/bin/kobopatch" "https://github.com/geek1011/kobopatch/releases/download/v0.14.0/kobopatch-linux-64bit"
   - chmod +x "$HOME/bin/kobopatch"
-  - wget -O "$HOME/kobo-update-4.18.13737.zip" "https://kbdownload1-a.akamaihd.net/firmwares/kobo6/Sept2019/kobo-update-4.18.13737.zip"
+  - wget -O "$HOME/kobo-update-4.18.13737.zip" "https://kbdownload1-a.akamaihd.net/firmwares/kobo7/Sept2019/kobo-update-4.18.13737.zip"
 
 script:
   - mv "$HOME/kobo-update-4.18.13737.zip" "src/kobo-update-4.18.13737.zip"
