@@ -11,30 +11,7 @@ Disable orphans/widows avoidance:
     # Beware that this patch might(?) intefere with related CSS properties such as
     # page-break-after:avoid; or page-break-inside:avoid;. A better solution would
     # be to edit the book's stylesheet to set orphans:1; widows:1;.
-  - ReplaceBytes: {Offset: 0x295EB4, FindH: E6 D0, ReplaceH: E6 E7}
-
-Default ePub monospace font (Courier):
-  - Enabled: no
-  - Description: |
-      Kobo devices don't come with any monospace fonts. If the book's stylesheet
-      specifies font-family:monospace; then the ePub reader will try to use the
-      "Courier Std" font, but even if that font were installed it wouldn't work
-      because the pathnames used by the ePub reader to request the font are wrong.
-     
-      This patch lets the EPUB reader use any font with a name beginning "Courier"
-      (e.g. Courier Prime, available at http://quoteunquoteapps.com/courierprime)
-      as the default monospace font instead of just Adobe's Courier Std font, and
-      also corrects the pathnames so that it can be found. If no suitably named
-      font is installed then this patch will have no effect.
-    # To use a different font name, change "Courier" in the replacement string to
-    # another font name prefix (7 letters max.). For example, change
-    # `normal/Courier` to `normal/Dark`, `bold/Courier` to `bold/Dark`, etc. to
-    # use HP's Dark Courier font available at
-    # http://h20000.www2.hp.com/hpsc/swd/public/detail?swItemId=lj611en
-  - FindReplaceString: {Find: "CourierStd.otf", Replace: "normal/Courier"}
-  - FindReplaceString: {Find: "CourierStd-Bold.otf", Replace: "bold/Courier"}
-  - FindReplaceString: {Find: "CourierStd-Oblique.otf", Replace: "italic/Courier"}
-  - FindReplaceString: {Find: "CourierStd-BoldOblique.otf", Replace: "bolditalic/Courier"}
+  - ReplaceBytes: {Offset: 0x297198, FindH: E6 D0, ReplaceH: E6 E7}
 
 Default ePub serif font (Amasis):
   - Enabled: no

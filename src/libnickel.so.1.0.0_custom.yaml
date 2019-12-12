@@ -3,7 +3,7 @@
 # Changed strings
 Rename new home screen footer:
   - Enabled: no
-  - Description: "Make sure the strings are the same length as the original."
+  - Description: Make sure the strings are the same length as the original.
   - FindReplaceString: {Find: "Find your next great read", Replace: "Patrick's Kobo"}
   - FindReplaceString: {Find: "Buy, borrow, or preview books", Replace: "Patrick's Kobo"}
   - FindReplaceString: {Find: "Find your next book in Kobo Plus or our store", Replace: "Patrick's Kobo"}

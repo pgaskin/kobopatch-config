@@ -1,1 +1,9 @@
-Stuff: [Enabled: yes, ReplaceBytes: {Offset: 0x6A8632, FindH: FFF520EB, ReplaceH: 4FF00100}, ReplaceBytes: {Offset: 0x70CDC6, FindH: 89F582EB, ReplaceH: 4FF00100}, ReplaceBytes: {Offset: 0x7119C2, FindH: 84F584ED, ReplaceH: 4FF00100}]
+Stuff: [Enabled: yes, ReplaceBytes: {Offset: 0x6AEA98, FindH: FEF544E9, ReplaceH: 4FF00100}, ReplaceBytes: {Offset: 0x71302A, FindH: 88F56EEA, ReplaceH: 4FF00100}, ReplaceBytes: {Offset: 0x717BFA, FindH: 83F586EC, ReplaceH: 4FF00100}]
+
+Hide scrollbars:
+  - Enabled: no
+  - Description: Hide the scrollbars on the WiFi panel, settings, and other places introduced in 4.19.14123.
+  # In PagingContainer::PagingContainer:
+  # don't actually add the scrollbar to the QBoxLayout
+  - ReplaceBytesNOP: {Offset: 0xC13730, FindBLX: 0x49967C}
+  # TODO: WiFi panel, also fix lost margins
