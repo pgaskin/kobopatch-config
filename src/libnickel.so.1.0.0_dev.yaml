@@ -7,3 +7,27 @@ Hide scrollbars:
   # don't actually add the scrollbar to the QBoxLayout
   - ReplaceBytesNOP: {Offset: 0xC13730, FindBLX: 0x49967C}
   # TODO: WiFi panel, also fix lost margins
+
+Invert locked landscape orientation:
+  - Enabled: no
+  - Description: |
+      Rotate the landscape locked orientation by 180 degrees. This is mainly
+      useful on devices without an orientation sensor.
+  # QFlags<Qt::ScreenOrientation>
+  #   0000 ::PrimaryOrientation
+  #   0001 ::PortraitOrientation
+  #   0010 ::LandscapeOrientation
+  #   0100 ::InvertedPortraitOrientation
+  #   1000 ::InvertedLandscapeOrientation
+  - FindBaseAddressSymbol: "RotatePopupController::onLandscape()"
+  - ReplaceInt: {Offset: 29, Find: 0b1010, Replace: 0b0010}
+  # TODO: this breaks touch when in landscape
+
+Remove auto rotation from orientation menu:
+  - Enabled: no
+  - Description: |
+      Remove the auto rotation item from the orientation menu. This is mainly
+      useful on devices without an orientation sensor.
+  # In Ui_RotatePopup::setupUi, don't actually add autoRotateContainer:
+  - ReplaceBytesNOP: {Offset: 0xB1D530, FindBLX: 0x49967C} # note: the popup is in r4+4, and the auto rotate item is in r4+8
+  # TODO: make the popup wide enough for the portrait and landscape items
