@@ -60,6 +60,7 @@ overrides:
     Hide top-left menu item - Recommended: yes
     Hide top-left menu item - Wishlist: yes
     Customize ComfortLight settings: yes
+    Allow searches on Extra dictionaries: yes
 
   src/libnickel.so.1.0.0_custom.yaml:
     Rename new home screen footer: yes
