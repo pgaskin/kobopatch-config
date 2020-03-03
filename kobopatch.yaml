@@ -1,5 +1,5 @@
-version: 4.19.14123
-in: src/kobo7-update-4.19.14123.zip
+version: 4.20.14601
+in: src/kobo7-update-4.20.14601.zip
 out: KoboRoot.tgz
 log: log.txt
 
@@ -29,7 +29,6 @@ overrides:
   src/nickel_dev.yaml:
 
   src/libadobe.so.yaml:
-    Keep PDF pan position: yes
 
   src/libnickel.so.1.0.0.yaml:
 #   Custom font sizes: yes
@@ -38,7 +37,7 @@ overrides:
     Custom kepub default margins: yes
     Allow rotation on all devices: yes
     Both page turn buttons go next: yes
-    My 24 line spacing values: yes
+    My 10 line spacing values: yes
     Replace adobe page numbers toggle with invert screen: yes
     Always show confirmation dialog before upgrading: yes
     Remove beta features not supported text: yes

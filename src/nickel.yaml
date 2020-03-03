@@ -2,8 +2,11 @@
 
 Show all games:
   - Enabled: no
-  - Description: Shows all games in beta features.
-  - FindZlib: "#boggleContainer[qApp_deviceIsPika=true]"
+  - Description: |
+      Shows all games in beta features. Sone firmware 4.20.14601, this patch is
+      not needed if you have developer mode enabled (search
+      devmodeon/devmodeoff).
+  - FindZlib: "#boggleContainer[devModeOn=false][qApp_deviceIsPika=true]"
   - ReplaceZlib: {Find: "qproperty-visible: false;", Replace: "qproperty-visible: true;"}
 
 Remove forgot pin button from lock screen:
@@ -13,11 +16,11 @@ Remove forgot pin button from lock screen:
       If this is enabled and you forget your pin, you will need to
       hard reset your Kobo.
   # In 4.19.14123, the exact stream appears in two locations for some reason.
-  - BaseAddress: 0x1401DA0
+  - BaseAddress: 0x13EBBDE
   - ReplaceZlib:
       Find: "#lblForgotPin[qApp_deviceIsDragon=true],\n#lblSignOut[qApp_deviceIsDragon=true] {\n  font-size: 26px;\n}"
       Replace: "#lblForgotPin,#lblSignOut{qproperty-visible:false;}"
-  - BaseAddress: 0x13FA520
+  - BaseAddress: 0x13FD71F
   - ReplaceZlib:
       Find: "#lblForgotPin[qApp_deviceIsDragon=true],\n#lblSignOut[qApp_deviceIsDragon=true] {\n  font-size: 26px;\n}"
       Replace: "#lblForgotPin,#lblSignOut{qproperty-visible:false;}"
@@ -55,6 +58,13 @@ Increase size of kepub chapter progress chart:
         Replace: "#chapterSizes[qApp_deviceIsDragon=true] {\n  max-height: 170px;\n  min-height: 170px;\n  min-width: 678px;\n  max-width: 678px;\n}"
       - Find:    "#chapterSizes[qApp_deviceIsDaylight=true] {\n  max-height: 130px;\n  min-height: 130px;\n}"
         Replace: "#chapterSizes[qApp_deviceIsDaylight=true] {\n  max-height: 215px;\n  min-height: 215px;\n  min-width: 865px;\n  max-width: 865px;\n}"
+
+Hide reading stats at end of purchased books:
+  - Enabled: yes
+  - FindZlib: "#relatedViewAll" # N3EndOfBookView.qss
+  - ReplaceZlib:
+      Find: "#bookStatsContainer[qApp_deviceIsTrilogy=true] {"
+      Replace: "#separator2, #bookStatsContainer { qproperty-visible: false; } #dummy {"
 
 # The following patch(es) are ported from GeoffR's patch zips
 
@@ -384,6 +394,14 @@ Custom new header/footer font:
         - Find:    "#caption[newHeader=true][qApp_deviceIsTrilogy=true] {\n  font-size: 13px;\n}"
           Replace: "#caption[newHeader=true] {\n  font-size: 13px; margin-bottom: 0px;}"
 
+        # Don't change anything below. It exists to free up some space for
+        # your changes above by removing Japanese/Chinese-specific CSS code blocks
+        # so that kobopatch will run without giving some kind of 'too long' error message.
+        - {Find: "#caption[newHeader=true][localeName=\"ja\"],\n#caption[newFooter=true][localeName=\"ja\"] {\n  font-family: Sans-SerifJP, sans-serif;\n  font-style: normal;\n}\n", Replace: "\n"}
+        - {Find: "#caption[newHeader=true][localeName=\"zh\"],\n#caption[newFooter=true][localeName=\"zh\"] {\n  font-family: Sans-SerifZH-Simplified, sans-serif;\n  font-style: normal;\n}\n", Replace: "\n"}
+        - {Find: "#caption[newHeader=true][localeName=\"zh-HK\"],\n#caption[newFooter=true][localeName=\"zh-HK\"] {\n  font-family: Sans-SerifZH-Traditional, sans-serif;\n  font-style: normal;\n}\n", Replace: "\n"}
+        - {Find: "#caption[newHeader=true][localeName=\"zh-TW\"],\n#caption[newFooter=true][localeName=\"zh-TW\"] {\n  font-family: Sans-SerifZH-Traditional, sans-serif;\n  font-style: normal;\n}\n", Replace: "\n"}
+
 Custom page navigation scrubber:
   - Enabled: no
   - Description: |
@@ -467,13 +485,24 @@ Custom page navigation scrubber:
         #- Find:    "#page {\n  padding-left: 0px;\n}"
         #  Replace: "#page {padding-left: 0px; font-family:Georgia; text-transform:none;}"
 
+Customise Header back button:
+  - Enabled: no
+  - Description: |
+        Customise in-book button (top left corner) for 'Back to Home', 'Back to My Books' etc
+  - FindZlib: "#ReadingMenuView"
+  - ReplaceZlibGroup:
+      Replacements:
+        # 'Back to Home' button un-bolded
+        - Find:    "#backLabel #label {\n  font-family: Avenir;\n  font-style: normal;\n  font-weight: bold;"
+          Replace: "#backLabel #label {\n  font-family:Avenir;\n  font-style:normal;\n  font-weight:normal;"
+
 # The following patch(es) are ported from oren64's patches
 
 Increase headlines font:
   - Enabled: no
   - Description: |
-      Increase the font size in My books, Activity, Bookstore...
-      See https://www.mobileread.com/forums/showpost.php?p=3520879&postcount=42
+      Increase the font-size of the tab header labels in My Books, Activity, Bookstore...
+      See https://www.mobileread.com/forums/showpost.php?p=3931942&postcount=183
   - FindZlib: "#tabContainer > N3TabItem"
   - ReplaceZlib:
       Find:    "#tabContainer > N3TabItem[qApp_deviceIsTrilogy=true] {\n  font-size: 16px;\n}"
@@ -484,6 +513,9 @@ Increase headlines font:
   - ReplaceZlib:
       Find:    "#tabContainer > N3TabItem[qApp_deviceIsDragon=true] {\n  font-size: 28px;\n}"
       Replace: "#tabContainer > N3TabItem[qApp_deviceIsDragon=true] {\n  font-size: 42px;\n}"
+  - ReplaceZlib:
+      Find:    "#tabContainer > N3TabItem[qApp_deviceIsStorm=true] {\n  font-size: 32px;\n}"
+      Replace: "#tabContainer > N3TabItem[qApp_deviceIsStorm=true] {\n  font-size: 46px;\n}"
   - ReplaceZlib:
       Find:    "#tabContainer > N3TabItem[qApp_deviceIsDaylight=true] {\n  font-size: 36px;\n}"
       Replace: "#tabContainer > N3TabItem[qApp_deviceIsDaylight=true] {\n  font-size: 50px;\n}"
