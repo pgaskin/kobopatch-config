@@ -1,5 +1,5 @@
-version: 4.20.14601
-in: src/kobo7-update-4.20.14601.zip
+version: 4.20.14622
+in: src/kobo7-update-4.20.14622.zip
 out: KoboRoot.tgz
 log: log.txt
 
@@ -22,7 +22,6 @@ overrides:
     Increase size of kepub chapter progress chart: yes
     Custom synopsis details line spacing: yes
     Remove forgot pin button from lock screen: yes
-    Change pop-up footnote font-family: yes
     Reduce new header/footer height: yes
     Reduce top/bottom page spacer: yes
   
@@ -31,13 +30,13 @@ overrides:
   src/libadobe.so.yaml:
 
   src/libnickel.so.1.0.0.yaml:
-#   Custom font sizes: yes
+    Custom font sizes: yes
     Enable advanced settings for all fonts: yes
     Custom Sleep/Power-off timeouts: yes
     Custom kepub default margins: yes
     Allow rotation on all devices: yes
     Both page turn buttons go next: yes
-    My 10 line spacing values: yes
+    My 24 line spacing values: yes
     Replace adobe page numbers toggle with invert screen: yes
     Always show confirmation dialog before upgrading: yes
     Remove beta features not supported text: yes

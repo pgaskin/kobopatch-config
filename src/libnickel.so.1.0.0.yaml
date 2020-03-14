@@ -5,18 +5,18 @@ Both page turn buttons go next:
   - Description: Make both page turn buttons on the Forma go next in the reader.
   # In ReadingView::keyPressEvent(QKeyEvent*):
   # force the possible branch to next page, never fall through to prev page.
-  - ReplaceBytes: {Offset: 0xB1260C, FindH: 28 B9, ReplaceH: 05 E0} # CBNZ R0, #0xE -> B #0xE
+  - ReplaceBytes: {Offset: 0xB13FFC, FindH: 28 B9, ReplaceH: 05 E0} # CBNZ R0, #0xE -> B #0xE
 
 Both page turn sides go next:
   - Enabled: no
   - Description: Make both page turn sides go next in the reader.
   # In ReadingView::processTap(TapGesture*):
   # nop the branch for checking if left-to-right (so it always runs the swap of back/forward)
-  - ReplaceBytesNOP: {Offset: 0xB19EAE, FindH: 18 B9}
+  - ReplaceBytesNOP: {Offset: 0xB1B89E, FindH: 18 B9}
   # where r3 = *(r7+0x18) (back) and r2 = *(r7+0x20) (forward), then they are stored in reverse,
   # instead of storing each one, just store forward (by changing the source register in the str
   # instruction)
-  - ReplaceBytes: {Offset: 0xB19EB4, FindH: 3B 62, ReplaceH: 3A 62}
+  - ReplaceBytes: {Offset: 0xB1B8A4, FindH: 3B 62, ReplaceH: 3A 62}
   # This patch could have also been done later on where the tap point is checked against different
   # QRects, but that's a lot more complicated due to the use of QHash s of pointers to functions.
 
@@ -27,12 +27,12 @@ Replace adobe page numbers toggle with invert screen:
       screen one.
   # in N3SettingsReadingView::N3SettingsReadingView(Widget):
   # change ReadingSettings::getShowAdobePageNumbers() to FeatureSettings::invertScreen()
-  - ReplaceBLX: {Offset: 0x938C68, Find: 0x4C4958, Replace: 0x4D1018}
+  - ReplaceBLX: {Offset: 0x93A3D0, Find: 0x4C5C7C, Replace: 0x4D237C}
   # in N3SettingsReadingController::showAdobePageNumbersToggled():
   # change ReadingSettings::getShowAdobePageNumbers() to FeatureSettings::invertScreen()
-  - ReplaceBLX: {Offset: 0x93464E, Find: 0x4C4958, Replace: 0x4D1018}
+  - ReplaceBLX: {Offset: 0x935DB6, Find: 0x4C5C7C, Replace: 0x4D237C}
   # and ReadingSettings::setShowAdobePageNumbers(bool) to FeatureSettings::setInvertScreen(bool)
-  - ReplaceBLX: {Offset: 0x93465A, Find: 0x4CA484, Replace: 0x4D06B8}
+  - ReplaceBLX: {Offset: 0x935DC2, Find: 0x4CB7A8, Replace: 0x4D1A10}
   # then change the text in the settings page
   - FindReplaceString: {Find: "Show Adobe EPUB page numbers", Replace: "Invert screen"}
 
@@ -42,9 +42,9 @@ Always show confirmation dialog before upgrading:
   - Description: This patch makes the confirmation dialog always show before upgrading.
   # In UpgradeManager::requestUpgradeConfirmation(UpgradeType, QString const&):
   # replace the check for if UpgradeType is optional to be always true (CMP r4, r4)
-  - ReplaceBytes: {Offset: 0xC17AA6, FindH: 01 2C, ReplaceH: A4 42}
+  - ReplaceBytes: {Offset: 0xC1AB76, FindH: 01 2C, ReplaceH: A4 42}
   # and replace the call to UpgradeManager::isSilent to be always false (MOV r0, #0x0)
-  - ReplaceBytes: {Offset: 0xC17ABA, FindBLX: 0x4CAE3C, ReplaceH: 4F F0 00 00}
+  - ReplaceBytes: {Offset: 0xC1AB8A, FindBLX: 0x4CC170, ReplaceH: 4F F0 00 00}
 
 Allow USB storage even when device locked:
   - Enabled: no
@@ -65,17 +65,17 @@ Hide browser from beta features:
   - Description: Hides the built-in browser from beta features.
   # In N3SettingsExtrasView::N3ExtrasView(QWidget*):
   # hide the browser by skipping over the branch to skip hiding it
-  - ReplaceBytesNOP: {Offset: 0xBB2784, FindH: 18 B1}
+  - ReplaceBytesNOP: {Offset: 0xBB46A4, FindH: 18 B1}
   # In SelectionMenuController::setupMainOptions():
   # always return true for isParentalControlEnabled:
-  - ReplaceBytes: {Offset: 0xAC5A16, FindBLX: 0x4C0A58, ReplaceH: 4F F0 01 00}
+  - ReplaceBytes: {Offset: 0xAC7406, FindBLX: 0x4C1D7C, ReplaceH: 4F F0 01 00}
 
 Remove beta features not supported text:
   - Enabled: no
   - Description: Does what it says to clear up the clutter.
   # In Ui_N3SettingsExtrasView::retranslateUi(QWidget*):
   # instead of setting the QLabel::setText(QString const&), QWidget::hide()
-  - ReplaceBLX: {Offset: 0xBB2E20, Find: 0x4BE9E8, Replace: 0x4BBD6C}
+  - ReplaceBLX: {Offset: 0xBB4D40, Find: 0x4BFD0C, Replace: 0x4BD090}
 
 Disable all tutorial dialogs:
   - Enabled: no
@@ -83,33 +83,33 @@ Disable all tutorial dialogs:
       Removes the annoying tutorials (and recurring dialogs). Note - I may
       have missed a few of them. If I have, just open an issue on GitHub or
       PM me (geek1011) on MobileRead, and I'll fix it.
-  # 0x4B555C is the offset of QVariant::toBool, which is called after getting
+  # 0x4B685C is the offset of QVariant::toBool, which is called after getting
   # the setting (of if it has/should show) as a QVariant. I am replacing this
   # method as opposed to replacing the return value of the function for 1. A
   # MOV instruction with an immediate (fixed) value is 4 long (rather than 2)
   # and 2. This is simpler to update as I only need to update the function
   # offset and the offset for each setting.
-  - ReplaceBytesAtSymbol: {Symbol: "DialogSettings::firstPurchaseCreditJitShown()",         Offset: 53, FindBLX: 0x4B555C, ReplaceH: 4F F0 01 00}
-  - ReplaceBytesAtSymbol: {Symbol: "DialogSettings::quickTurnDialogShown()",                Offset: 53, FindBLX: 0x4B555C, ReplaceH: 4F F0 01 00}
-  - ReplaceBytesAtSymbol: {Symbol: "DialogSettings::returningReaderDialogShown()",          Offset: 53, FindBLX: 0x4B555C, ReplaceH: 4F F0 01 00}
-  - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::koboLoveDialogShown()",            Offset: 53, FindBLX: 0x4B555C, ReplaceH: 4F F0 01 00}
-  - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::quickTourWidgetShown()",           Offset: 53, FindBLX: 0x4B555C, ReplaceH: 4F F0 01 00}
-  - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::overDriveFilterShown()",           Offset: 53, FindBLX: 0x4B555C, ReplaceH: 4F F0 01 00}
-  - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::wifiReminderDialogShown()",        Offset: 53, FindBLX: 0x4B555C, ReplaceH: 4F F0 01 00}
-  - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::readABookShown()",                 Offset: 53, FindBLX: 0x4B555C, ReplaceH: 4F F0 01 00}
-  - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::borrowDialogShown()",              Offset: 53, FindBLX: 0x4B555C, ReplaceH: 4F F0 01 00}
-  - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::quickTourShown()",                 Offset: 53, FindBLX: 0x4B555C, ReplaceH: 4F F0 01 00}
-  - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::libraryFTEShown()",                Offset: 53, FindBLX: 0x4B555C, ReplaceH: 4F F0 01 00}
-  - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::zoomFTEShown()",                   Offset: 53, FindBLX: 0x4B555C, ReplaceH: 4F F0 01 00}
-  - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::welcomeShown()",                   Offset: 53, FindBLX: 0x4B555C, ReplaceH: 4F F0 01 00}
-  - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::koboPlusPromoShown()",             Offset: 53, FindBLX: 0x4B555C, ReplaceH: 4F F0 01 00}
-  - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::syncWarningDialogShown()",         Offset: 53, FindBLX: 0x4B555C, ReplaceH: 4F F0 01 00}
-  - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::addedToMyWordsDialogShown()",      Offset: 53, FindBLX: 0x4B555C, ReplaceH: 4F F0 01 00}
-  - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::longPressDialogShown()",           Offset: 53, FindBLX: 0x4B555C, ReplaceH: 4F F0 01 00}
-  - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::swipeDialogShown()",               Offset: 53, FindBLX: 0x4B555C, ReplaceH: 4F F0 01 00}
-  - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::syncReminderDialogShown()",        Offset: 53, FindBLX: 0x4B555C, ReplaceH: 4F F0 01 00}
-  - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::eReaderBooksManagementFTEShown()", Offset: 53, FindBLX: 0x4B555C, ReplaceH: 4F F0 01 00}
-  - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::libraryCuratedListsDialogShown()", Offset: 53, FindBLX: 0x4B555C, ReplaceH: 4F F0 01 00}
+  - ReplaceBytesAtSymbol: {Symbol: "DialogSettings::firstPurchaseCreditJitShown()",         Offset: 53, FindBLX: 0x4B685C, ReplaceH: 4F F0 01 00}
+  - ReplaceBytesAtSymbol: {Symbol: "DialogSettings::quickTurnDialogShown()",                Offset: 53, FindBLX: 0x4B685C, ReplaceH: 4F F0 01 00}
+  - ReplaceBytesAtSymbol: {Symbol: "DialogSettings::returningReaderDialogShown()",          Offset: 53, FindBLX: 0x4B685C, ReplaceH: 4F F0 01 00}
+  - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::koboLoveDialogShown()",            Offset: 53, FindBLX: 0x4B685C, ReplaceH: 4F F0 01 00}
+  - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::quickTourWidgetShown()",           Offset: 53, FindBLX: 0x4B685C, ReplaceH: 4F F0 01 00}
+  - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::overDriveFilterShown()",           Offset: 53, FindBLX: 0x4B685C, ReplaceH: 4F F0 01 00}
+  - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::wifiReminderDialogShown()",        Offset: 53, FindBLX: 0x4B685C, ReplaceH: 4F F0 01 00}
+  - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::readABookShown()",                 Offset: 53, FindBLX: 0x4B685C, ReplaceH: 4F F0 01 00}
+  - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::borrowDialogShown()",              Offset: 53, FindBLX: 0x4B685C, ReplaceH: 4F F0 01 00}
+  - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::quickTourShown()",                 Offset: 53, FindBLX: 0x4B685C, ReplaceH: 4F F0 01 00}
+  - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::libraryFTEShown()",                Offset: 53, FindBLX: 0x4B685C, ReplaceH: 4F F0 01 00}
+  - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::zoomFTEShown()",                   Offset: 53, FindBLX: 0x4B685C, ReplaceH: 4F F0 01 00}
+  - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::welcomeShown()",                   Offset: 53, FindBLX: 0x4B685C, ReplaceH: 4F F0 01 00}
+  - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::koboPlusPromoShown()",             Offset: 53, FindBLX: 0x4B685C, ReplaceH: 4F F0 01 00}
+  - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::syncWarningDialogShown()",         Offset: 53, FindBLX: 0x4B685C, ReplaceH: 4F F0 01 00}
+  - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::addedToMyWordsDialogShown()",      Offset: 53, FindBLX: 0x4B685C, ReplaceH: 4F F0 01 00}
+  - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::longPressDialogShown()",           Offset: 53, FindBLX: 0x4B685C, ReplaceH: 4F F0 01 00}
+  - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::swipeDialogShown()",               Offset: 53, FindBLX: 0x4B685C, ReplaceH: 4F F0 01 00}
+  - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::syncReminderDialogShown()",        Offset: 53, FindBLX: 0x4B685C, ReplaceH: 4F F0 01 00}
+  - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::eReaderBooksManagementFTEShown()", Offset: 53, FindBLX: 0x4B685C, ReplaceH: 4F F0 01 00}
+  - ReplaceBytesAtSymbol: {Symbol: "ApplicationSettings::libraryCuratedListsDialogShown()", Offset: 53, FindBLX: 0x4B685C, ReplaceH: 4F F0 01 00}
 
 Remove recommendations (row1col2) from home screen:
   - Enabled: no
@@ -118,7 +118,7 @@ Remove recommendations (row1col2) from home screen:
       column shows in the top right of the home screen. This patch hides it.
   # in HomePageView::configureTopRight(HomePageWidgets):
   # always hide top-right widget:
-  - ReplaceBytesNOP: {Offset: 0x9D01AC, FindH: 58 B1}
+  - ReplaceBytesNOP: {Offset: 0x9D1914, FindH: 58 B1}
 
 Rename new home screen footer:
   - Enabled: no
@@ -160,15 +160,15 @@ Change Browse Kobo home screen link target - Activity:
   - Enabled: no
   - PatchGroup: Browse Kobo link target
   - Description: See the comment above.
-  - ReplaceBytes: {Offset: 0x9D3AFA, FindH: E8 F6 1F B7, ReplaceH: DF F6 A3 B1} # tail call to bx before ReadingLifeNavMixin::chooseActivity (sub_493e3c)
-  - ReplaceBLX:   {Offset: 0x9D34BA, Find:  0x4CE958,    Replace:  0x4C1D58}    # N3DeviceCharm::extrasName (Activity)
+  - ReplaceBytes: {Offset: 0x9D5262, FindH: E8 F6 FD B4, ReplaceH: DE F6 69 B7} # tail call to bx before ReadingLifeNavMixin::chooseActivity (sub_493e3c)
+  - ReplaceBLX:   {Offset: 0x9D4C22, Find:  0x4CFCB0,    Replace:  0x4C307C}    # N3DeviceCharm::extrasName (Activity)
 
 Change Browse Kobo home screen link target - Articles:
   - Enabled: no
   - PatchGroup: Browse Kobo link target
   - Description: See the comment above.
-  - ReplaceBytes: {Offset: 0x9D3AFA, FindH: E8 F6 1F B7, ReplaceH: 03 F7 79 B7} # tail call to bx before LibraryNavMixin::showPocketLibrary (sub_4b8150)
-  - ReplaceBLX:   {Offset: 0x9D34BA, Find: 0x4CE958,     Replace:  0x4DCE48}    # N3DeviceCharm::articlesSearchName (My Articles)
+  - ReplaceBytes: {Offset: 0x9D5262, FindH: E8 F6 FD B4, ReplaceH: 03 F7 7F B5} # tail call to bx before LibraryNavMixin::showPocketLibrary (sub_4b8150)
+  - ReplaceBLX:   {Offset: 0x9D4C22, Find:  0x4CFCB0,    Replace:  0x4DE1EC}    # N3DeviceCharm::articlesSearchName (My Articles)
 
 ###
 
@@ -203,11 +203,11 @@ Set visible SmartLink:
   #
   # in SmartLinkWidget::showRotationMessage, which is the only caller of ActivityManager::smartLinkGeneralMessage:
   # change the result of the call to ActivityManager::smartLinkGeneralMessage:
-  - ReplaceBytes: {Offset: 0x9DAE90, FindBLX: 0x4DF560, ReplaceH: 4F F0 04 00}
+  - ReplaceBytes: {Offset: 0x9DC5F8, FindBLX: 0x4E091C, ReplaceH: 4F F0 04 00}
   # set the new SmartLink to show (you can set this to your preference based on the
   # previous list, but it MUST be one of the above options, or you may need to
   # factory reset):
-  - ReplaceInt: {Offset: 0x9DAE92, Find: 4, Replace: 4}
+  - ReplaceInt: {Offset: 0x9DC5FA, Find: 4, Replace: 4}
 
 Only show Pocket SmartLink:
   - Enabled: no
@@ -215,7 +215,7 @@ Only show Pocket SmartLink:
   - Description: Only show the Pocket SmartLink on the home screen.
   # in SmartLinkWidget::showRotationMessage:
   # change the result of the call to ActivityManager::smartLinkGeneralMessage to 17 (0x11):
-  - ReplaceBytes: {Offset: 0x9DAE90, FindBLX: 0x4DF560, ReplaceH: 4F F0 11 00}
+  - ReplaceBytes: {Offset: 0x9DC5F8, FindBLX: 0x4E091C, ReplaceH: 4F F0 11 00}
   # replace the text:
   - FindReplaceString: {Find: "Catch up on the %n article(s) you added recently", Replace: "My Articles"}
 # - FindReplaceString: {Find: "Catch up on the %n article(s) you added recently", Replace: "My Articles (%n unread)"}
@@ -226,7 +226,7 @@ Only show stats SmartLink:
   - Description: Only show the stats SmartLink on the home screen.
   # in SmartLinkWidget::showRotationMessage:
   # change the result of the call to ActivityManager::smartLinkGeneralMessage to 15 (0x0F):
-  - ReplaceBytes: {Offset: 0x9DAE90, FindBLX: 0x4DF560, ReplaceH: 4F F0 0F 00}
+  - ReplaceBytes: {Offset: 0x9DC5F8, FindBLX: 0x4E091C, ReplaceH: 4F F0 0F 00}
 
 Never show Kobo Plus, wishlist, and points SmartLinks:
   - Enabled: no
@@ -236,11 +236,11 @@ Never show Kobo Plus, wishlist, and points SmartLinks:
   # Note: To update, first, update offsets of the smartlink vector append, then
   # find the one after putting the smartlink in r3.
   # NOP Kobo Plus (2):
-  - ReplaceBytesNOP: {Offset: 0x6912F2, FindBLX: 0x4B9B80}
+  - ReplaceBytesNOP: {Offset: 0x6929EA, FindBLX: 0x4BAE8C}
   # NOP wishlist (13):
-  - ReplaceBytesNOP: {Offset: 0x6912D8, FindBLX: 0x4B9B80}
+  - ReplaceBytesNOP: {Offset: 0x6929D0, FindBLX: 0x4BAE8C}
   # NOP super points (16):
-  - ReplaceBytesNOP: {Offset: 0x6917D4, FindBLX: 0x4B9B80}
+  - ReplaceBytesNOP: {Offset: 0x692ECC, FindBLX: 0x4BAE8C}
 
 ###
 
@@ -323,7 +323,7 @@ Increase TOC level indentation:
       The space indented Table of Contents levels are quite hard to see, as the
       difference is almost too small to easily notice.
   # Shift by 2 instead of 1 (multiply level by 4 instead of 2).
-  - ReplaceBytes: {Offset: 0x96CA02, FindH: 42 00, ReplaceH: 82 00}
+  - ReplaceBytes: {Offset: 0x96E16A, FindH: 42 00, ReplaceH: 82 00}
 
 Increase TOC level indentation and fix extra indentation bug:
   - Enabled: no
@@ -332,7 +332,7 @@ Increase TOC level indentation and fix extra indentation bug:
       The space indented Table of Contents levels are quite hard to see, as the
       difference is almost too small to easily notice. In addition, this fixes
       the bug where all TOC entries are indented by 1 level extra.
-  - BaseAddress: 0x96C9FE
+  - BaseAddress: 0x96E166
   # Clear out existing instructions with NOPs
   - ReplaceBytes: {Offset: 0, FindH: 07 F1 0C 0B, ReplaceH: 00 20 00 20} # put string address in fp
   - ReplaceBytes: {Offset: 4, FindH: 42 00, ReplaceH: 00 20}             # shift level by 1 (multiply by 2) into r2
@@ -352,7 +352,7 @@ Allow showing info panel on random screensaver:
       allows showing the info panel even when using a random screensaver image
       from .kobo/screensaver (note that full-screen covers needs to be enabled
       for the screensaver to show).
-  - ReplaceBytesNOP: {Offset: 0xB07F38, FindBLX: 0x4EA30C}
+  - ReplaceBytesNOP: {Offset: 0xB09928, FindBLX: 0x4EB6F0}
 
 Remove title from reading header/footer:
   - Enabled: no
@@ -371,8 +371,8 @@ Remove title from reading header/footer:
   # We'll patch this in a slightly hacky and inefficient, but simple and easy-to-update
   # way by replacing the first QString::append (the dash) with a QString::resize
   # to zero (I would have done a QString::clear, but that symbol isn't imported):
-  - ReplaceBytes: {Offset: 0xC576CC, FindH: F9 68, ReplaceH: 00 21} # replace LDR r1, [...] with MOV r1, #0 (the LDR doesn't matter, but will need to be updated)
-  - ReplaceBLX: {Offset: 0xC576D0, Find: 0x4E760C, Replace: 0x4C5BCC}
+  - ReplaceBytes: {Offset: 0xC5A7AC, FindH: F9 68, ReplaceH: 00 21} # replace LDR r1, [...] with MOV r1, #0 (the LDR doesn't matter, but will need to be updated)
+  - ReplaceBLX: {Offset: 0xC5A7B0, Find: 0x4E89F4, Replace: 0x4C6EF0}
 
 # Prevent Kobo from scanning dotfiles/folders (since 4.17.13651): See https://www.mobileread.com/forums/showthread.php?t=323083.
 
@@ -435,13 +435,13 @@ Allow rotation on all devices:
       Unlike only the DeveloperSettings ForceAllowLandscape option, this patch
       also makes the rotation icon show on the new reader as well.
   # Always return true for ForceAllowLandscape:
-  - ReplaceBytes: {Offset: 0x728EB6, FindBLX: 0x4B555C, ReplaceH: 4F F0 01 00}
+  - ReplaceBytes: {Offset: 0x72A5AE, FindBLX: 0x4B685C, ReplaceH: 4F F0 01 00}
   # In ReadingMenuView::ReadingMenuView, replace the value of Device::hasOrientationSensor,
   # which is passed to a function to hide/show the rotate icon:
-  - ReplaceBytes: {Offset: 0xB3727C, FindBLX: 0x4CCD90, ReplaceH: 4F F0 01 00}
+  - ReplaceBytes: {Offset: 0xB38C6C, FindBLX: 0x4CE0E8, ReplaceH: 4F F0 01 00}
   # Also fix sizing of popup by doing the same in RotatePopup::RotatePopup, but
   # note that this will make the Automatic option show too (and do nothing):
-  - ReplaceBytes: {Offset: 0xB53096, FindBLX: 0x4CCD90, ReplaceH: 4F F0 01 00}
+  - ReplaceBytes: {Offset: 0xB54A86, FindBLX: 0x4CE0E8, ReplaceH: 4F F0 01 00}
 
 Don't uppercase header/footer text:
   - Enabled: no
@@ -450,9 +450,9 @@ Don't uppercase header/footer text:
   # In ReadingView::getChapterTitle (header), replace QString::toUpper call with
   # QString::trimmed (to copy the string, and not need to add a mov instruction
   # and NOP the destructor):
-  - ReplaceBLX: {Offset: 0xB12AE2, Find: 0x4D461C, Replace: 0x4E6B00}
+  - ReplaceBLX: {Offset: 0xB144D2, Find: 0x4D5980, Replace: 0x4E7EF8}
   # In ReadingView::updateFooter, do the same:
-  - ReplaceBLX: {Offset: 0xB15142, Find: 0x4D461C, Replace: 0x4E6B00}
+  - ReplaceBLX: {Offset: 0xB16B32, Find: 0x4D5980, Replace: 0x4E7EF8}
   # Page number text
   - FindReplaceString: {Find: "%1 OF %2", Replace: "%1 of %2"}
 
@@ -466,8 +466,8 @@ Don't uppercase header/footer text and change page number text:
   - Enabled: no
   - Description: Combines the previous two patches.
   - PatchGroup: Header/footer page number text
-  - ReplaceBLX: {Offset: 0xB12AE2, Find: 0x4D461C, Replace: 0x4E6B00}
-  - ReplaceBLX: {Offset: 0xB15142, Find: 0x4D461C, Replace: 0x4E6B00}
+  - ReplaceBLX: {Offset: 0xB144D2, Find: 0x4D5980, Replace: 0x4E7EF8}
+  - ReplaceBLX: {Offset: 0xB16B32, Find: 0x4D5980, Replace: 0x4E7EF8}
   - FindReplaceString: {Find: "%1 OF %2", Replace: "%1 / %2"}
 
 Swap reading header/footer:
@@ -487,12 +487,12 @@ Swap reading header/footer:
   #  - ReadingView->footer - 0x1C
   #
   # Header: ReadingView::updateProgressHeader:
-  - ReplaceBytes: {Offset: 0xB10D3C, FindH: 00 69, ReplaceH: C0 69} # ldr r0, [r0, #0x10] ->  ldr r0, [r0, #0x1C]
+  - ReplaceBytes: {Offset: 0xB1272C, FindH: 00 69, ReplaceH: C0 69} # ldr r0, [r0, #0x10] ->  ldr r0, [r0, #0x1C]
   # Footer: ReadingView::updatePercentageFooter, ReadingView::updatePageFooter:
-  - ReplaceBytes: {Offset: 0xB11A42, FindH: C0 69, ReplaceH: 00 69} # ldr r0, [r0, #0x1C] ->  ldr r0, [r0, #0x10]
-  - ReplaceBytes: {Offset: 0xB150E6, FindH: C0 69, ReplaceH: 00 69} # ldr r0, [r0, #0x1C] ->  ldr r0, [r0, #0x10]
+  - ReplaceBytes: {Offset: 0xB13432, FindH: C0 69, ReplaceH: 00 69} # ldr r0, [r0, #0x1C] ->  ldr r0, [r0, #0x10]
+  - ReplaceBytes: {Offset: 0xB16AD6, FindH: C0 69, ReplaceH: 00 69} # ldr r0, [r0, #0x1C] ->  ldr r0, [r0, #0x10]
   # Footer: ReadingView::updateTimeFooter (this one is slightly different):
-  - ReplaceBytes: {Offset: 0xB14F84, FindH: D3 F8 1C 90, ReplaceH: D3 F8 10 90} # ldr.w sb, [r3, #0x1C] -> ldr.w sb, [r3, #0x10]
+  - ReplaceBytes: {Offset: 0xB16974, FindH: D3 F8 1C 90, ReplaceH: D3 F8 10 90} # ldr.w sb, [r3, #0x1C] -> ldr.w sb, [r3, #0x10]
 
 Enable advanced settings for all fonts:
   # rewritten and simplified from scratch by geek1011 for 4.19.14123
@@ -503,11 +503,11 @@ Enable advanced settings for all fonts:
     # In AdvancedFontSettingsController::loadView (which is used in the fonts
     # dropdown in the advanced font settings dialog):
     # use setupDropdown instead of setupMonotypeDropdown to show all fonts
-  - ReplaceBLX: {Offset: 0x92EBF0, Find: 0x4C518C, Replace: 0x4D7ECC} # note: the function sigs match (they're both static and take a TouchDropdown and a QString)
+  - ReplaceBLX: {Offset: 0x930358, Find: 0x4C64B0, Replace: 0x4D9240} # note: the function sigs match (they're both static and take a TouchDropdown and a QString)
     # In ReadingMenuFontSettingsController::setupAdvancedOption (which is used
     # in the font panel):
     # always return true for N3FontTypeUtil::isMonotypeFont
-  - ReplaceBytesAtSymbol: {Symbol: "ReadingMenuFontSettingsController::setupAdvancedOption(QString const&)", Offset: 111, FindBLX: 0x4C2DD0, ReplaceH: 4F F0 01 00}
+  - ReplaceBytesAtSymbol: {Symbol: "ReadingMenuFontSettingsController::setupAdvancedOption(QString const&)", Offset: 111, FindBLX: 0x4C40F4, ReplaceH: 4F F0 01 00}
 
 Customize ComfortLight settings:
   - Enabled: no
@@ -527,21 +527,21 @@ Customize ComfortLight settings:
   #
   # Change the initial hour / first bedtime dropdown item passed to the QTime
   # constructor (mov r1, #21):
-  - ReplaceInt: {Offset: 0xA9047E, Find: 21, Replace: 17} # 21:00 (9PM) -> 17:00 (5PM)
+  - ReplaceInt: {Offset: 0xA91E2E, Find: 21, Replace: 17} # 21:00 (9PM) -> 17:00 (5PM)
   #
   # Optional: Change the increment passed to QTime::addSecs (you need to use an
   # ARM assembler to change this value):
-  - ReplaceBytes: {Offset: 0xA904E2, FindH: 4F F4 E1 61, ReplaceH: 4F F4 E1 61} # mov.w r1, #1800: 30m
+  - ReplaceBytes: {Offset: 0xA91E92, FindH: 4F F4 E1 61, ReplaceH: 4F F4 E1 61} # mov.w r1, #1800: 30m
   #
   # Change the number of increments / bedtime dropdown options (start at the
   # initial time, add this number -1 more items with the above increment each
   # time) (movs r5, #13):
-  - ReplaceInt: {Offset: 0xA904B6, Find: 13, Replace: 21} # 13 [9PM..3AM]+30m -> 21 [5PM..3AM]+30m
+  - ReplaceInt: {Offset: 0xA91E66, Find: 13, Replace: 21} # 13 [9PM..3AM]+30m -> 21 [5PM..3AM]+30m
   #
   # Change the number of pre-allocated elements (I don't think this is actually
   # required, as Qt will realloc as necessary, but we might as well do this just
   # in case) (mov r1, #21):
-  - ReplaceInt: {Offset: 0xA90720, Find: 13, Replace: 21} # same as prev replacement
+  - ReplaceInt: {Offset: 0xA920D0, Find: 13, Replace: 21} # same as prev replacement
   ##
   # The actual color adjustment is done in BedtimeManager::adjustTemperature.
   # The color temperature is based on the current time, the bedtime, the hardcoded
@@ -551,59 +551,59 @@ Customize ComfortLight settings:
   # Change the sunset time (the transition to a warmer temperature starts here
   # and transitions until the bedtime chosen) (this should be 1-3 hours before
   # the minimum bedtime from the first replacement above) (mov r1, #18):
-  - ReplaceInt: {Offset: 0xA88F72, Find: 18, Replace: 16} # 18:00 (9PM-3=6PM) -> 16:00 (5PM-1=4PM)
+  - ReplaceInt: {Offset: 0xA8A922, Find: 18, Replace: 16} # 18:00 (9PM-3=6PM) -> 16:00 (5PM-1=4PM)
   #
   # Change the time for the sunset timer to fire at (this is passed to a QTime
   # constructor which is passed to PowerTime::fireAt) (mov r1, #18):
-  - ReplaceInt: {Offset: 0xA8908A, Find: 18, Replace: 16} # should match the sunset time above
+  - ReplaceInt: {Offset: 0xA8AA3A, Find: 18, Replace: 16} # should match the sunset time above
   #
   # Optional: Change the sunrise start time (the transition back to a cooler
   # temperature starts here) (this should be sometime after the last bedtime,
   # but before the sunset time) (mov r1, #5):
-  - ReplaceInt: {Offset: 0xA88F94, Find: 5, Replace: 5} # 5AM
+  - ReplaceInt: {Offset: 0xA8A944, Find: 5, Replace: 5} # 5AM
   #
   # Optional: Change the sunrise end time (the transition back to a cooler
   # temperature ends here) (this should be 1-3 hours after the sunrise start but
   # before the sunset time or bad things will happen with negative values) (mov r1, #7):
-  - ReplaceInt: {Offset: 0xA88F5E, Find: 7, Replace: 7} # 5AM+2=7AM
+  - ReplaceInt: {Offset: 0xA8A90E, Find: 7, Replace: 7} # 5AM+2=7AM
 
 # The following patches allow you to enable a config file option with a patch.
 
 FeatureSettings - BookSpecificStats:
   - Enabled: no
   - Description: Adds an option to view stats for a specific book to the book menu.
-  - ReplaceBytesAtSymbol: {Symbol: "FeatureSettings::bookSpecificStatsEnabled()", Offset: 53, FindBLX: 0x4B555C, ReplaceH: 4F F0 01 00}
+  - ReplaceBytesAtSymbol: {Symbol: "FeatureSettings::bookSpecificStatsEnabled()", Offset: 53, FindBLX: 0x4B685C, ReplaceH: 4F F0 01 00}
 
 FeatureSettings - ShowFacebookShare:
   - Enabled: no
   - Description: Re-enables the Facebook share option in menus.
-  - ReplaceBytesAtSymbol: {Symbol: "FeatureSettings::showFacebookShare()", Offset: 53, FindBLX: 0x4B555C, ReplaceH: 4F F0 01 00}
+  - ReplaceBytesAtSymbol: {Symbol: "FeatureSettings::showFacebookShare()", Offset: 53, FindBLX: 0x4B685C, ReplaceH: 4F F0 01 00}
 
 FeatureSettings - FullScreenBrowser:
   - Enabled: no
   - Description: Makes the browser fullscreen (note that there is no way out except for rebooting).
-  - ReplaceBytesAtSymbol: {Symbol: "FeatureSettings::fullScreenBrowser()", Offset: 53, FindBLX: 0x4B555C, ReplaceH: 4F F0 01 00}
+  - ReplaceBytesAtSymbol: {Symbol: "FeatureSettings::fullScreenBrowser()", Offset: 53, FindBLX: 0x4B685C, ReplaceH: 4F F0 01 00}
 
 FeatureSettings - MyWords:
   - Enabled: no
   - Description: Enables the My Words tab of the Activity screen.
-  - ReplaceBytesAtSymbol: {Symbol: "FeatureSettings::myWords()", Offset: 53, FindBLX: 0x4B555C, ReplaceH: 4F F0 01 00}
+  - ReplaceBytesAtSymbol: {Symbol: "FeatureSettings::myWords()", Offset: 53, FindBLX: 0x4B685C, ReplaceH: 4F F0 01 00}
 
 FeatureSettings - ExportHighlights:
   - Enabled: no
   - Description: Add an option to export highlights to the book menu.
-  - ReplaceBytesAtSymbol: {Symbol: "FeatureSettings::exportHighlightsEnabled()", Offset: 53, FindBLX: 0x4B555C, ReplaceH: 4F F0 01 00}
+  - ReplaceBytesAtSymbol: {Symbol: "FeatureSettings::exportHighlightsEnabled()", Offset: 53, FindBLX: 0x4B685C, ReplaceH: 4F F0 01 00}
 
 DeveloperSettings - AutoUsbGadget:
   - Enabled: no
   - Description: Automatically enable USB Storage mode when connected.
-  - ReplaceBytes: {Offset: 0x728F56, FindBLX: 0x4B555C, ReplaceH: 4F F0 01 00}
+  - ReplaceBytes: {Offset: 0x72A64E, FindBLX: 0x4B685C, ReplaceH: 4F F0 01 00}
 
 PowerSettings - UnlockEnabled:
   - Enabled: no
   - Description: Disables/enables the slide to unlock feature.
-  - ReplaceBytes: {Offset: 0x732D7E, FindBLX: 0x4B555C, ReplaceH: 4F F0 00 00} # disable
-# - ReplaceBytes: {Offset: 0x732D7E, FindBLX: 0x4B555C, ReplaceH: 4F F0 01 00} # enable
+  - ReplaceBytes: {Offset: 0x7344FE, FindBLX: 0x4B685C, ReplaceH: 4F F0 00 00} # disable
+# - ReplaceBytes: {Offset: 0x7344FE, FindBLX: 0x4B685C, ReplaceH: 4F F0 01 00} # enable
 
 # The following patch(es) were made by GeoffR, and most are updated by geek1011
 
@@ -623,11 +623,11 @@ My 10 line spacing values:
       much narrower spacing values to be set.
     # Bypass code-constructed values 1.0, 1.2, 1.5, 2.0, 3.0
     # These are all the appends not loaded using adr.
-  - ReplaceBytesNOP: {Offset: 0x735294, FindBLX: 0x4D0368}
-  - ReplaceBytesNOP: {Offset: 0x7352EA, FindBLX: 0x4D0368}
-  - ReplaceBytesNOP: {Offset: 0x735314, FindBLX: 0x4D0368}
-  - ReplaceBytesNOP: {Offset: 0x735350, FindBLX: 0x4D0368}
-  - ReplaceBytesNOP: {Offset: 0x7353B6, FindBLX: 0x4D0368}
+  - ReplaceBytesNOP: {Offset: 0x736A14, FindBLX: 0x4D16C0}
+  - ReplaceBytesNOP: {Offset: 0x736A6A, FindBLX: 0x4D16C0}
+  - ReplaceBytesNOP: {Offset: 0x736A94, FindBLX: 0x4D16C0}
+  - ReplaceBytesNOP: {Offset: 0x736AD0, FindBLX: 0x4D16C0}
+  - ReplaceBytesNOP: {Offset: 0x736B36, FindBLX: 0x4D16C0}
     # 10 values for replacement, change these replace_float values to suit:
     # Find the prologue for the values + first subtraction (has been unique in
     # every version so far, and is near impossible to change and fail silently):
@@ -643,9 +643,110 @@ My 10 line spacing values:
   - ReplaceFloat: {Offset: 0x40,  Find: 2.6,  Replace: 1.05}
   - ReplaceFloat: {Offset: 0x48,  Find: 2.8,  Replace: 1.1}
 
-# MISSING (geek1011): My 24 line spacing values
-#  Something's wrong with this patch, and I can't figure out exactly what. I'm
-#  going to take another attempt at updating it later.
+My 24 line spacing values:
+  - Enabled: no
+  - PatchGroup: Line spacing values alternatives
+  - Description: |
+      This patch changes the values on the line spacing adjustment slider,
+      increasing the number of spacing options from 15 to 24, and allowing
+      much narrower spacing values to be set.
+    ## UPDATING: replace address for QList<double>::append(), then see notes below
+    # basically rewrite the entire code starting where values are added:
+    # save r5, initialise loop counter
+  - BaseAddress: 0x736A14 # starting at first QList<double>::append() ## UPDATING: +0 from orig instruction
+  - ReplaceBytes: {Offset:  0, FindBLX: 0x4D16C0, ReplaceH: A9 46 00 25}              # mov sb, r5       mov r5, #0
+  - ReplaceBytes: {Offset:  4, FindH: 6D A3, ReplaceH: ED 00}                         # lsls r5, r5, #3
+    # loop to load 14 vals from new table
+  - ReplaceBytes: {Offset:  6, FindH: D3 E9 00 23 07 F1, ReplaceH: 20 46 04 A1 29 44} # mov r0, r4   adr r1, #0x10  add r1, r5
+  - ReplaceBytes: {Offset: 12, FindH: 80 01 20 46,       ReplaceH: 9A F5 4E EE}       # blx QList<double>::append() ## UPDATING: assemble blx
+  -               ReplaceBLX: {Offset: 12, Find: 0x4D16C0, Replace: 0x4D16C0}         # just to double-check (will error if the BLX is incorrect)
+  - ReplaceBytes: {Offset: 16, FindH: 61 E9 1C 23,       ReplaceH: 08 35 70 2D}       # add r5, #8   cmp r5, 112 ## NOTE: 14*8=112
+  - ReplaceBytes: {Offset: 20, FindBLX: 0x4D16C0,        ReplaceH: 00 00 00 00}       # clear out the BLX in the way of the next two replacements
+  - ReplaceBytes: {Offset: 20, FindH: 00 00,             ReplaceH: F7 D1}             # bne #-10
+    # jump over new table
+  - ReplaceBytes: {Offset: 22, FindH: 00 00 6A A3 D3 E9, ReplaceH: 7C E0 00 BF 00 BF} # b #0xFC
+    # new table: 14 8-aligned doubles
+  - BaseAddress: 0x736A30 # right after previous instruction ## UPDATING: +2 from orig instruction
+  - ReplaceBytes: {Offset:  12, FindBLX: 0x4D16C0, ReplaceH: 00 00 00 00} # first, clear out the BLXs in the way
+  - ReplaceBytes: {Offset:  32, FindBLX: 0x4D16C0, ReplaceH: 00 00 00 00}
+  - ReplaceBytes: {Offset:  58, FindBLX: 0x4D16C0, ReplaceH: 00 00 00 00}
+  - ReplaceBytes: {Offset:  78, FindBLX: 0x4D16C0, ReplaceH: 00 00 00 00}
+  - ReplaceBytes: {Offset: 100, FindBLX: 0x4D16C0, ReplaceH: 00 00 00 00}
+  - ReplaceBytes: {Offset:   0, FindH: 00 23 07 F1 80 01 20 46, ReplaceH: 00 00 00 00 00 00 F0 3F} # table of 1.0f values, to be replaced later
+  - ReplaceBytes: {Offset:   8, FindH: 61 E9 1A 23 00 00 00 00, ReplaceH: 00 00 00 00 00 00 F0 3F}
+  - ReplaceBytes: {Offset:  16, FindH: 67 A3 D3 E9 00 23 07 F1, ReplaceH: 00 00 00 00 00 00 F0 3F}
+  - ReplaceBytes: {Offset:  24, FindH: 80 01 20 46 61 E9 18 23, ReplaceH: 00 00 00 00 00 00 F0 3F}
+  - ReplaceBytes: {Offset:  32, FindH: 00 00 00 00 43 F2 33 33, ReplaceH: 00 00 00 00 00 00 F0 3F}
+  - ReplaceBytes: {Offset:  40, FindH: 4F F0 33 32 C3 F6 F3 73, ReplaceH: 00 00 00 00 00 00 F0 3F}
+  - ReplaceBytes: {Offset:  48, FindH: 07 F1 80 01 20 46 61 E9, ReplaceH: 00 00 00 00 00 00 F0 3F}
+  - ReplaceBytes: {Offset:  56, FindH: 16 23 00 00 00 00 5E A3, ReplaceH: 00 00 00 00 00 00 F0 3F}
+  - ReplaceBytes: {Offset:  64, FindH: D3 E9 00 23 07 F1 80 01, ReplaceH: 00 00 00 00 00 00 F0 3F}
+  - ReplaceBytes: {Offset:  72, FindH: 20 46 61 E9 14 23 00 00, ReplaceH: 00 00 00 00 00 00 F0 3F}
+  - ReplaceBytes: {Offset:  80, FindH: 00 00 00 23 00 22 C3 F6, ReplaceH: 00 00 00 00 00 00 F0 3F}
+  - ReplaceBytes: {Offset:  88, FindH: F8 73 07 F1 80 01 20 46, ReplaceH: 00 00 00 00 00 00 F0 3F}
+  - ReplaceBytes: {Offset:  96, FindH: 61 E9 12 23 00 00 00 00, ReplaceH: 00 00 00 00 00 00 F0 3F}
+  - ReplaceBytes: {Offset: 104, FindH: 55 A3 D3 E9 00 23 07 F1, ReplaceH: 00 00 00 00 00 00 F0 3F}
+    # jump target after table
+  - BaseAddress: 0x736B24 ## UPDATING: +0 from orig instruction
+    # initialise loop counter
+  - ReplaceBytes: {Offset:  0, FindH: 00 23 00 22,       ReplaceH: 00 BF 00 25}       # nop   movs r5, #0
+    # loop to load 10 vals from old table
+  - ReplaceBytes: {Offset:  4, FindH: C4 F2 08 03 07 F1, ReplaceH: 20 46 29 A1 29 44} # mov r0, r4   adr r1, #0xA4   add r1, r5 ## NOTE: adr r1, #0xA4 sets r1 to the beginning of the old table
+  - ReplaceBytes: {Offset: 10, FindH: 80 01 20 46,       ReplaceH: 9A F5 C8 ED}       # blx QList<double>::append() ## UPDATING: assemble blx
+  -               ReplaceBLX: {Offset: 10, Find: 0x4D16C0, Replace: 0x4D16C0}         # just to double-check (will error if the BLX is incorrect)
+  - ReplaceBytes: {Offset: 18, FindBLX: 0x4D16C0,        ReplaceH: 00 00 00 00}       # clear out the BLX in the way of the next two replacements
+  - ReplaceBytes: {Offset: 14, FindH: 61 E9 02 23 00 00, ReplaceH: 08 35 50 2D F7 D1} # adds r5, #8   cmp r5, #80   bne #-10 ## NOTE: 8*10=80
+    # restore r5
+  - ReplaceBytes: {Offset: 20, FindH: 00 00,             ReplaceH: 4D 46}             # mov r5, sb
+    # finished replacements
+  - BaseAddress: 0
+    #
+    # Replacement value: the number of initial line spacing values to exclude from
+    # the line spacing slider; minimum 0, maximum 13. E.g. 9 will result in a
+    # slider with 15 positions, starting from the 10th replace_float value below.
+  - ReplaceInt: {Offset: 0x736A16, Find: 0, Replace: 0} # the value from the MOV instruction at the beginning of this patch ## UPDATING: +2 from orig instruction
+    # 24 replacement line spacing values: change these replace_float values to suit
+    # your device and preferences:
+  - BaseAddress: 0x736A30 # beginning of new table from above ## UPDATING: +2 from orig instruction
+  - ReplaceFloat: {Offset:   0, Find: 1.0, Replace: 0.75}
+  - ReplaceFloat: {Offset:   8, Find: 1.0, Replace: 0.78}
+  - ReplaceFloat: {Offset:  16, Find: 1.0, Replace: 0.8}
+  - ReplaceFloat: {Offset:  24, Find: 1.0, Replace: 0.82}
+  - ReplaceFloat: {Offset:  32, Find: 1.0, Replace: 0.84}
+  - ReplaceFloat: {Offset:  40, Find: 1.0, Replace: 0.86}
+  - ReplaceFloat: {Offset:  48, Find: 1.0, Replace: 0.88}
+  - ReplaceFloat: {Offset:  56, Find: 1.0, Replace: 0.9}
+  - ReplaceFloat: {Offset:  64, Find: 1.0, Replace: 0.92}
+  - ReplaceFloat: {Offset:  72, Find: 1.0, Replace: 0.94}
+  - ReplaceFloat: {Offset:  80, Find: 1.0, Replace: 0.96}
+  - ReplaceFloat: {Offset:  88, Find: 1.0, Replace: 0.98}
+  - ReplaceFloat: {Offset:  96, Find: 1.0, Replace: 1.0}
+  - ReplaceFloat: {Offset: 104, Find: 1.0, Replace: 1.02}
+  - FindBaseAddressHex: CDCC CCCC CCCC F03F 1F85 # beginning of old table
+  - ReplaceFloat: {Offset:  0, Find: 1.05, Replace: 1.05}
+  - ReplaceFloat: {Offset:  8, Find: 1.07, Replace: 1.07}
+  - ReplaceFloat: {Offset: 16, Find: 1.1,  Replace: 1.1}
+  - ReplaceFloat: {Offset: 24, Find: 1.35, Replace: 1.15}
+  - ReplaceFloat: {Offset: 32, Find: 1.7,  Replace: 1.2}
+  - ReplaceFloat: {Offset: 40, Find: 1.8,  Replace: 1.25}
+  - ReplaceFloat: {Offset: 48, Find: 2.2,  Replace: 1.3}
+  - ReplaceFloat: {Offset: 56, Find: 2.4,  Replace: 1.35}
+  - ReplaceFloat: {Offset: 64, Find: 2.6,  Replace: 1.4}
+  - ReplaceFloat: {Offset: 72, Find: 2.8,  Replace: 1.5}
+    # The first 14 replace_float values above should allow the line spacing to be
+    # adjusted in increments of one pixel when using a medium sized font on a high
+    # resolution device. If you use a smaller font size and/or a lower resolution
+    # device you might find that increasing the slider one step at a time doesn't
+    # always result in a line spacing increase at each step. In that case, you
+    # might want to use replacement values that are not quite so close together.
+    #
+    # For example: (I use these values on my 758x1024 Glo)
+    #
+    #  0.7 0.725 0.75 0.775 0.8 0.825 0.85 0.875 0.9 0.925 0.95 0.975 1.0 1.025 ...
+    #
+    # or: (these might better suit the 600x800 Touch)
+    #
+    #  0.6 0.633 0.667 0.7 0.733 0.767 0.8 0.833 0.867 9.0 9.33 9.67 1.0 1.025 ...
 
 Custom left & right margins:
   - Enabled: no
@@ -696,19 +797,19 @@ Custom font sizes:
   #    the Device::is* calls.
   #
   # Initial font size:
-  - ReplaceInt: {Offset: 0x932E4C, Find: 18, Replace: 18} # AuraOne/Forma
-  - ReplaceInt: {Offset: 0x932CE0, Find: 14, Replace: 14} # GloHD/ClaraHD/Libra
-  - ReplaceInt: {Offset: 0x932E34, Find: 12, Replace: 12} # Others
+  - ReplaceInt: {Offset: 0x9345B4, Find: 18, Replace: 18} # AuraOne/Forma
+  - ReplaceInt: {Offset: 0x934448, Find: 14, Replace: 14} # GloHD/ClaraHD/Libra
+  - ReplaceInt: {Offset: 0x93459C, Find: 12, Replace: 12} # Others
   # Increment:
-  - ReplaceInt: {Offset: 0x932D08, Find: 21, Replace: 43} # Add font sizes in increments of 1 until this size exceeded}
-  - ReplaceInt: {Offset: 0x932D10, Find: 22, Replace: 44} # Continue from this font size}
-  - ReplaceInt: {Offset: 0x932DB0, Find: 49, Replace: 67} # Add font sizes in increments of 2 until this size exceeded}
-  - ReplaceInt: {Offset: 0x932DB6, Find: 50, Replace: 68} # Continue from this font size}
+  - ReplaceInt: {Offset: 0x934470, Find: 21, Replace: 43} # Add font sizes in increments of 1 until this size exceeded}
+  - ReplaceInt: {Offset: 0x934478, Find: 22, Replace: 44} # Continue from this font size}
+  - ReplaceInt: {Offset: 0x934518, Find: 49, Replace: 67} # Add font sizes in increments of 2 until this size exceeded}
+  - ReplaceInt: {Offset: 0x93451E, Find: 50, Replace: 68} # Continue from this font size}
   # Now increment by +4 until final font size:
-  - ReplaceInt: {Offset: 0x932E50, Find: 195, Replace: 132} # AuraOne/Forma
-  - ReplaceInt: {Offset: 0x932CF0, Find: 150, Replace: 108} # AuraHD/H2O/GloHD/ClaraHD/Libra
-  - ReplaceInt: {Offset: 0x932E6E, Find: 122, Replace: 88}  # Glo/Aura
-  - ReplaceInt: {Offset: 0x932E6A, Find: 90,  Replace: 80}  # Touch/Mini
+  - ReplaceInt: {Offset: 0x9345B8, Find: 195, Replace: 132} # AuraOne/Forma
+  - ReplaceInt: {Offset: 0x934458, Find: 150, Replace: 108} # AuraHD/H2O/GloHD/ClaraHD/Libra
+  - ReplaceInt: {Offset: 0x9345D6, Find: 122, Replace: 88}  # Glo/Aura
+  - ReplaceInt: {Offset: 0x9345D2, Find: 90,  Replace: 80}  # Touch/Mini
 
 ePub fixed top/bottom margins:
   - Enabled: no
@@ -822,8 +923,8 @@ Set KePub hyphenation:
       will always be turned on, regardless of justification button setting.
       
       (The publisher can still turn hyphenation off/on in the book's stylesheet.)
-  - ReplaceBytes: {Offset: 0xB2077A, FindBLX: 0x4D9BC8, ReplaceH: 01 20 01 20} # Alternative 1: Always turn KePub hyphenation on
-# - ReplaceBytes: {Offset: 0xB2077A, FindBLX: 0x4D9BC8, ReplaceH: 00 20 00 20} # Alternative 2: Never turn KePub hyphenation on
+  - ReplaceBytes: {Offset: 0xB2216A, FindBLX: 0x4DAF48, ReplaceH: 01 20 01 20} # Alternative 1: Always turn KePub hyphenation on
+# - ReplaceBytes: {Offset: 0xB2216A, FindBLX: 0x4DAF48, ReplaceH: 00 20 00 20} # Alternative 2: Never turn KePub hyphenation on
 
 Force user line spacing in KePubs:
   - Enabled: no
@@ -990,35 +1091,23 @@ KePub stylesheet additions:
     # Replacement value: CSS string of exactly 44 characters in length:
     #
     # Example 1: Make full justification the default:
-# - ReplaceString: {Offset: 467, Find: "/******************************************/", Replace: "body{text-align:justify                    }", MustMatchLength: yes}
+# - FindReplaceString: {Find: "/******************************************/", Replace: "body{text-align:justify                    }", MustMatchLength: yes}
     #
     # Example 2: text-rendering:optimizeSpeed: Disables kerning, but fixes some
     # rendering problems that affect fully justified text.
-# - ReplaceString: {Offset: 467, Find: "/******************************************/", Replace: "body{text-rendering:optimizeSpeed          }", MustMatchLength: yes}
+# - FindReplaceString: {Find: "/******************************************/", Replace: "body{text-rendering:optimizeSpeed          }", MustMatchLength: yes}
     #
     # Example 3: text-rendering:optimizeLegibility: Enables ligatures, but causes
     # some additional rendering problems for fully justified text.
-# - ReplaceString: {Offset: 467, Find: "/******************************************/", Replace: "body{text-rendering:optimizeLegibility     }", MustMatchLength: yes}
+# - FindReplaceString: {Find: "/******************************************/", Replace: "body{text-rendering:optimizeLegibility     }", MustMatchLength: yes}
     #
     # Example 4: Make KePub font sizes match ePub font sizes: ePubs render with
     # 1.5 times the font size of KePubs by default. With this enabled they match.
-# - ReplaceString: {Offset: 467, Find: "/******************************************/", Replace: "#book-inner{font-size:1.5em                }", MustMatchLength: yes}
-
-Change dicthtml strings to micthtml:
-  - Enabled: no
-  - Description: |
-      This patch is used for something to do with syncing and custom dictionaries.
-      If you don't know what it does, then you probably don't need it.
-  - FindReplaceString: {Find: "%1/dicthtml%2\0", Replace: "%1/micthtml%2\0"} # null is needed to not match %1/dicthtml%2.zip
-  - FindReplaceString: {Find: "dicthtml\0",      Replace: "micthtml\0"}      # null is needed to not match dicthtml*
-  - FindReplaceString: {Find: "/mnt/onboard/.kobo/dict/dicthtml%1", Replace: "/mnt/onboard/.kobo/dict/micthtml%1"}
+# - FindReplaceString: {Find: "/******************************************/", Replace: "#book-inner{font-size:1.5em                }", MustMatchLength: yes}
 
 Allow searches on Extra dictionaries:
   - Enabled: no
-    ## To allow searches on Extra dictionaries change space character at end of
-    ## "Extra: " to another char (ex: "Extra:_")
-    ## The space char causes a non-desired "English - English" when searching on
-    ## Extra dictionary from main menu.
+    # See https://pgaskin.net/dictutil/dicthtml/install
   - FindBaseAddressString: "\0Extra:\x20"
   - ReplaceString: {Offset: 7, Find: "\x20", Replace: "_"}
 
@@ -1050,8 +1139,8 @@ Set font scale factor:
   # Font scale factor is calculated as (font size slider) / (X+32)
   # Original value X=14, so original scale factor is (font size slider) / 46.
   # Allowed replacement values for X: 0-15 (smaller X --> larger scale factor)
-  - ReplaceInt: {Offset: 0x545526, Find: 14, Replace: 4} # ePub
-  - ReplaceInt: {Offset: 0xB2035A, Find: 14, Replace: 4} # KePub
+  - ReplaceInt: {Offset: 0x546926, Find: 14, Replace: 4} # ePub
+  - ReplaceInt: {Offset: 0xB21D4A, Find: 14, Replace: 4} # KePub
 
 # The following patch(es) were made by jackie_w
 
