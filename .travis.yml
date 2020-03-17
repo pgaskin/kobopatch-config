@@ -4,7 +4,7 @@ language: minimal
 
 install:
   - mkdir -p "$HOME/bin/"
-  - wget -O "$HOME/bin/kobopatch" "https://github.com/geek1011/kobopatch/releases/download/v0.14.1/kobopatch-linux-64bit"
+  - wget -O "$HOME/bin/kobopatch" "https://github.com/geek1011/kobopatch/releases/download/v0.15.0/kobopatch-linux-64bit"
   - chmod +x "$HOME/bin/kobopatch"
   - wget -O "$HOME/kobo7-update-4.20.14622.zip" "https://kbdownload1-a.akamaihd.net/firmwares/kobo7/Feb2020/kobo-update-4.20.14622.zip"
 
