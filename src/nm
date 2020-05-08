@@ -1,0 +1,12 @@
+menu_item:reader:Invert Screen:nickel_setting:invert
+menu_item:reader:Screenshots:nickel_setting:Screenshots
+menu_item:main:Web Browser:nickel_extras:web_browser
+menu_item:main:USB Connection:nickel_misc:force_usb_connection
+menu_item:main:Rescan Books:nickel_misc:rescan_books_full
+menu_item:main:Telnet:cmd_spawn:quiet:/bin/mount -t devpts | /bin/grep -q /dev/pts || { /bin/mkdir -p /dev/pts && /bin/mount -t devpts devpts /dev/pts; }
+  chain:cmd_spawn:quiet:/usr/bin/pkill -f "^/usr/bin/tcpsvd -E 0.0.0.0 1023" || true && exec /usr/bin/tcpsvd -E 0.0.0.0 1023 /usr/sbin/telnetd -i -l /bin/login
+  chain:dbg_toast:Started Telnet server on port 1023.
+menu_item:main:FTP:cmd_spawn:quiet:/usr/bin/pkill -f "^/usr/bin/tcpsvd -E 0.0.0.0 1021" || true && exec /usr/bin/tcpsvd -E 0.0.0.0 1021 /usr/sbin/ftpd -w -t 30 /
+  chain:dbg_toast:Started FTP server for / on port 1021.
+menu_item:main:IP Address:cmd_output:500:/sbin/ifconfig | /usr/bin/awk '/inet addr/{print substr($2,6)}'
+menu_item:main:Reboot:power:reboot

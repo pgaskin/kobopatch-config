@@ -100,3 +100,7 @@ files:
   #src/envsetup.sh: usr/local/geek1011/envsetup.sh
   geek1011/kobo-dotfile-hack_v0.1_6f452d1/usr/local/geek1011/libhidedir_kobo.so: usr/local/geek1011/libhidedir_kobo.so
   geek1011/kobo-dotfile-hack_v0.1_6f452d1/etc/ld.so.preload: etc/ld.so.preload
+
+  # NickelMenu
+  src/nm: mnt/onboard/.adds/nm/config
+  src/libnm.0.0.2.so: usr/local/Kobo/imageformats/libnm.so
