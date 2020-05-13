@@ -24,6 +24,8 @@ overrides:
     Remove forgot pin button from lock screen: yes
     Reduce new header/footer height: yes
     Reduce top/bottom page spacer: yes
+    Series list increase cover thumbnails: yes
+    Reduce height of page navigator arrows: yes
   
   src/nickel_dev.yaml:
 
@@ -103,4 +105,4 @@ files:
 
   # NickelMenu
   src/nm: mnt/onboard/.adds/nm/config
-  src/libnm.0.0.2.so: usr/local/Kobo/imageformats/libnm.so
+  src/libnm.ga32c17b.so: usr/local/Kobo/imageformats/libnm.so
