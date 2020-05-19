@@ -11,7 +11,11 @@ Disable orphans/widows avoidance:
     # Beware that this patch might(?) intefere with related CSS properties such as
     # page-break-after:avoid; or page-break-inside:avoid;. A better solution would
     # be to edit the book's stylesheet to set orphans:1; widows:1;.
-  - ReplaceBytes: {Offset: 0x2972E4, FindH: E6 D0, ReplaceH: E6 E7}
+  - ReplaceBytes:
+      Base:     "_ZN6layout13FlowProcessor17getPageBreakScoreEbbbbf"
+      Offset:   80
+      FindH:    E6 D0
+      ReplaceH: E6 E7
 
 Default ePub serif font (Amasis):
   - Enabled: no

@@ -13,7 +13,7 @@ Both page turn sides go next:
   - Enabled: no
   - Description: Make both page turn sides go next in the reader.
   # In ReadingView::processTap(TapGesture*) where the page direction is checked:
-  - BaseAddress:  {Sym: "ReadingView::processTap(TapGesture*)", Rel: 362}
+  - BaseAddress:  {Sym: "ReadingView::processTap(TapGesture*)", Rel: 390}
   - ReplaceBytes: {Offset:  0, FindInstBLX: {SymPLT: "ReadingView::leftToRightPageProgressDirection() const"}, CheckOnly: true}
   # nop the branch for checking if left-to-right (so it always runs the swap of back/forward)
   - ReplaceBytes: {Offset:  4, FindH: 18 B9, ReplaceInstNOP: true}
@@ -75,7 +75,7 @@ Hide browser from beta features:
       ReplaceH:    4F F0 01 00
   - ReplaceBytes:
       Base:        {Sym: "SelectionMenuController::setupMainOptions()"}
-      Offset:      474
+      Offset:      396
       FindInstBLX: {SymPLT: "Device::isParentalControlEnabled() const"}
       ReplaceH:    4F F0 01 00
 
@@ -140,8 +140,12 @@ Rename new home screen footer:
   # the keyboard uses a letter from one of these strings, and will type the letter
   # from the replacement.
   - FindReplaceString: {Find: "Find your next great read", Replace: "Find your next great read"}
-  - FindReplaceString: {Find: "Buy, borrow, or preview books", Replace: "Buy, borrow, or preview books"}
   - FindReplaceString: {Find: "Find your next book in Kobo Plus or our store", Replace: "Find your next book in Kobo Plus or our store"}
+  - ReplaceBytes:
+      Base:          "HomePageView::setOverDriveUser(OverDriveUser const&)"
+      Offset:         60
+      FindInstBLX:    {SymPLT: "GenericHomeWidget::setTitleText(QString)"}
+      ReplaceInstNOP: true
     # You can enable the following replacement, but note that it might cause the o letter on the keyboard to change
 #  - FindReplaceString: {Find: "Shop Kobo", Replace: "9char-str"}
 
@@ -174,14 +178,24 @@ Change Browse Kobo home screen link target - Activity:
   - Description: See the comment above.
   - ReplaceBytes:
       Base:          "BrowseKoboWidget::tapped()"
-      Offset:        14
+      Offset:        22
       FindInstBW:    {SymPLTTail: "DiscoverNavMixin::storefront()"}        # Store
       ReplaceInstBW: {SymPLTTail: "ReadingLifeNavMixin::chooseActivity()"} # Activity
   - ReplaceBytes:
+      Base:          "BrowseKoboWidget::tapped()"
+      Offset:        32
+      FindInstBW:    {SymPLTTail: "StoreNavMixin::overDriveFeaturedLists()"} # OverDrive
+      ReplaceInstBW: {SymPLTTail: "ReadingLifeNavMixin::chooseActivity()"}   # Activity
+  - ReplaceBytes:
       Base:           "BrowseKoboWidget::BrowseKoboWidget(QWidget*)"
-      Offset:         190
+      Offset:         196
       FindInstBLX:    {SymPLT: "N3DeviceCharm::shopName()"}   # "Shop Kobo" or "Walmart"
       ReplaceInstBLX: {SymPLT: "N3DeviceCharm::extrasName()"} # "Activity"
+  - ReplaceBytes:
+      Base:          "HomePageView::setOverDriveUser(OverDriveUser const&)"
+      Offset:         114
+      FindInstBLX:    {SymPLT: "GenericHomeWidget::setMetaText(QString)"} # "OverDrive"
+      ReplaceInstNOP: true
 
 Change Browse Kobo home screen link target - Articles:
   - Enabled: no
@@ -189,14 +203,24 @@ Change Browse Kobo home screen link target - Articles:
   - Description: See the comment above.
   - ReplaceBytes:
       Base:          "BrowseKoboWidget::tapped()"
-      Offset:        14
+      Offset:        22
       FindInstBW:    {SymPLTTail: "DiscoverNavMixin::storefront()"}       # Store
       ReplaceInstBW: {SymPLTTail: "LibraryNavMixin::showPocketLibrary()"} # My Articles
   - ReplaceBytes:
+      Base:          "BrowseKoboWidget::tapped()"
+      Offset:        32
+      FindInstBW:    {SymPLTTail: "StoreNavMixin::overDriveFeaturedLists()"} # OverDrive
+      ReplaceInstBW: {SymPLTTail: "LibraryNavMixin::showPocketLibrary()"}    # My Articles
+  - ReplaceBytes:
       Base:           "BrowseKoboWidget::BrowseKoboWidget(QWidget*)"
-      Offset:         190
+      Offset:         196
       FindInstBLX:    {SymPLT: "N3DeviceCharm::shopName()"}           # "Shop Kobo" or "Walmart"
       ReplaceInstBLX: {SymPLT: "N3DeviceCharm::articlesSearchName()"} # "My Articles"
+  - ReplaceBytes:
+      Base:          "HomePageView::setOverDriveUser(OverDriveUser const&)"
+      Offset:         114
+      FindInstBLX:    {SymPLT: "GenericHomeWidget::setMetaText(QString)"} # "OverDrive"
+      ReplaceInstNOP: true
 
 ###
 
@@ -265,14 +289,14 @@ Never show Kobo Plus, wishlist, and points SmartLinks:
   - Description: Removes Kobo Plus, wishlist, and points SmartLinks from the rotation.
   - BaseAddress: "ActivityManager::smartLinkGeneralMessage(Device const&)"
   # NOP Kobo Plus (2):
-  - ReplaceBytes: {Offset:  292, FindH: 02 23, CheckOnly: true} # MOVS r3, #2
-  - ReplaceBytes: {Offset:  302, FindInstBLX: {SymPLT: "QVector<SmartLinkType>::append(SmartLinkType const&)"}, ReplaceInstNOP: true}
+  - ReplaceBytes: {Offset: 292, FindH: 02 23, CheckOnly: true} # MOVS r3, #2
+  - ReplaceBytes: {Offset: 302, FindInstBLX: {SymPLT: "QVector<SmartLinkType>::append(SmartLinkType const&)"}, ReplaceInstNOP: true}
   # NOP wishlist (13):
-  - ReplaceBytes: {Offset:  266, FindH: 0D 23, CheckOnly: true} # MOVS r3, #13
-  - ReplaceBytes: {Offset:  276, FindInstBLX: {SymPLT: "QVector<SmartLinkType>::append(SmartLinkType const&)"}, ReplaceInstNOP: true}
+  - ReplaceBytes: {Offset: 202, FindH: 0D 23, CheckOnly: true} # MOVS r3, #13
+  - ReplaceBytes: {Offset: 212, FindInstBLX: {SymPLT: "QVector<SmartLinkType>::append(SmartLinkType const&)"}, ReplaceInstNOP: true}
   # NOP super points (16):
-  - ReplaceBytes: {Offset: 1540, FindH: 10 23, CheckOnly: true} # MOVS r3, #16
-  - ReplaceBytes: {Offset: 1552, FindInstBLX: {SymPLT: "QVector<SmartLinkType>::append(SmartLinkType const&)"}, ReplaceInstNOP: true}
+  - ReplaceBytes: {Offset: 414, FindH: 10 23, CheckOnly: true} # MOVS r3, #16
+  - ReplaceBytes: {Offset: 424, FindInstBLX: {SymPLT: "QVector<SmartLinkType>::append(SmartLinkType const&)"}, ReplaceInstNOP: true}
 
 ###
 
@@ -292,37 +316,41 @@ Hide top-left menu item - Dropbox:
   - Enabled: no
   - Description: See the comment above.
   - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 182}
-  - ReplaceBytes: {Offset:   0, FindH: 51 46, ReplaceH: 00 21} # DropboxSeparator (sl=51) (sl:sb&r5)
-  - ReplaceBytes: {Offset:  22, FindH: 51 46, ReplaceH: 00 21} # DropboxSeparator (sl=51)
-  - ReplaceBytes: {Offset: 124, FindH: 41 46, ReplaceH: 00 21} # DropboxWidget (r8=41) (r8:r8&r5)
-  - ReplaceBytes: {Offset: 146, FindH: 41 46, ReplaceH: 00 21} # DropboxWidget (r8=41)
+  - ReplaceBytes: {Offset:  0, FindH: 51 46, ReplaceH: 00 21} # DropboxSeparator (sl=51) (sl:sb&r5)
+  - ReplaceBytes: {Offset: 22, FindH: 51 46, ReplaceH: 00 21} # DropboxSeparator (sl=51)
+  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 366}
+  - ReplaceBytes: {Offset:  0, FindH: 49 46, ReplaceH: 00 21} # DropboxWidget (sb=41) (sb:sb&r5)
+  - ReplaceBytes: {Offset: 22, FindH: 49 46, ReplaceH: 00 21} # DropboxWidget (sb=41)
 
 Hide top-left menu item - Pocket:
   - Enabled: no
   - Description: See the comment above.
-  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 484}
-  - ReplaceBytes: {Offset:   0, FindH: 29 46, ReplaceH: 00 21} # PocketSeparator (r5=29)
-  - ReplaceBytes: {Offset:  22, FindH: 29 46, ReplaceH: 00 21} # PocketSeparator (r5=29)
-  - ReplaceBytes: {Offset: 112, FindH: 29 46, ReplaceH: 00 21} # PocketWidget (r5=29)
-  - ReplaceBytes: {Offset: 134, FindH: 29 46, ReplaceH: 00 21} # PocketWidget (r5=29)
+  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 544}
+  - ReplaceBytes: {Offset:  0, FindH: 29 46, ReplaceH: 00 21} # PocketSeparator (r5=29)
+  - ReplaceBytes: {Offset: 22, FindH: 29 46, ReplaceH: 00 21} # PocketSeparator (r5=29)
+  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 722}
+  - ReplaceBytes: {Offset:  0, FindH: 29 46, ReplaceH: 00 21} # PocketWidget (r5=29)
+  - ReplaceBytes: {Offset: 22, FindH: 29 46, ReplaceH: 00 21} # PocketWidget (r5=29)
 
 Hide top-left menu item - Store:
   - Enabled: no
   - Description: See the comment above.
-  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 774}
-  - ReplaceBytes: {Offset:   0, FindH: 29 46, ReplaceH: 00 21} # StoreSeparator (r5=29)
-  - ReplaceBytes: {Offset:  22, FindH: 29 46, ReplaceH: 00 21} # StoreSeparator (r5=29)
-  - ReplaceBytes: {Offset: 178, FindH: 29 46, ReplaceH: 00 21} # StoreWidget (r5=29)
-  - ReplaceBytes: {Offset: 200, FindH: 29 46, ReplaceH: 00 21} # StoreWidget (r5=29)
+  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 900}
+  - ReplaceBytes: {Offset:  0, FindH: 29 46, ReplaceH: 00 21} # StoreSeparator (r5=29)
+  - ReplaceBytes: {Offset: 22, FindH: 29 46, ReplaceH: 00 21} # StoreSeparator (r5=29)
+  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 1078}
+  - ReplaceBytes: {Offset:  0, FindH: 29 46, ReplaceH: 00 21} # StoreWidget (r5=29)
+  - ReplaceBytes: {Offset: 22, FindH: 29 46, ReplaceH: 00 21} # StoreWidget (r5=29)
 
 Hide top-left menu item - Recommended:
   - Enabled: no
   - Description: See the comment above.
-  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 1130}
+  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 1256}
   - ReplaceBytes: {Offset:   0, FindH: 29 46, ReplaceH: 00 21} # RecommendedSeparator (r5=29)
   - ReplaceBytes: {Offset:  22, FindH: 29 46, ReplaceH: 00 21} # RecommendedSeparator (r5=29)
-  - ReplaceBytes: {Offset: 178, FindH: 29 46, ReplaceH: 00 21} # RecommendedWidget (r5=29)
-  - ReplaceBytes: {Offset: 200, FindH: 29 46, ReplaceH: 00 21} # RecommendedWidget (r5=29)
+  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 1434}
+  - ReplaceBytes: {Offset:  0, FindH: 29 46, ReplaceH: 00 21} # RecommendedWidget (r5=29)
+  - ReplaceBytes: {Offset: 22, FindH: 29 46, ReplaceH: 00 21} # RecommendedWidget (r5=29)
 
 # Note about updating: the following ones were mistakenly detected as outside
 # the procedure by Hopper, but this can be fixed by NOPing the DDs between and
@@ -331,20 +359,22 @@ Hide top-left menu item - Recommended:
 Hide top-left menu item - Wishlist:
   - Enabled: no
   - Description: See the comment above.
-  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 4664}
-  - ReplaceBytes: {Offset:   0, FindH: 51 46, ReplaceH: 00 21} # WishlistSeparator (sl=51) (sl:sb&r5)
-  - ReplaceBytes: {Offset:  22, FindH: 51 46, ReplaceH: 00 21} # WishlistSeparator (sl=51)
-  - ReplaceBytes: {Offset: 398, FindH: 49 46, ReplaceH: 00 21} # WishlistWidget (sb=49) (sb:sb&r5)
-  - ReplaceBytes: {Offset: 420, FindH: 49 46, ReplaceH: 00 21} # WishlistWidget (sb=49)
+  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 4680}
+  - ReplaceBytes: {Offset:   0, FindH: 59 46, ReplaceH: 00 21} # WishlistSeparator (fp=51) (fp:sb&r5)
+  - ReplaceBytes: {Offset:  22, FindH: 59 46, ReplaceH: 00 21} # WishlistSeparator (fp=51)
+  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 5158}
+  - ReplaceBytes: {Offset:  0, FindH: 41 46, ReplaceH: 00 21} # WishlistWidget (r8=49) (r8:r8&r5)
+  - ReplaceBytes: {Offset: 22, FindH: 41 46, ReplaceH: 00 21} # WishlistWidget (r8=49)
 
 Hide top-left menu item - Activity:
   - Enabled: no
   - Description: See the comment above.
-  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 5574}
+  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 5276}
   - ReplaceBytes: {Offset:   0, FindH: 29 46, ReplaceH: 00 21} # ActivitySeparator (r5=29)
   - ReplaceBytes: {Offset:  22, FindH: 29 46, ReplaceH: 00 21} # ActivitySeparator (r5=29)
-  - ReplaceBytes: {Offset: 380, FindH: 29 46, ReplaceH: 00 21} # ActivityWidget (r5=29)
-  - ReplaceBytes: {Offset: 402, FindH: 29 46, ReplaceH: 00 21} # ActivityWidget (r5=29)
+  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 5656}
+  - ReplaceBytes: {Offset:  0, FindH: 29 46, ReplaceH: 00 21} # ActivityWidget (r5=29)
+  - ReplaceBytes: {Offset: 22, FindH: 29 46, ReplaceH: 00 21} # ActivityWidget (r5=29)
 
 ###
 
@@ -411,7 +441,7 @@ Remove title from reading header/footer:
   # easy-to-update way by replacing the first QString::append (the dash) with a
   # QString::resize to zero (I would have done a QString::clear, but that symbol
   # isn't imported):
-  - BaseAddress:  {Sym: "ReadingFooter::update(QString const&, QString const&, QString const&, bool)", Rel: 304}
+  - BaseAddress:  {Sym: "ReadingFooter::update(QString const&, QString const&, QString const&, bool)", Rel: 298}
   - ReplaceBytes: {Offset: 0, FindH: F9 68, ReplaceH: 00 21} # replace LDR r1, [...] with MOV r1, #0 (the LDR doesn't matter, but may to be updated to match)
   - ReplaceBytes: {Offset: 4, FindInstBLX: {SymPLT: "QString::append(QString const&)"}, ReplaceInstBLX: {SymPLT: "QString::resize(int)"}}
 
@@ -479,13 +509,13 @@ Allow rotation on all devices:
       Unlike only the DeveloperSettings ForceAllowLandscape option, this patch
       also makes the rotation icon show on the new reader as well.
   # Always return true for ForceAllowLandscape:
-  - ReplaceBytes: {Offset: 0x72A5AE, FindInstBLX: {SymPLT: "QVariant::toBool() const"}, ReplaceH: 4F F0 01 00}
+  - ReplaceBytes: {Offset: 0x75AB56, FindInstBLX: {SymPLT: "QVariant::toBool() const"}, ReplaceH: 4F F0 01 00}
   # In ReadingMenuView::ReadingMenuView, replace the value of Device::hasOrientationSensor,
   # which is passed to a function to hide/show the rotate icon:
-  - ReplaceBytes: {Offset: 0xB38C6C, FindInstBLX: {SymPLT: "Device::hasOrientationSensor() const"}, ReplaceH: 4F F0 01 00}
+  - ReplaceBytes: {Offset: 0xB874CA, FindInstBLX: {SymPLT: "Device::hasOrientationSensor() const"}, ReplaceH: 4F F0 01 00}
   # Also fix sizing of popup by doing the same in RotatePopup::RotatePopup, but
   # note that this will make the Automatic option show too (and do nothing):
-  - ReplaceBytes: {Offset: 0xB54A86, FindInstBLX: {SymPLT: "Device::hasOrientationSensor() const"}, ReplaceH: 4F F0 01 00}
+  - ReplaceBytes: {Offset: 0xBA36CE, FindInstBLX: {SymPLT: "Device::hasOrientationSensor() const"}, ReplaceH: 4F F0 01 00}
 
 Don't uppercase header/footer text:
   - Enabled: no
@@ -595,48 +625,50 @@ Customize ComfortLight settings:
   # In an unnamed subroutine two layers into FrontLightPopupController::loadView
   # (find it by going back from QTime::addSecs), the times for the dropdown are
   # generated into a QVector<QPair<QString, QTime>> with a simple loop.
+  - BaseAddress: 0xACABF8 # find by the x-ref to _ZN5QTimeC1Eiiii from an unnamed sub
   #
   # Change the initial hour / first bedtime dropdown item passed to the QTime
   # constructor (mov r1, #21):
-  - ReplaceInt: {Offset: 0xA91E2E, Find: 21, Replace: 17} # 21:00 (9PM) -> 17:00 (5PM)
+  - ReplaceInt: {Offset: 22, Find: 21, Replace: 17} # 21:00 (9PM) -> 17:00 (5PM)
   #
   # Optional: Change the increment passed to QTime::addSecs (you need to use an
   # ARM assembler to change this value):
-  - ReplaceBytes: {Offset: 0xA91E92, FindH: 4F F4 E1 61, ReplaceH: 4F F4 E1 61} # mov.w r1, #1800: 30m
+  - ReplaceBytes: {Offset: 122, FindH: 4F F4 E1 61, ReplaceH: 4F F4 E1 61} # mov.w r1, #1800: 30m
   #
   # Change the number of increments / bedtime dropdown options (start at the
   # initial time, add this number -1 more items with the above increment each
   # time) (movs r5, #13):
-  - ReplaceInt: {Offset: 0xA91E66, Find: 13, Replace: 21} # 13 [9PM..3AM]+30m -> 21 [5PM..3AM]+30m
+  - ReplaceInt: {Offset: 78, Find: 13, Replace: 21} # 13 [9PM..3AM]+30m -> 21 [5PM..3AM]+30m
   #
   # Change the number of pre-allocated elements (I don't think this is actually
   # required, as Qt will realloc as necessary, but we might as well do this just
   # in case) (mov r1, #21):
-  - ReplaceInt: {Offset: 0xA920D0, Find: 13, Replace: 21} # same as prev replacement
+  - ReplaceInt: {Offset: 696, Find: 13, Replace: 21} # same as prev replacement
   ##
   # The actual color adjustment is done in BedtimeManager::adjustTemperature.
   # The color temperature is based on the current time, the bedtime, the hardcoded
   # sunset, the hardcoded sunrise start, the hardcoded sunrise end, the daytime
   # temperature, and the nighttime temperature.
+  - BaseAddress: "BedtimeManager::adjustTemperature()"
   #
   # Change the sunset time (the transition to a warmer temperature starts here
   # and transitions until the bedtime chosen) (this should be 1-3 hours before
   # the minimum bedtime from the first replacement above) (mov r1, #18):
-  - ReplaceInt: {Offset: 0xA8A922, Find: 18, Replace: 16} # 18:00 (9PM-3=6PM) -> 16:00 (5PM-1=4PM)
+  - ReplaceInt: {Offset: 158, Find: 18, Replace: 16} # 18:00 (9PM-3=6PM) -> 16:00 (5PM-1=4PM)
   #
   # Change the time for the sunset timer to fire at (this is passed to a QTime
   # constructor which is passed to PowerTime::fireAt) (mov r1, #18):
-  - ReplaceInt: {Offset: 0xA8AA3A, Find: 18, Replace: 16} # should match the sunset time above
+  - ReplaceInt: {Offset: 438, Find: 18, Replace: 16} # should match the sunset time above
   #
   # Optional: Change the sunrise start time (the transition back to a cooler
   # temperature starts here) (this should be sometime after the last bedtime,
   # but before the sunset time) (mov r1, #5):
-  - ReplaceInt: {Offset: 0xA8A944, Find: 5, Replace: 5} # 5AM
+  - ReplaceInt: {Offset: 192, Find: 5, Replace: 5} # 5AM
   #
   # Optional: Change the sunrise end time (the transition back to a cooler
   # temperature ends here) (this should be 1-3 hours after the sunrise start but
   # before the sunset time or bad things will happen with negative values) (mov r1, #7):
-  - ReplaceInt: {Offset: 0xA8A90E, Find: 7, Replace: 7} # 5AM+2=7AM
+  - ReplaceInt: {Offset: 138, Find: 7, Replace: 7} # 5AM+2=7AM
 
 # The following patches allow you to enable a config file option with a patch.
 
@@ -668,13 +700,13 @@ FeatureSettings - ExportHighlights:
 DeveloperSettings - AutoUsbGadget:
   - Enabled: no
   - Description: Automatically enable USB Storage mode when connected.
-  - ReplaceBytes: {Offset: 0x72A64E, FindBLX: 0x4B685C, ReplaceH: 4F F0 01 00}
+  - ReplaceBytes: {Offset: 0x75ABF6, FindInstBLX: {SymPLT: "QVariant::toBool() const"}, ReplaceH: 4F F0 01 00}
 
 PowerSettings - UnlockEnabled:
   - Enabled: no
   - Description: Disables/enables the slide to unlock feature.
-  - ReplaceBytes: {Offset: 0x7344FE, FindBLX: 0x4B685C, ReplaceH: 4F F0 00 00} # disable
-# - ReplaceBytes: {Offset: 0x7344FE, FindBLX: 0x4B685C, ReplaceH: 4F F0 01 00} # enable
+  - ReplaceBytes: {Base: "PowerSettings::getUnlockEnabled()", Offset: 62, FindInstBLX: {SymPLT: "QVariant::toBool() const"}, ReplaceH: 4F F0 00 00} # disable
+# - ReplaceBytes: {Base: "PowerSettings::getUnlockEnabled()", Offset: 62, FindInstBLX: {SymPLT: "QVariant::toBool() const"}, ReplaceH: 4F F0 01 00} # enable
 
 # The following patch(es) were made by GeoffR, and most are updated by geek1011
 
@@ -866,20 +898,21 @@ Custom font sizes:
   #    https://gist.github.com/geek1011/613b34c23f026f7c39c50ee32f5e167e and
   #    the Device::is* calls.
   #
+  - BaseAddress: "N3FontTypeUtil::fontSizes()"
   # Initial font size:
-  - ReplaceInt: {Offset: 0x9345B4, Find: 18, Replace: 18} # AuraOne/Forma
-  - ReplaceInt: {Offset: 0x934448, Find: 14, Replace: 14} # GloHD/ClaraHD/Libra
-  - ReplaceInt: {Offset: 0x93459C, Find: 12, Replace: 12} # Others
+  - ReplaceInt: {Offset: 400, Find: 18, Replace: 18} # AuraOne/Forma
+  - ReplaceInt: {Offset:  36, Find: 14, Replace: 14} # GloHD/ClaraHD/Libra
+  - ReplaceInt: {Offset: 376, Find: 12, Replace: 12} # Others
   # Increment:
-  - ReplaceInt: {Offset: 0x934470, Find: 21, Replace: 43} # Add font sizes in increments of 1 until this size exceeded}
-  - ReplaceInt: {Offset: 0x934478, Find: 22, Replace: 44} # Continue from this font size}
-  - ReplaceInt: {Offset: 0x934518, Find: 49, Replace: 67} # Add font sizes in increments of 2 until this size exceeded}
-  - ReplaceInt: {Offset: 0x93451E, Find: 50, Replace: 68} # Continue from this font size}
+  - ReplaceInt: {Offset:  76, Find: 21, Replace: 43} # Add font sizes in increments of 1 until this size exceeded}
+  - ReplaceInt: {Offset:  84, Find: 22, Replace: 44} # Continue from this font size}
+  - ReplaceInt: {Offset: 244, Find: 49, Replace: 67} # Add font sizes in increments of 2 until this size exceeded}
+  - ReplaceInt: {Offset: 250, Find: 50, Replace: 68} # Continue from this font size}
   # Now increment by +4 until final font size:
-  - ReplaceInt: {Offset: 0x9345B8, Find: 195, Replace: 132} # AuraOne/Forma
-  - ReplaceInt: {Offset: 0x934458, Find: 150, Replace: 108} # AuraHD/H2O/GloHD/ClaraHD/Libra
-  - ReplaceInt: {Offset: 0x9345D6, Find: 122, Replace: 88}  # Glo/Aura
-  - ReplaceInt: {Offset: 0x9345D2, Find: 90,  Replace: 80}  # Touch/Mini
+  - ReplaceInt: {Offset: 404, Find: 195, Replace: 132} # AuraOne/Forma
+  - ReplaceInt: {Offset:  52, Find: 150, Replace: 108} # AuraHD/H2O/GloHD/ClaraHD/Libra
+  - ReplaceInt: {Offset: 434, Find: 122, Replace: 88}  # Glo/Aura
+  - ReplaceInt: {Offset: 430, Find: 90,  Replace: 80}  # Touch/Mini
 
 ePub fixed top/bottom margins:
   - Enabled: no
@@ -994,8 +1027,8 @@ Set KePub hyphenation:
       will always be turned on, regardless of justification button setting.
       
       (The publisher can still turn hyphenation off/on in the book's stylesheet.)
-  - ReplaceBytes: {Offset: 0xB2216A, FindInstBLX: {SymPLT: "QString::operator==(QLatin1String) const"}, ReplaceH: 01 20 01 20} # Alternative 1: Always turn KePub hyphenation on
-# - ReplaceBytes: {Offset: 0xB2216A, FindInstBLX: {SymPLT: "QString::operator==(QLatin1String) const"}, ReplaceH: 00 20 00 20} # Alternative 2: Never turn KePub hyphenation on
+  - ReplaceBytes: {Offset: 0xB70856, FindInstBLX: {SymPLT: "QString::operator==(QLatin1String) const"}, ReplaceH: 01 20 01 20} # Alternative 1: Always turn KePub hyphenation on
+# - ReplaceBytes: {Offset: 0xB70856, FindInstBLX: {SymPLT: "QString::operator==(QLatin1String) const"}, ReplaceH: 00 20 00 20} # Alternative 2: Never turn KePub hyphenation on
 
 Force user line spacing in KePubs:
   - Enabled: no
@@ -1210,8 +1243,8 @@ Set font scale factor:
   # Font scale factor is calculated as (font size slider) / (X+32)
   # Original value X=14, so original scale factor is (font size slider) / 46.
   # Allowed replacement values for X: 0-15 (smaller X --> larger scale factor)
-  - ReplaceInt: {Offset: 0x546926, Find: 14, Replace: 4} # ePub
-  - ReplaceInt: {Offset: 0xB21D4A, Find: 14, Replace: 4} # KePub
+  - ReplaceInt: {Offset: 0x56D56C, Find: 14, Replace: 4} # ePub
+  - ReplaceInt: {Offset: 0xB70436, Find: 14, Replace: 4} # KePub
 
 # The following patch(es) were made by jackie_w
 
@@ -1501,5 +1534,5 @@ Bulgarian Phonetic Keyboard (GloHD/ClaraHD/AuraOne/H2O2/Forma/Libra):
 Don't grab exclusive access to event0:
   - Enabled: no
   - Description: Allows third-party tools to read the event0 input device
-  - FindReplaceString: {Find: "/dev/input/event0:keymap=keys/device.qmap:grab=1", Replace: "/dev/input/event0:keymap=keys/device.qmap:grab=0"}
+  - FindReplaceString: {Find: "%0:keymap=keys/device.qmap:grab=1", Replace: "%0:keymap=keys/device.qmap:grab=0"}
 

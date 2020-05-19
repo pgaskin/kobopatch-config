@@ -1,5 +1,5 @@
-version: 4.20.14622
-in: src/kobo7-update-4.20.14622.zip
+version: 4.21.15015
+in: src/kobo7-update-4.21.15015.zip
 out: KoboRoot.tgz
 log: log.txt
 
@@ -26,7 +26,7 @@ overrides:
     Reduce top/bottom page spacer: yes
     Series list increase cover thumbnails: yes
     Reduce height of page navigator arrows: yes
-  
+
   src/nickel_dev.yaml:
 
   src/libadobe.so.yaml:
@@ -106,3 +106,12 @@ files:
   # NickelMenu
   src/nm: mnt/onboard/.adds/nm/config
   src/libnm.ga32c17b.so: usr/local/Kobo/imageformats/libnm.so
+
+# [DeveloperSettings]
+# EnableDebugServices=true
+#
+# [FeatureSettings]
+# ExcludeEndMatterFromStats=true
+#
+# [OneStoreServices]
+# dropbox_link_account_poll=https://authorize.kobo.com/{region}/{language}/LinkDropbox
