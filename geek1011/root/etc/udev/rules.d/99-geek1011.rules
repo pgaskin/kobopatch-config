@@ -1,1 +1,0 @@
-KERNEL=="loop0", RUN+="/usr/local/geek1011/init"

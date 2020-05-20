@@ -70,6 +70,7 @@ overrides:
   src/librmsdk.so.1.0.0.yaml:
 
 files:
+  # fonts
   fonts/Literata-BoldItalic.otf: mnt/onboard/fonts/Literata-BoldItalic.otf
   fonts/Literata-Bold.otf: mnt/onboard/fonts/Literata-Bold.otf
   fonts/Literata-Italic.otf: mnt/onboard/fonts/Literata-Italic.otf
@@ -94,24 +95,23 @@ files:
   # screensaver
   src/black.png: mnt/onboard/.kobo/screensaver/black.png
 
-  # my stuff
-  #geek1011/root/usr/local/geek1011/sftp-server: usr/local/geek1011/sftp-server
-  #geek1011/root/usr/local/geek1011/dropbearmulti: usr/local/geek1011/dropbearmulti
-  #geek1011/root/usr/local/geek1011/init: usr/local/geek1011/init
-  #geek1011/root/etc/udev/rules.d/99-geek1011.rules: etc/udev/rules.d/99-geek1011.rules
-  #src/envsetup.sh: usr/local/geek1011/envsetup.sh
-  geek1011/kobo-dotfile-hack_v0.1_6f452d1/usr/local/geek1011/libhidedir_kobo.so: usr/local/geek1011/libhidedir_kobo.so
-  geek1011/kobo-dotfile-hack_v0.1_6f452d1/etc/ld.so.preload: etc/ld.so.preload
+  # kobo-dotfile-hack
+  pkg/kobo-dotfile-hack-6f452d1/usr/local/geek1011/libhidedir_kobo.so: usr/local/geek1011/libhidedir_kobo.so
+  pkg/kobo-dotfile-hack-6f452d1/etc/ld.so.preload: etc/ld.so.preload
+
+  # BusyBox
+  pkg/busybox-v1.31.0/busybox-armv7l: usr/local/geek1011/busybox
 
   # NickelMenu
   src/nm: mnt/onboard/.adds/nm/config
-  src/libnm.ga32c17b.so: usr/local/Kobo/imageformats/libnm.so
+  pkg/nickelmenu-ga32c17/libnm.so: usr/local/Kobo/imageformats/libnm.so
 
-# [DeveloperSettings]
-# EnableDebugServices=true
-#
-# [FeatureSettings]
-# ExcludeEndMatterFromStats=true
-#
-# [OneStoreServices]
-# dropbox_link_account_poll=https://authorize.kobo.com/{region}/{language}/LinkDropbox
+#config:
+  ##[DeveloperSettings]
+  ##EnableDebugServices=true
+
+  #[FeatureSettings]
+  #ExcludeEndMatterFromStats=true
+
+  #[OneStoreServices]
+  #dropbox_link_account_poll=https://authorize.kobo.com/{region}/{language}/LinkDropbox
