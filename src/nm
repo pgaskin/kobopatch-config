@@ -3,10 +3,23 @@ menu_item:reader:Screenshots:nickel_setting:Screenshots
 menu_item:main:Web Browser:nickel_extras:web_browser
 menu_item:main:USB Connection:nickel_misc:force_usb_connection
 menu_item:main:Rescan Books:nickel_misc:rescan_books_full
-menu_item:main:Telnet:cmd_spawn:quiet:/usr/local/geek1011/busybox mount -t devpts | /usr/local/geek1011/busybox grep -q /dev/pts || { /usr/local/geek1011/busybox mkdir -p /dev/pts && /usr/local/geek1011/busybox mount -t devpts devpts /dev/pts; }
-  chain:cmd_spawn:quiet:/usr/local/geek1011/busybox pkill -f "^/usr/local/geek1011/busybox tcpsvd -E 0.0.0.0 1023" || true && exec /usr/local/geek1011/busybox tcpsvd -E 0.0.0.0 1023 /usr/local/geek1011/busybox telnetd -i -l /bin/login
-  chain:dbg_toast:Started Telnet server on port 1023.
-menu_item:main:FTP:cmd_spawn:quiet:/usr/local/geek1011/busybox pkill -f "^/usr/local/geek1011/busybox tcpsvd -E 0.0.0.0 1021" || true && exec /usr/local/geek1011/busybox tcpsvd -E 0.0.0.0 1021 /usr/local/geek1011/busybox ftpd -w -t 30 /
-  chain:dbg_toast:Started FTP server for / on port 1021.
+
+menu_item:main:Telnet:cmd_output:500:quiet:/usr/local/geek1011/busybox pkill -f "^/usr/local/geek1011/busybox tcpsvd -E 0.0.0.0 1023"
+  chain_success:skip:5
+    chain_failure:cmd_spawn:quiet:/usr/local/geek1011/busybox mount -t devpts | /usr/local/geek1011/busybox grep -q /dev/pts || { /usr/local/geek1011/busybox mkdir -p /dev/pts && /usr/local/geek1011/busybox mount -t devpts devpts /dev/pts; }
+    chain_success:cmd_spawn:quiet:exec /usr/local/geek1011/busybox tcpsvd -E 0.0.0.0 1023 /usr/local/geek1011/busybox telnetd -i -l /bin/login
+    chain_success:dbg_toast:Started Telnet server on port 1023
+    chain_failure:dbg_toast:Error starting Telnet server on port 1023
+    chain_always:skip:-1
+  chain_success:dbg_toast:Stopped Telnet server on port 1023
+
+menu_item:main:FTP:cmd_output:500:quiet:/usr/local/geek1011/busybox pkill -f "^/usr/local/geek1011/busybox tcpsvd -E 0.0.0.0 1021"
+  chain_success:skip:4
+    chain_failure:cmd_spawn:quiet:exec /usr/local/geek1011/busybox tcpsvd -E 0.0.0.0 1021 /usr/local/geek1011/busybox ftpd -w -t 30 /
+    chain_success:dbg_toast:Started FTP server for / on port 1021
+    chain_failure:dbg_toast:Error starting FTP server for / on port 1021
+    chain_always:skip:-1
+  chain_success:dbg_toast:Stopped FTP server for / on port 1021
+
 menu_item:main:IP Address:cmd_output:500:/usr/local/geek1011/busybox /ifconfig | /usr/local/geek1011/busybox awk '/inet addr/{print substr($2,6)}'
 menu_item:main:Reboot:power:reboot
