@@ -320,8 +320,8 @@ Hide top-left menu item - Dropbox:
   - ReplaceBytes: {Offset:  0, FindH: 51 46, ReplaceH: 00 21} # DropboxSeparator (sl=51) (sl:sb&r5)
   - ReplaceBytes: {Offset: 22, FindH: 51 46, ReplaceH: 00 21} # DropboxSeparator (sl=51)
   - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 366}
-  - ReplaceBytes: {Offset:  0, FindH: 49 46, ReplaceH: 00 21} # DropboxWidget (sb=41) (sb:sb&r5)
-  - ReplaceBytes: {Offset: 22, FindH: 49 46, ReplaceH: 00 21} # DropboxWidget (sb=41)
+  - ReplaceBytes: {Offset:  0, FindH: 41 46, ReplaceH: 00 21} # DropboxWidget (sb=41) (sb:sb&r5)
+  - ReplaceBytes: {Offset: 22, FindH: 41 46, ReplaceH: 00 21} # DropboxWidget (sb=41)
 
 Hide top-left menu item - Pocket:
   - Enabled: no
@@ -346,10 +346,10 @@ Hide top-left menu item - Store:
 Hide top-left menu item - Recommended:
   - Enabled: no
   - Description: See the comment above.
-  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 1256}
-  - ReplaceBytes: {Offset:   0, FindH: 29 46, ReplaceH: 00 21} # RecommendedSeparator (r5=29)
-  - ReplaceBytes: {Offset:  22, FindH: 29 46, ReplaceH: 00 21} # RecommendedSeparator (r5=29)
-  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 1434}
+  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 1196}
+  - ReplaceBytes: {Offset:  0, FindH: 29 46, ReplaceH: 00 21} # RecommendedSeparator (r5=29)
+  - ReplaceBytes: {Offset: 22, FindH: 29 46, ReplaceH: 00 21} # RecommendedSeparator (r5=29)
+  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 1308}
   - ReplaceBytes: {Offset:  0, FindH: 29 46, ReplaceH: 00 21} # RecommendedWidget (r5=29)
   - ReplaceBytes: {Offset: 22, FindH: 29 46, ReplaceH: 00 21} # RecommendedWidget (r5=29)
 
@@ -360,19 +360,19 @@ Hide top-left menu item - Recommended:
 Hide top-left menu item - Wishlist:
   - Enabled: no
   - Description: See the comment above.
-  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 4680}
-  - ReplaceBytes: {Offset:   0, FindH: 59 46, ReplaceH: 00 21} # WishlistSeparator (fp=51) (fp:sb&r5)
-  - ReplaceBytes: {Offset:  22, FindH: 59 46, ReplaceH: 00 21} # WishlistSeparator (fp=51)
-  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 5158}
-  - ReplaceBytes: {Offset:  0, FindH: 41 46, ReplaceH: 00 21} # WishlistWidget (r8=49) (r8:r8&r5)
-  - ReplaceBytes: {Offset: 22, FindH: 41 46, ReplaceH: 00 21} # WishlistWidget (r8=49)
+  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 4380}
+  - ReplaceBytes: {Offset:  0, FindH: 51 46, ReplaceH: 00 21} # WishlistSeparator (fp=51) (fp:sb&r5)
+  - ReplaceBytes: {Offset: 22, FindH: 51 46, ReplaceH: 00 21} # WishlistSeparator (fp=51)
+  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 4778}
+  - ReplaceBytes: {Offset:  0, FindH: 49 46, ReplaceH: 00 21} # WishlistWidget (r8=49) (r8:r8&r5)
+  - ReplaceBytes: {Offset: 22, FindH: 49 46, ReplaceH: 00 21} # WishlistWidget (r8=49)
 
 Hide top-left menu item - Activity:
   - Enabled: no
   - Description: See the comment above.
-  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 5276}
-  - ReplaceBytes: {Offset:   0, FindH: 29 46, ReplaceH: 00 21} # ActivitySeparator (r5=29)
-  - ReplaceBytes: {Offset:  22, FindH: 29 46, ReplaceH: 00 21} # ActivitySeparator (r5=29)
+  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 5172}
+  - ReplaceBytes: {Offset:  0, FindH: 29 46, ReplaceH: 00 21} # ActivitySeparator (r5=29)
+  - ReplaceBytes: {Offset: 22, FindH: 29 46, ReplaceH: 00 21} # ActivitySeparator (r5=29)
   - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 5656}
   - ReplaceBytes: {Offset:  0, FindH: 29 46, ReplaceH: 00 21} # ActivityWidget (r5=29)
   - ReplaceBytes: {Offset: 22, FindH: 29 46, ReplaceH: 00 21} # ActivityWidget (r5=29)
@@ -510,13 +510,13 @@ Allow rotation on all devices:
       Unlike only the DeveloperSettings ForceAllowLandscape option, this patch
       also makes the rotation icon show on the new reader as well.
   # Always return true for ForceAllowLandscape:
-  - ReplaceBytes: {Offset: 0x75AB56, FindInstBLX: {SymPLT: "QVariant::toBool() const"}, ReplaceH: 4F F0 01 00}
+  - ReplaceBytes: {Offset: 0x76745E, FindInstBLX: {SymPLT: "QVariant::toBool() const"}, ReplaceH: 4F F0 01 00}
   # In ReadingMenuView::ReadingMenuView, replace the value of Device::hasOrientationSensor,
   # which is passed to a function to hide/show the rotate icon:
-  - ReplaceBytes: {Offset: 0xB874CA, FindInstBLX: {SymPLT: "Device::hasOrientationSensor() const"}, ReplaceH: 4F F0 01 00}
+  - ReplaceBytes: {Offset: 0xB96E72, FindInstBLX: {SymPLT: "Device::hasOrientationSensor() const"}, ReplaceH: 4F F0 01 00}
   # Also fix sizing of popup by doing the same in RotatePopup::RotatePopup, but
   # note that this will make the Automatic option show too (and do nothing):
-  - ReplaceBytes: {Offset: 0xBA36CE, FindInstBLX: {SymPLT: "Device::hasOrientationSensor() const"}, ReplaceH: 4F F0 01 00}
+  - ReplaceBytes: {Offset: 0xBB30CE, FindInstBLX: {SymPLT: "Device::hasOrientationSensor() const"}, ReplaceH: 4F F0 01 00}
 
 Don't uppercase header/footer text:
   - Enabled: no
@@ -626,7 +626,7 @@ Customize ComfortLight settings:
   # In an unnamed subroutine two layers into FrontLightPopupController::loadView
   # (find it by going back from QTime::addSecs), the times for the dropdown are
   # generated into a QVector<QPair<QString, QTime>> with a simple loop.
-  - BaseAddress: 0xACABF8 # find by the x-ref to _ZN5QTimeC1Eiiii from an unnamed sub
+  - BaseAddress: 0xADA8B0 # find by the x-ref to _ZN5QTimeC1Eiiii from an unnamed sub
   #
   # Change the initial hour / first bedtime dropdown item passed to the QTime
   # constructor (mov r1, #21):
@@ -701,7 +701,7 @@ FeatureSettings - ExportHighlights:
 DeveloperSettings - AutoUsbGadget:
   - Enabled: no
   - Description: Automatically enable USB Storage mode when connected.
-  - ReplaceBytes: {Offset: 0x75ABF6, FindInstBLX: {SymPLT: "QVariant::toBool() const"}, ReplaceH: 4F F0 01 00}
+  - ReplaceBytes: {Offset: 0x7674FE, FindInstBLX: {SymPLT: "QVariant::toBool() const"}, ReplaceH: 4F F0 01 00}
 
 PowerSettings - UnlockEnabled:
   - Enabled: no
@@ -1028,8 +1028,8 @@ Set KePub hyphenation:
       will always be turned on, regardless of justification button setting.
       
       (The publisher can still turn hyphenation off/on in the book's stylesheet.)
-  - ReplaceBytes: {Offset: 0xB70856, FindInstBLX: {SymPLT: "QString::operator==(QLatin1String) const"}, ReplaceH: 01 20 01 20} # Alternative 1: Always turn KePub hyphenation on
-# - ReplaceBytes: {Offset: 0xB70856, FindInstBLX: {SymPLT: "QString::operator==(QLatin1String) const"}, ReplaceH: 00 20 00 20} # Alternative 2: Never turn KePub hyphenation on
+  - ReplaceBytes: {Offset: 0xB7FEEA, FindInstBLX: {SymPLT: "QString::operator==(QLatin1String) const"}, ReplaceH: 01 20 01 20} # Alternative 1: Always turn KePub hyphenation on
+# - ReplaceBytes: {Offset: 0xB7FEEA, FindInstBLX: {SymPLT: "QString::operator==(QLatin1String) const"}, ReplaceH: 00 20 00 20} # Alternative 2: Never turn KePub hyphenation on
 
 Force user line spacing in KePubs:
   - Enabled: no
@@ -1244,8 +1244,9 @@ Set font scale factor:
   # Font scale factor is calculated as (font size slider) / (X+32)
   # Original value X=14, so original scale factor is (font size slider) / 46.
   # Allowed replacement values for X: 0-15 (smaller X --> larger scale factor)
-  - ReplaceInt: {Offset: 0x56D56C, Find: 14, Replace: 4} # ePub
-  - ReplaceInt: {Offset: 0xB70436, Find: 14, Replace: 4} # KePub
+  # Note: vmov.f32 s1, #15.0 before getReadingFontSizeScaleFactor
+  - ReplaceInt: {Offset: 0x5773AC, Find: 14, Replace: 4} # ePub
+  - ReplaceInt: {Offset: 0xB7FAC0, Find: 14, Replace: 4} # KePub
 
 # The following patch(es) were made by jackie_w
 

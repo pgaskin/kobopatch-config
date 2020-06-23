@@ -1,5 +1,5 @@
-version: 4.21.15015
-in: src/kobo7-update-4.21.15015.zip
+version: 4.22.15190
+in: src/kobo7-update-4.22.15190.zip
 out: KoboRoot.tgz
 log: log.txt
 

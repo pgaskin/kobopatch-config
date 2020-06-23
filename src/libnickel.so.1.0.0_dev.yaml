@@ -1,1 +1,1 @@
-Stuff: [Enabled: yes, ReplaceBytes: {Offset: 0x6F2580, FindH: FBF58EEB, ReplaceH: 4FF00100}, ReplaceBytes: {Offset: 0x75C2C6, FindH: 7FF588EC, ReplaceH: 4FF00100}, ReplaceBytes: {Offset: 0x760CD6, FindH: 7AF580EF, ReplaceH: 4FF00100}]
+Stuff: [Enabled: yes, ReplaceBytes: {Offset: 0x6FE398, FindH: F8F588E9, ReplaceH: 4FF00100}, ReplaceBytes: {Offset: 0x768BCE, FindH: 7BF534EC, ReplaceH: 4FF00100}, ReplaceBytes: {Offset: 0x76D586, FindH: 76F558EF, ReplaceH: 4FF00100}]
