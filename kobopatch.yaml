@@ -104,7 +104,7 @@ files:
 
   # NickelMenu
   src/nm: mnt/onboard/.adds/nm/config
-  pkg/nickelmenu-980703c/libnm.so: usr/local/Kobo/imageformats/libnm.so
+  pkg/nickelmenu-45c9583/libnm.so: usr/local/Kobo/imageformats/libnm.so
 
 #config:
   ##[DeveloperSettings]
