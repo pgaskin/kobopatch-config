@@ -39,7 +39,7 @@ overrides:
     Allow rotation on all devices: yes
     Both page turn buttons go next: yes
     My 24 line spacing values: yes
-    Replace adobe page numbers toggle with invert screen: yes
+#   Replace adobe page numbers toggle with invert screen: yes
     Always show confirmation dialog before upgrading: yes
     Remove beta features not supported text: yes
     Disable all tutorial dialogs: yes
@@ -61,6 +61,7 @@ overrides:
     Hide top-left menu item - Wishlist: yes
     Customize ComfortLight settings: yes
     Allow searches on Extra dictionaries: yes
+    Increase page navigation history: yes
 
   src/libnickel.so.1.0.0_custom.yaml:
     Rename new home screen footer: yes
