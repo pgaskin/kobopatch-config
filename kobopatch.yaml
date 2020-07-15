@@ -59,6 +59,7 @@ overrides:
     Hide top-left menu item - Store: yes
     Hide top-left menu item - Recommended: yes
     Hide top-left menu item - Wishlist: yes
+    Hide top-left menu item - Kobo Plus: yes
     Customize ComfortLight settings: yes
     Allow searches on Extra dictionaries: yes
     Increase page navigation history: yes
