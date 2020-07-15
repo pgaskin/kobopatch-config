@@ -557,7 +557,7 @@ New home screen subtitle custom font:
   - Description: |
       Increase subtitle font size, font color black. Works best when used
       with with patch `New home screen increasing cover size`
-  - BaseAddress: 0x1400C98 # FindZlib: "MetaDataLabel {\n  color: #666666;\n  qproperty-indent: 0;\n}"
+  - BaseAddress: 0x1485467 # FindZlib: "MetaDataLabel {\n  color: #666666;\n  qproperty-indent: 0;\n}"
   - ReplaceZlib: {Find: "MetaDataLabel {\n  color: #666666;\n  qproperty-indent: 0;\n}", Replace: "MetaDataLabel {\n  color: #000000;\n  qproperty-indent: 0;\n}"}
   - ReplaceZlib:
       Find:    "MetaDataLabel[qApp_deviceIsTrilogy=true] {\n  font-size: 13px;\n}"
@@ -572,7 +572,7 @@ New home screen subtitle custom font:
       Find:    "MetaDataLabel[qApp_deviceIsDaylight=true] {\n  font-size: 31px;\n}"
       Replace: "MetaDataLabel[qApp_deviceIsDaylight=true] {\n  font-size: 34px;\n}"
   # duplicate
-  - BaseAddress: 0x14093E8
+  - BaseAddress: 0x148FAF2
   - ReplaceZlib: {Find: "MetaDataLabel {\n  color: #666666;\n  qproperty-indent: 0;\n}", Replace: "MetaDataLabel {\n  color: #000000;\n  qproperty-indent: 0;\n}"}
   - ReplaceZlib:
       Find:    "MetaDataLabel[qApp_deviceIsTrilogy=true] {\n  font-size: 13px;\n}"
@@ -630,11 +630,11 @@ Remove forgot pin button from lock screen:
       Removes the Forgot PIN -> Sign Out button from the lock screen.
       If this is enabled and you forget your pin, you will need to
       hard reset your Kobo.
-  - BaseAddress: 0x140661E
+  - BaseAddress: 0x1484AE1
   - ReplaceZlib:
       Find: "#lblForgotPin[qApp_deviceIsDragon=true],\n#lblSignOut[qApp_deviceIsDragon=true] {\n  font-size: 26px;\n}"
       Replace: "#lblForgotPin,#lblSignOut{qproperty-visible:false;}"
-  - BaseAddress: 0x1409CDC
+  - BaseAddress: 0x14939B8
   - ReplaceZlib:
       Find: "#lblForgotPin[qApp_deviceIsDragon=true],\n#lblSignOut[qApp_deviceIsDragon=true] {\n  font-size: 26px;\n}"
       Replace: "#lblForgotPin,#lblSignOut{qproperty-visible:false;}"
