@@ -108,6 +108,9 @@ files:
   src/nm: mnt/onboard/.adds/nm/config
   pkg/nickelmenu-45c9583/libnm.so: usr/local/Kobo/imageformats/libnm.so
 
+  # NickelSeries
+  pkg/nickelseries-8c5d318/libns.so: usr/local/Kobo/imageformats/libns.so
+
 #config:
   ##[DeveloperSettings]
   ##EnableDebugServices=true
