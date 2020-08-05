@@ -97,10 +97,6 @@ files:
   # screensaver
   src/black.png: mnt/onboard/.kobo/screensaver/black.png
 
-  # kobo-dotfile-hack
-  pkg/kobo-dotfile-hack-6f452d1/usr/local/geek1011/libhidedir_kobo.so: usr/local/geek1011/libhidedir_kobo.so
-  pkg/kobo-dotfile-hack-6f452d1/etc/ld.so.preload: etc/ld.so.preload
-
   # BusyBox
   pkg/busybox-v1.31.0/busybox-armv7l: usr/local/geek1011/busybox
 
@@ -110,6 +106,9 @@ files:
 
   # NickelSeries
   pkg/nickelseries-8c5d318/libns.so: usr/local/Kobo/imageformats/libns.so
+
+  # kobo-dotfile-hack-ng
+  pkg/kobo-dotfile-hack-ng-3c786e4/libdfh.so: usr/local/Kobo/imageformats/libdfh.so
 
 #config:
   ##[DeveloperSettings]
