@@ -1,5 +1,5 @@
-version: 4.22.15268
-in: src/kobo7-update-4.22.15268.zip
+version: 4.23.15505
+in: src/kobo7-update-4.23.15505.zip
 out: KoboRoot.tgz
 log: log.txt
 
@@ -55,11 +55,7 @@ overrides:
     Don't uppercase header/footer text: yes
     Allow USB storage even when device locked: yes
     Change Browse Kobo home screen link target - Activity: yes
-    Hide top-left menu item - Dropbox: yes
-    Hide top-left menu item - Store: yes
-    Hide top-left menu item - Recommended: yes
-    Hide top-left menu item - Wishlist: yes
-    Hide top-left menu item - Kobo Plus: yes
+    Remove line from bottom tab bar: yes
     Customize ComfortLight settings: yes
     Allow searches on Extra dictionaries: yes
     Increase page navigation history: yes
@@ -102,7 +98,7 @@ files:
 
   # NickelMenu
   src/nm: mnt/onboard/.adds/nm/config
-  pkg/nickelmenu-7b814df/libnm.so: usr/local/Kobo/imageformats/libnm.so
+  pkg/nickelmenu-ab56a31/libnm.so: usr/local/Kobo/imageformats/libnm.so
 
   # NickelSeries
   pkg/nickelseries-8c5d318/libns.so: usr/local/Kobo/imageformats/libns.so

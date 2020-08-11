@@ -27,6 +27,7 @@ menu_item:reader:Invert Orientation:nickel_orientation:invert
 menu_item:reader:Invert Screen:nickel_setting:toggle:invert
 menu_item:reader:Screenshots:nickel_setting:toggle:screenshots
 
+menu_item:browser:Quit:nickel_misc:home
 menu_item:browser:Invert Orientation:nickel_orientation:invert
 menu_item:browser:Invert Screen:nickel_setting:toggle:invert
 menu_item:browser:Open Pop-Up:nickel_browser:modal:https://www.google.com

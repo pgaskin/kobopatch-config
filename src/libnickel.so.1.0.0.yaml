@@ -233,7 +233,7 @@ ePub disable built-in body padding-bottom:
       The built-in ePub stylesheet adds a line of padding at the bottom of the
       body element, to prevent the chapter ending on the last line of a page.
       This patch disables that stylesheet entry.
-      
+
       This patch is not compatible with `ePub fixed/adjustable top/bottom margins`
       patch, which already removes this stylesheet entry to make room for other
       things.
@@ -260,12 +260,12 @@ Block WiFi firmware upgrade:
   - PatchGroup: Firmware upgrade options
   - Description: |
       WARNING! THIS IS A DANGEROUS PATCH! READ THE INFORMATION BELOW CAREFULLY!
-      
+
       THIS PATCH IS UNTESTED, as there is no way to be sure it still works until
       the next firmware version is released. If it works then the firmware will
       not be upgraded during a WiFi sync, but you will still be able to upgrade
       manually or by syncing with the Kobo desktop.
-      
+
       THIS PATCH COULD RESULT IN A BOOT LOOP when signing out of your Kobo account
       (Settings > Accounts > Sign out) or when invoking a factory reset from the
       device information menu (Settings > Device information > Factory reset).
@@ -315,10 +315,10 @@ Set KePub hyphenation:
       to turn on hyphenation, but it is only used if the device's justification
       button is set to full justification. With this patch enabled hyphenation
       will always be turned on, regardless of justification button setting.
-      
+
       (The publisher can still turn hyphenation off/on in the book's stylesheet.)
-  - ReplaceBytes: {Offset: 0xB801D2, FindInstBLX: {SymPLT: "QString::operator==(QLatin1String) const"}, ReplaceH: 01 20 01 20} # Alternative 1: Always turn KePub hyphenation on
-# - ReplaceBytes: {Offset: 0xB801D2, FindInstBLX: {SymPLT: "QString::operator==(QLatin1String) const"}, ReplaceH: 00 20 00 20} # Alternative 2: Never turn KePub hyphenation on
+  - ReplaceBytes: {Offset: 0xB8F15E, FindInstBLX: {SymPLT: "QString::operator==(QLatin1String) const"}, ReplaceH: 01 20 01 20} # Alternative 1: Always turn KePub hyphenation on
+# - ReplaceBytes: {Offset: 0xB8F15E, FindInstBLX: {SymPLT: "QString::operator==(QLatin1String) const"}, ReplaceH: 00 20 00 20} # Alternative 2: Never turn KePub hyphenation on
 
 Force user line spacing in KePubs:
   - Enabled: no
@@ -403,8 +403,8 @@ KePub constant font sharpness:
       Find:    "body { -kobo-font-sharpness: %1; -kobo-font-thickness: %2; }\n"
       Replace: "body{-kobo-font-sharpness:0.0/*%1*/;-kobo-font-thickness:%2}\n"
       MustMatchLength: yes
-  - ReplaceString: 
-      Offset: 5 
+  - ReplaceString:
+      Offset: 5
       Find:    "-kobo-font-sharpness:0.0"
       Replace: "-kobo-font-sharpness:0.2" # Replacement sharpness value
       MustMatchLength: yes
@@ -417,7 +417,7 @@ Un-Force user text-align in div,p tags in KePubs:
     #     div, p { text-align: %1 !important; }
     # --> body   { text-align: %1 !important; }
   - FindBaseAddressString: "div, p { text-align: %1"
-  - ReplaceString: 
+  - ReplaceString:
       Find:    "div, p {"
       Replace: "body   {"
       MustMatchLength: yes
@@ -534,17 +534,17 @@ Set font scale factor:
   # Original value X=14, so original scale factor is (font size slider) / 46.
   # Allowed replacement values for X: 0-15 (smaller X --> larger scale factor)
   # Note: vmov.f32 s1, #15.0 before getReadingFontSizeScaleFactor
-  - ReplaceInt: {Offset: 0x577624, Find: 14, Replace: 4} # ePub
-  - ReplaceInt: {Offset: 0xB7FDA8, Find: 14, Replace: 4} # KePub
+  - ReplaceInt: {Offset: 0x586A7C, Find: 14, Replace: 4} # ePub
+  - ReplaceInt: {Offset: 0xB8ED34, Find: 14, Replace: 4} # KePub
 
 # The following patch(es) were made by jackie_w
 
 Dictionary text font-family/font-size/line-height:
   - Enabled: no
   - Description: |
-      This patch allows you to to customise the appearance of the text 
+      This patch allows you to to customise the appearance of the text
       in the pop-up and full-screen dictionary widgets.
-      4.17.13651: improved to also reduce the blank lines displayed in many 
+      4.17.13651: improved to also reduce the blank lines displayed in many
                   sideloaded custom dictionaries which contain <blockquote>.
       .
       See https://www.mobileread.com/forums/showpost.php?p=3521137&postcount=48
@@ -582,18 +582,18 @@ Dictionary text font-family/font-size/line-height:
   # Stage 2: N.B. You MUST keep old and new strings EXACTLY the same length
   #
   # Notes for changing font-family:
-  #   1.  Pad the shorter of the old/new strings with spaces to 
+  #   1.  Pad the shorter of the old/new strings with spaces to
   #       keep same length for both strings (see examples below)
   #
-  #   2.  If the new font-family name (max. 29 chars) contains any spaces it 
+  #   2.  If the new font-family name (max. 29 chars) contains any spaces it
   #       should be wrapped in 'single quotes' (see examples 2, 3)
   #
-  #   3.  To change from Georgia to the Kobo default sans-serif font, Avenir, 
+  #   3.  To change from Georgia to the Kobo default sans-serif font, Avenir,
   #       use either one of the following to achieve the same result:
   #       - sans-serif
   #       - 'Avenir Next Medium'
-  # 
-  # Un-comment ONE ONLY of the following ReplaceString examples 
+  #
+  # Un-comment ONE ONLY of the following ReplaceString examples
   #   to change dictionary font-family from default Georgia:
   #     - to a different built-in font
   #     - to one of your sideloaded custom fonts
@@ -631,10 +631,10 @@ Change Wikipedia search language:
       The patch set the search language in Wikipedia.
       Replace the "en" (in both the replace_string lines) to language code you want.
       For example English is "en" (set as default), for German is "de", for Russian is "ru".
-  - FindReplaceString: 
+  - FindReplaceString:
       Find:    "\0https://%1.m.wikipedia.org/wiki/Special:Search\0"
       Replace: "\0https://es.m.wikipedia.org/wiki/Special:Search\0"
-  - FindReplaceString: 
+  - FindReplaceString:
       Find:    "\0https://%1.wikipedia.org/wiki/Special:Search\0"
       Replace: "\0https://es.wikipedia.org/wiki/Special:Search\0"
 
@@ -646,7 +646,7 @@ Cyrillic Keyboard (GloHD/ClaraHD/AuraOne/H2O2):
   - PatchGroup: Keyboard alternatives
   - Description: |
       Replaces keys on the Extended Latin keypad with Cyrillic alternatives.
-    
+
       Note that after the device boots, the keypad might just show blank squares
       until after the first book has been opened.
       Also note that long-pressing keys on the base keypad will no longer show
@@ -705,7 +705,7 @@ Greek Keyboard (GloHD/ClaraHD/AuraOne/H2O2):
   - PatchGroup: Keyboard alternatives
   - Description: |
       Replaces keys on the Extended Latin keypad with Cyrillic alternatives.
-    
+
       Note that after the device boots, the keypad might just show blank squares
       until after the first book has been opened.
       Also note that long-pressing keys on the base keypad will no longer show
@@ -825,7 +825,7 @@ Bulgarian Phonetic Keyboard (GloHD/ClaraHD/AuraOne/H2O2/Forma/Libra):
 Don't grab exclusive access to event0:
   - Enabled: no
   - Description: Allows third-party tools to read the event0 input device
-  - FindReplaceString: {Find: "%0:keymap=keys/device.qmap:grab=1", Replace: "%0:keymap=keys/device.qmap:grab=0"}
+  - FindReplaceString: {Find: "%0::keymap=keys/device.qmap::grab=1", Replace: "%0::keymap=keys/device.qmap::grab=0"}
 
 # The following patch(es) are by pgaskin (geek1011)
 
@@ -986,6 +986,16 @@ Rename new home screen footer:
     # You can enable the following replacement, but note that it might cause the o letter on the keyboard to change
 #  - FindReplaceString: {Find: "Shop Kobo", Replace: "9char-str"}
 
+Remove line from bottom tab bar:
+  - Enabled: no
+  - Description: Removes the line from the top of the bottom tab bar added in 4.23.15505.
+  # Instead of setting the minimum size of the QFrame for the line, hide it.
+  - ReplaceBytes:
+      Base:           "Ui_MainNavView::setupUi(QWidget*)"
+      Offset:         322
+      FindInstBLX:    {SymPLT: "QWidget::setMinimumSize(int, int)"}
+      ReplaceInstBLX: {SymPLT: "QWidget::hide()"}
+
 ## Change Browse Kobo home screen link target ###
 # This patch allows you to change the target of the Browse Kobo link. To
 # rename the top description, use the rename home screen footer patch.
@@ -1041,13 +1051,13 @@ Change Browse Kobo home screen link target - Articles:
   - ReplaceBytes:
       Base:          "BrowseKoboWidget::tapped()"
       Offset:        22
-      FindInstBW:    {SymPLTTail: "DiscoverNavMixin::storefront()"}       # Store
-      ReplaceInstBW: {SymPLTTail: "LibraryNavMixin::showPocketLibrary()"} # My Articles
+      FindInstBW:    {SymPLTTail: "DiscoverNavMixin::storefront()"} # Store
+      ReplaceInstBW: {SymPLTTail: "MoreController::articles()"}     # Articles
   - ReplaceBytes:
       Base:          "BrowseKoboWidget::tapped()"
       Offset:        32
       FindInstBW:    {SymPLTTail: "StoreNavMixin::overDriveFeaturedLists()"} # OverDrive
-      ReplaceInstBW: {SymPLTTail: "LibraryNavMixin::showPocketLibrary()"}    # My Articles
+      ReplaceInstBW: {SymPLTTail: "MoreController::articles()"}              # Articles
   - ReplaceBytes:
       Base:           "BrowseKoboWidget::BrowseKoboWidget(QWidget*)"
       Offset:         196
@@ -1138,92 +1148,6 @@ Never show Kobo Plus, wishlist, and points SmartLinks:
 
 ###
 
-### Hide top-left menu items ###
-# This following patches take advantage of the parental controls feature, as
-# StatusBarMenuController::updateParentControlSensitiveMenuItems is always
-# called when setting them up. All that is needed to hide items is to hardcode
-# false before calling QAction::setVisible ([XX 46] mov r1, XX -> [00 21] movs r1, #0).
-# To prevent ghost items, the value which stores the number of items to draw
-# also needs to be fixed before the ldrex/strex just after the setVisible.
-
-# Note for updating:
-# It's just the r1 before QAction::setVisible and after
-# QWidgetAction::defaultWidget for each widget name.
-
-Hide top-left menu item - Dropbox:
-  - Enabled: no
-  - Description: See the comment above.
-  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 182}
-  - ReplaceBytes: {Offset:  0, FindH: 51 46, ReplaceH: 00 21} # DropboxSeparator (sl=51) (sl:sb&r5)
-  - ReplaceBytes: {Offset: 22, FindH: 51 46, ReplaceH: 00 21} # DropboxSeparator (sl=51)
-  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 366}
-  - ReplaceBytes: {Offset:  0, FindH: 41 46, ReplaceH: 00 21} # DropboxWidget (sb=41) (sb:sb&r5)
-  - ReplaceBytes: {Offset: 22, FindH: 41 46, ReplaceH: 00 21} # DropboxWidget (sb=41)
-
-Hide top-left menu item - Pocket:
-  - Enabled: no
-  - Description: See the comment above.
-  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 544}
-  - ReplaceBytes: {Offset:  0, FindH: 29 46, ReplaceH: 00 21} # PocketSeparator (r5=29)
-  - ReplaceBytes: {Offset: 22, FindH: 29 46, ReplaceH: 00 21} # PocketSeparator (r5=29)
-  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 722}
-  - ReplaceBytes: {Offset:  0, FindH: 29 46, ReplaceH: 00 21} # PocketWidget (r5=29)
-  - ReplaceBytes: {Offset: 22, FindH: 29 46, ReplaceH: 00 21} # PocketWidget (r5=29)
-
-Hide top-left menu item - Store:
-  - Enabled: no
-  - Description: See the comment above.
-  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 900}
-  - ReplaceBytes: {Offset:  0, FindH: 29 46, ReplaceH: 00 21} # StoreSeparator (r5=29)
-  - ReplaceBytes: {Offset: 22, FindH: 29 46, ReplaceH: 00 21} # StoreSeparator (r5=29)
-  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 1078}
-  - ReplaceBytes: {Offset:  0, FindH: 29 46, ReplaceH: 00 21} # StoreWidget (r5=29)
-  - ReplaceBytes: {Offset: 22, FindH: 29 46, ReplaceH: 00 21} # StoreWidget (r5=29)
-
-Hide top-left menu item - Recommended:
-  - Enabled: no
-  - Description: See the comment above.
-  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 1196}
-  - ReplaceBytes: {Offset:  0, FindH: 29 46, ReplaceH: 00 21} # RecommendedSeparator (r5=29)
-  - ReplaceBytes: {Offset: 22, FindH: 29 46, ReplaceH: 00 21} # RecommendedSeparator (r5=29)
-  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 1308}
-  - ReplaceBytes: {Offset:  0, FindH: 29 46, ReplaceH: 00 21} # RecommendedWidget (r5=29)
-  - ReplaceBytes: {Offset: 22, FindH: 29 46, ReplaceH: 00 21} # RecommendedWidget (r5=29)
-
-# Note about updating: the following ones were mistakenly detected as outside
-# the procedure by Hopper, but this can be fixed by NOPing the DDs between and
-# recreating the procedure (press P at the start).
-
-Hide top-left menu item - Wishlist:
-  - Enabled: no
-  - Description: See the comment above.
-  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 4380}
-  - ReplaceBytes: {Offset:  0, FindH: 51 46, ReplaceH: 00 21} # WishlistSeparator (fp=51) (fp:sb&r5)
-  - ReplaceBytes: {Offset: 22, FindH: 51 46, ReplaceH: 00 21} # WishlistSeparator (fp=51)
-  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 4778}
-  - ReplaceBytes: {Offset:  0, FindH: 49 46, ReplaceH: 00 21} # WishlistWidget (r8=49) (r8:r8&r5)
-  - ReplaceBytes: {Offset: 22, FindH: 49 46, ReplaceH: 00 21} # WishlistWidget (r8=49)
-
-Hide top-left menu item - Activity:
-  - Enabled: no
-  - Description: See the comment above.
-  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 5172}
-  - ReplaceBytes: {Offset:  0, FindH: 29 46, ReplaceH: 00 21} # ActivitySeparator (r5=29)
-  - ReplaceBytes: {Offset: 22, FindH: 29 46, ReplaceH: 00 21} # ActivitySeparator (r5=29)
-  - BaseAddress:  {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 5656}
-  - ReplaceBytes: {Offset:  0, FindH: 29 46, ReplaceH: 00 21} # ActivityWidget (r5=29)
-  - ReplaceBytes: {Offset: 22, FindH: 29 46, ReplaceH: 00 21} # ActivityWidget (r5=29)
-
-Hide top-left menu item - Kobo Plus:
-  - Enabled: no
-  - Description: See the comment above.
-  # This one is slightly different, as we need to do it by replacing the return
-  # value of the inlined sub which calls OneStoreServiceSettings::subscriptionsEnabled.
-  - BaseAddress: {Sym: "StatusBarMenuController::updateParentControlSensitiveMenuItems()", Rel: 1402}
-  - ReplaceBytes: {Offset: 0, FindH: A4 F4 E7 FE, ReplaceH: 4F F0 00 00}
-
-###
-
 Increase TOC level indentation:
   - Enabled: no
   - PatchGroup: TOC Indentation
@@ -1298,7 +1222,7 @@ Larger Sleep/Power-off timeouts:
   - PatchGroup: Sleep/Power-off timeouts
   - Description: |
       Increase the available sleep/power-off timeouts to larger values (up to a
-      few weeks). To customize this patch, see https://pgaskin.net/kobopatch-patches/lgrpwroff-14601.html .
+      few weeks). To customize this patch, see https://pgaskin.net/kobopatch-patches/lgrpwroff-15505.html .
 
       IMPORTANT - Although this patch has been tested by multiple users and
       confirmed to be working, the interaction between the RTC timer and Nickel
@@ -1317,10 +1241,10 @@ Larger Sleep/Power-off timeouts:
       for more details about this.
   # Multipliers
   - ReplaceBytes:
-      Base: "N3PowerWorkflowManager::configureWakeup(AlarmControl*, int, char const*)"
-      Offset: 12
-      FindH: 04 FB 05 F5    # MUL r5(dest), r4(multiplier), r5(mins)
-      ReplaceH: 4F EA C5 45 # LSL r5, r5, #19
+      Base: "N3PowerWorkflowManager::configureWakeup(AlarmControl*, int, AlarmControlDelegate*)"
+      Offset: 28
+      FindH: 03 FB 04 F2    # MUL r2(dest), r3(multiplier), r4(mins)
+      ReplaceH: 4F EA C4 42 # LSL r2, r4, #19
   - ReplaceBytes: {Base: "N3PowerWorkflowManager::pollBattery()", Offset: 106, FindH: 08 FB 00 F8, ReplaceH: 4F EA C0 48} # MUL r8(dest), r8(multiplier), r0(mins) -> LSL r8, r0, #19
   - ReplaceBytes: {Base: "N3PowerWorkflowManager::pollBattery()", Offset: 156, FindH: 02 FB 00 F2, ReplaceH: 4F EA C0 42} # MUL r2(dest), r2(multiplier), r0(mins) -> LSL r2, r0, #19
   # Menu text
@@ -1355,13 +1279,13 @@ Allow rotation on all devices:
       Unlike only the DeveloperSettings ForceAllowLandscape option, this patch
       also makes the rotation icon show on the new reader as well.
   # Always return true for ForceAllowLandscape:
-  - ReplaceBytes: {Offset: 0x76783E, FindInstBLX: {SymPLT: "QVariant::toBool() const"}, ReplaceH: 4F F0 01 00}
+  - ReplaceBytes: {Offset: 0x777E4E, FindInstBLX: {SymPLT: "QVariant::toBool() const"}, ReplaceH: 4F F0 01 00}
   # In ReadingMenuView::ReadingMenuView, replace the value of Device::hasOrientationSensor,
   # which is passed to a function to hide/show the rotate icon:
-  - ReplaceBytes: {Offset: 0xB971BA, FindInstBLX: {SymPLT: "Device::hasOrientationSensor() const"}, ReplaceH: 4F F0 01 00}
+  - ReplaceBytes: {Offset: 0xBA60FC, FindInstBLX: {SymPLT: "Device::hasOrientationSensor() const"}, ReplaceH: 4F F0 01 00}
   # Also fix sizing of popup by doing the same in RotatePopup::RotatePopup, but
   # note that this will make the Automatic option show too (and do nothing):
-  - ReplaceBytes: {Offset: 0xBB33DE, FindInstBLX: {SymPLT: "Device::hasOrientationSensor() const"}, ReplaceH: 4F F0 01 00}
+  - ReplaceBytes: {Offset: 0xBC29BE, FindInstBLX: {SymPLT: "Device::hasOrientationSensor() const"}, ReplaceH: 4F F0 01 00}
 
 Don't uppercase header/footer text:
   - Enabled: no
@@ -1419,26 +1343,36 @@ Swap reading header/footer:
   # Offsets (since 4.19.14123):
   #  - ReadingView->header - 0x10
   #  - ReadingView->footer - 0x1C
-  - ReplaceBytes: 
+  - ReplaceBytes:
       Base:     "ReadingView::updateProgressHeader(QString const&, QString const&)"
       Offset:   8
       FindH:    00 69 # LDR r0, [r0, #0x10]
       ReplaceH: C0 69 # LDR r0, [r0, #0x1C]
-  - ReplaceBytes: 
+  - ReplaceBytes:
       Base:     "ReadingView::updatePercentageFooter(QString const&)"
       Offset:   158
       FindH:    C0 69 # LDR r0, [r0, #0x1C]
       ReplaceH: 00 69 # LDR r0, [r0, #0x10]
-  - ReplaceBytes: 
+  - ReplaceBytes:
       Base:     "ReadingView::updatePageFooter(QString const&)"
-      Offset:   178
+      Offset:   172
       FindH:    C0 69 # LDR r0, [r0, #0x1C]
       ReplaceH: 00 69 # LDR r0, [r0, #0x10]
-  - ReplaceBytes: 
+  - ReplaceBytes:
       Base:     "ReadingView::updateTimeFooter(QString const&)"
-      Offset:   100
+      Offset:   50 # "Loading..."
+      FindH:    E4 69 # LDR r4, [r4, #0x1C]
+      ReplaceH: 24 69 # LDR r4, [r4, #0x10]
+  - ReplaceBytes:
+      Base:     "ReadingView::updateTimeFooter(QString const&)"
+      Offset:   102 # time estimate
       FindH:    D3 F8 1C 90 # LDR.W sb, [r3, #0x1C]
       ReplaceH: D3 F8 10 90 # LDR.W sb, [r3, #0x10]
+  - ReplaceBytes:
+      Base:     "ReadingView::updateTimeFooter(QString const&)"
+      Offset:   240 # pages
+      FindH:    DE F8 1C 40 # LDR.W r4, [lr, #0x1C]
+      ReplaceH: DE F8 10 40 # LDR.W r4, [lr, #0x10]
 
 Enable advanced settings for all fonts:
   - Enabled: no
@@ -1471,7 +1405,7 @@ Customize ComfortLight settings:
   # In an unnamed subroutine two layers into FrontLightPopupController::loadView
   # (find it by going back from QTime::addSecs), the times for the dropdown are
   # generated into a QVector<QPair<QString, QTime>> with a simple loop.
-  - BaseAddress: 0xADAF98 # find the base of the unnamed subroutine with the x-ref to _ZN5QTimeC1Eiiii
+  - BaseAddress: 0xAE9B90 # find the base of the unnamed subroutine with the x-ref to _ZN5QTimeC1Eiiii
   #
   # Change the initial hour / first bedtime dropdown item passed to the QTime
   # constructor (mov r1, #21):
@@ -1546,7 +1480,7 @@ FeatureSettings - ExportHighlights:
 DeveloperSettings - AutoUsbGadget:
   - Enabled: no
   - Description: Automatically enable USB Storage mode when connected.
-  - ReplaceBytes: {Offset: 0x7678DE, FindInstBLX: {SymPLT: "QVariant::toBool() const"}, ReplaceH: 4F F0 01 00}
+  - ReplaceBytes: {Offset: 0x777EEE, FindInstBLX: {SymPLT: "QVariant::toBool() const"}, ReplaceH: 4F F0 01 00}
 
 PowerSettings - UnlockEnabled:
   - Enabled: no
