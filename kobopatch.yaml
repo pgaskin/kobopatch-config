@@ -25,7 +25,6 @@ overrides:
     Reduce new header/footer height: yes
     Reduce top/bottom page spacer: yes
     Series list increase cover thumbnails: yes
-    Reduce height of page navigator arrows: yes
 
   src/nickel_dev.yaml:
 
@@ -98,7 +97,7 @@ files:
 
   # NickelMenu
   src/nm: mnt/onboard/.adds/nm/config
-  pkg/nickelmenu-ab56a31/libnm.so: usr/local/Kobo/imageformats/libnm.so
+  pkg/nickelmenu-v3.1.2/libnm.so: usr/local/Kobo/imageformats/libnm.so
 
   # NickelSeries
   pkg/nickelseries-8c5d318/libns.so: usr/local/Kobo/imageformats/libns.so
