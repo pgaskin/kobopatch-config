@@ -1,3 +1,5 @@
+menu_item:main:Invert Orientation:nickel_orientation:invert                                            
+menu_item:main:Invert Screen:nickel_setting:toggle:invert
 menu_item:main:Web Browser:nickel_browser:
 menu_item:main:USB Connection:nickel_misc:force_usb_connection
 
