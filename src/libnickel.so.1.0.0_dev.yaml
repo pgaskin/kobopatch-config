@@ -1,1 +1,86 @@
 #Stuff: [Enabled: yes, ReplaceBytes: {Offset: 0x6FE398, FindH: F8F588E9, ReplaceH: 4FF00100}, ReplaceBytes: {Offset: 0x768BCE, FindH: 7BF534EC, ReplaceH: 4FF00100}, ReplaceBytes: {Offset: 0x76D586, FindH: 76F558EF, ReplaceH: 4FF00100}]
+
+# TODO: figure out segfaults in patch below
+
+#Show series name in grid:
+#  - Enabled: no
+#  - Description: Replaces the series book count with the series name in the series grid view.
+#  # When updating the series for the SeriesGridWidget:
+#  - BaseAddress: {Sym: "SeriesGridWidget::setContent(Series const&)", Rel: 138}
+#  # Clear out the code between the call to Series::booksCount and
+#  # QMetaObject::tr, inclusive:
+#  - ReplaceBytes: {Offset:  0, FindH: 05 F1 54 00, CheckOnly: true} # add.w  r0, r5, #0x54                    | r0 = r5 + 0x54    // the number doesn't matter, what matters is that the Series this pointer is in r0
+#  - ReplaceBytes: {Offset:  4, FindInstBLX: {SymPLT: "_ZNK6Series10booksCountEv"}, ReplaceH: 00 46 00 46}     # blx    _ZNK6Series10booksCountEv@PLT    | r0 = (Series*)(r0)->booksCount() // unnecessary, we don't need the count anymore
+#  - ReplaceBytes: {Offset:  8, FindH: 3C 49, ReplaceH: 00 46}       # ldr    r1, [pc, #0xf0]                  | r1 = *(pc + 0xF0) // unnecessary, used for tr's arguments (note that tr is static and doesn't take a this pointer)
+#  - ReplaceBytes: {Offset: 10, FindH: 3C 4B, ReplaceH: 00 46}       # ldr    r3, [pc, #0xf0]                  | r3 = *(pc + 0xF0) // "
+#  - ReplaceBytes: {Offset: 12, FindH: 3D 4A, ReplaceH: 00 46}       # ldr    r2, [pc, #0xf4]                  | r2 = *(pc + 0xF4) // "
+#  - ReplaceBytes: {Offset: 14, FindH: 71 58, ReplaceH: 00 46}       # ldr    r1, [r6, r1]                     | r1 = *(r6 + r1)   // ", argument 1 for tr (sourceText)
+#  - ReplaceBytes: {Offset: 16, FindH: 7B 44, ReplaceH: 00 46}       # add    r3, pc                           | r3 = *(r3 + pc)   // ", argument 3 for tr (n)
+#  - ReplaceBytes: {Offset: 18, FindH: 00 90, ReplaceH: 00 46}       # str    r0, [sp]                         | *sp = (int)(r0)   // -- almost certainly unnecessary, not used later
+#  - ReplaceBytes: {Offset: 20, FindH: 7A 44, ReplaceH: 00 46}       # add    r2, pc                           | r2 = *(r2 + pc)   // ", argument 2 for tr (disambiguation)
+#  - ReplaceBytes: {Offset: 22, FindH: 20 46, ReplaceH: 00 46}       # mov    r0, r4                           | r0 = r4           // QString stack return address for tr (value returns of classes are passed as a hidden argument, the pointer to the stack memory, before the other ones) (see the ARM and Itanium C++ ABIs)
+#  - ReplaceBytes: {Offset: 24, FindInstBLX: {SymPLT: "_ZNK11QMetaObject2trEPKcS1_i"},  ReplaceH: 00 46 00 46} # blx    _ZNK11QMetaObject2trEPKcS1_i@PLT | *r0 = QMetaObject::tr((char const*)(r1), (char const*)(r2), (int)(r3)) // unnecessary, we don't need the translated string
+#  - ReplaceBytes: {Offset: 28, FindH: 2B 6D, CheckOnly: true}       # ldr    r3, [r5, #0x50]                  | r3 = *(r5 + 0x50) // gets the object with the QLabel pointer
+#  - ReplaceBytes: {Offset: 30, FindH: 21 46, CheckOnly: true}       # mov    r1, r4                           | r1 = r4           // return address of the translated QString, argument 1 for setText
+#  - ReplaceBytes: {Offset: 32, FindH: 18 69, CheckOnly: true}       # ldr    r0, [r3, #0x10]                  | r0 = *(r3 + 0x10) // pointer to the QLabel, this pointer for setText
+#  - ReplaceBytes: {Offset: 34, FindInstBLX: {SymPLT: "_ZN6QLabel7setTextERK7QString"}, CheckOnly: true}       # blx    _ZNK6Series10booksCountEv@PLT    | (QLabel*)(r0)->setText((QString const&)(r1)) // set the label text
+#  - ReplaceBytes: {Offset: 38, FindH: 78 68, CheckOnly: true}       # ldr    r0, [r7, #0x4]                   | r0 = *(r7 + 0x4)  // not relevant other than that it overwrites r0 (meaning we can do what we want with r0 above)
+#  - ReplaceBytes: {Offset: 40, FindH: 03 68, CheckOnly: true}       # ldr    r3, [r0]                         | r3 = *r0          // ", but for r3 (also note that r1 and r2 are also overwritten later, and that the memory pointed to by r4 isn't used again)
+#  # Add our replacement code:
+#  - ReplaceBytes: {Offset:  4, FindH: 00 46,       ReplaceH: 01 46}                                       # mov  r1, r0                                  | r1 = r0                                    // Series this pointer for title
+#  - ReplaceBytes: {Offset:  6, FindH: 00 46,       ReplaceH: 81 B0}                                       # sub  sp, #4                                  | sp -= 4                                    // allocate 4 bytes of stack memory
+#  - ReplaceBytes: {Offset:  8, FindH: 00 46,       ReplaceH: 68 46}                                       # mov  r0, sp                                  | r0 = sp                                    // use it for the QByteArray stack return address for title
+#  - ReplaceBytes: {Offset: 10, FindH: 00 46 00 46, ReplaceInstBLX: "_ZNK6Series5titleEv"}                 # blx  _ZNK6Series5titleEv@PLT                 | *r0 = (Series*)(r1)->title()               // get the title
+#  - ReplaceBytes: {Offset: 14, FindH: 00 46,       ReplaceH: 69 46}                                       # mov  r1, sp                                  | r1 = sp                                    // title QByteArray (if we wanted the const char* itself, we could have dereferenced the pointer to get the QByteArray data), argument 1 for fromUtf8
+#  - ReplaceBytes: {Offset: 16, FindH: 00 46,       ReplaceH: 20 46}                                       # mov  r0, r4                                  | r0 = r4                                    // QString stack return address for fromUtf8
+#  - ReplaceBytes: {Offset: 18, FindH: 00 46 00 46, ReplaceInstBLX: "_ZN7QString8fromUtf8ERK10QByteArray"} # blx  _ZN7QString8fromUtf8ERK10QByteArray@PLT | *r0 = QString::fromUtf8((QByteArray*)(r1)) // convert the title to a QString (the rest of the code is compatible since we're now in the same state as we would have been with tr, with the QString pointer in r4)
+#  - ReplaceBytes: {Offset: 22, FindH: 00 46,       ReplaceH: 01 B0}                                       # add  sp, #4                                  | sp += 4                                    // deallocate the 4 bytes of stack we used earlier
+
+#Show series name in grid:
+#  - Enabled: yes
+#  - Description: Replaces the series book count with the series name in the series grid view.
+#
+#  # When updating the series for the SeriesGridWidget:
+#  - BaseAddress: "SeriesGridWidget::setContent(Series const&)"
+#
+#  # NOP Series::booksCount since we don't need its value anymore and we want to
+#  # preserve the Series this pointer to in r0:
+#  - ReplaceBytes:
+#      Offset:         142
+#      FindInstBLX:    {SymPLT: "Series::booksCount() const"}
+#      ReplaceInstNOP: true
+#
+#  # Then, instead of calling tr, we can get the series name. We could use
+#  # Series::title, but that just calls Content::getTitleRaw, which returns a
+#  # QByteArray (most functions dereference it [remember that the first thing in
+#  # a QByteArray is the data pointer] to get a const char*), which isn't exactly
+#  # what we need. Instead, we call Content::getTitle, which returns a QString:
+#  - ReplaceBytes:
+#      Offset:         162
+#      FindInstBLX:    {SymPLT: "QMetaObject::tr(char const*, char const*, int) const"}
+#      ReplaceInstBLX: {SymPLT: "Content::getTitle() const"}
+#
+#  # But, since it returns a QString on the stack, we need to pass a pointer to
+#  # the stack memory for it as a hidden argument before the others, making r0
+#  # the return value pointer and r1 the Series this pointer (it was originally
+#  # in r4 for tr to return it's value) (see the ARM and Itanium C++ ABIs) (see
+#  # https://godbolt.org/z/1vnM3e) (also note that the values of r0 and r1 aren't
+#  # used by anything after this, so we don't need to bother preserving them):
+#  - ReplaceBytes:
+#      Offset:   158   # note: it's important that this is before the r0=r4, since we still need the r0 to have the Series this pointer
+#      FindH:    7A 44 # add r2, pc
+#      ReplaceH: 01 46 # mov r1, r0 (set the second argument to the Series* this pointer)
+#  - ReplaceBytes:
+#      Offset:   160
+#      FindH:    20 46 # mov r0, r4 (the r4 is irrelevant, as it's just what was used to store the pointer - it's the r0 that matters since it's the hidden first argument for the stack pointer for the QString return value)
+#      CheckOnly: true # it's already done for use with the tr function
+#
+#  # Just to make sure it's used to set the QLabel's text:
+#  - ReplaceBytes:
+#      Offset:    168
+#      FindH:     21 46 # mov r1, r4
+#      CheckOnly: true
+#  - ReplaceBytes:
+#      Offset:      172
+#      FindInstBLX: {SymPLT: "QLabel::setText(QString const&)"}
+#      CheckOnly:   true
