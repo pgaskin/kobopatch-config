@@ -317,8 +317,8 @@ Set KePub hyphenation:
       will always be turned on, regardless of justification button setting.
 
       (The publisher can still turn hyphenation off/on in the book's stylesheet.)
-  - ReplaceBytes: {Offset: 0xB8FB8E, FindInstBLX: {SymPLT: "QString::operator==(QLatin1String) const"}, ReplaceH: 01 20 01 20} # Alternative 1: Always turn KePub hyphenation on
-# - ReplaceBytes: {Offset: 0xB8FB8E, FindInstBLX: {SymPLT: "QString::operator==(QLatin1String) const"}, ReplaceH: 00 20 00 20} # Alternative 2: Never turn KePub hyphenation on
+  - ReplaceBytes: {Offset: 0xB90F62, FindInstBLX: {SymPLT: "QString::operator==(QLatin1String) const"}, ReplaceH: 01 20 01 20} # Alternative 1: Always turn KePub hyphenation on
+# - ReplaceBytes: {Offset: 0xB90F62, FindInstBLX: {SymPLT: "QString::operator==(QLatin1String) const"}, ReplaceH: 00 20 00 20} # Alternative 2: Never turn KePub hyphenation on
 
 Force user line spacing in KePubs:
   - Enabled: no
@@ -499,12 +499,6 @@ KePub stylesheet additions:
     # 1.5 times the font size of KePubs by default. With this enabled they match.
 # - FindReplaceString: {Find: "/******************************************/", Replace: "#book-inner{font-size:1.5em                }", MustMatchLength: yes}
 
-Allow searches on Extra dictionaries:
-  - Enabled: no
-    # See https://pgaskin.net/dictutil/dicthtml/install
-  - FindBaseAddressString: "\0Extra:\x20"
-  - ReplaceString: {Offset: 7, Find: "\x20", Replace: "_"}
-
 Ignore .otf fonts:
   - Enabled: no
   - Description:
@@ -534,80 +528,12 @@ Set font scale factor:
   # Original value X=14, so original scale factor is (font size slider) / 46.
   # Allowed replacement values for X: 0-15 (smaller X --> larger scale factor)
   # Note: vmov.f32 s1, #15.0 before getReadingFontSizeScaleFactor
-  - ReplaceInt: {Offset: 0x5874AC, Find: 14, Replace: 4} # ePub
-  - ReplaceInt: {Offset: 0xB8F764, Find: 14, Replace: 4} # KePub
+  - ReplaceInt: {Offset: 0x58953C, Find: 14, Replace: 4} # ePub
+  - ReplaceInt: {Offset: 0xB90B34, Find: 14, Replace: 4} # KePub
 
 # The following patch(es) were made by jackie_w
 
-Dictionary text font-family/font-size/line-height:
-  - Enabled: no
-  - Description: |
-      This patch allows you to to customise the appearance of the text
-      in the pop-up and full-screen dictionary widgets.
-      4.17.13651: improved to also reduce the blank lines displayed in many
-                  sideloaded custom dictionaries which contain <blockquote>.
-      .
-      See https://www.mobileread.com/forums/showpost.php?p=3521137&postcount=48
-      for screenshots
-      .
-      You can change one or more of the following properties:
-      - font-family
-      - font-size
-      - line-height
-      .
-      These are the Kobo defaults
-                Glo - Georgia  23px  1.4em
-                H2O - Georgia  29px  1.4em
-              GloHD - Georgia  32px  1.4em
-            AuraONE - Georgia  42px  1.4em
-  #
-  # Stage 1: Change DictionaryView to remove %variables
-  # from:
-  #    * { font: %1px %2; line-height: 1.4em; }
-  #    div.descriptionFont { font-family: %3; }
-  #    ol { font-size: %1px; font-weight: bold; margin-left: %4em; margin-top: 0px; }
-  #    ol p { font-size: %1px; font-weight:normal; }
-  # to:
-  #    * { font-size: %1px; line-height: 1.40em;font-family: Georgia                       ;}
-  #    ol {margin-left:1em; margin-top:0}
-  #    blockquote {margin:0.3em 0 0.3em 1em} blockquote>blockquote {margin:-0.3em 0 0 2em}
-  #
-  # ##### N.B. Do not change the next 4 lines #####
-  - FindReplaceString:
-      Find:    "* { font: %1px %2; line-height: 1.4em; }\ndiv.descriptionFont { font-family: %3; }\nol { font-size: %1px; font-weight: bold; margin-left: %4em; margin-top: 0px; }\nol p { font-size: %1px; font-weight:normal; }\n"
-      Replace: "* { font-size: %1px; line-height: 1.40em;font-family: Georgia                       ;}\n\nol {margin-left:1em; margin-top:0}\nblockquote {margin:0.3em 0 0.3em 1em} blockquote>blockquote {margin:-0.3em 0 0 2em}\n"
-      MustMatchLength: yes
-  # ##### N.B. Do not change anything above this line #####
-  #
-  # Stage 2: N.B. You MUST keep old and new strings EXACTLY the same length
-  #
-  # Notes for changing font-family:
-  #   1.  Pad the shorter of the old/new strings with spaces to
-  #       keep same length for both strings (see examples below)
-  #
-  #   2.  If the new font-family name (max. 29 chars) contains any spaces it
-  #       should be wrapped in 'single quotes' (see examples 2, 3)
-  #
-  #   3.  To change from Georgia to the Kobo default sans-serif font, Avenir,
-  #       use either one of the following to achieve the same result:
-  #       - sans-serif
-  #       - 'Avenir Next Medium'
-  #
-  # Un-comment ONE ONLY of the following ReplaceString examples
-  #   to change dictionary font-family from default Georgia:
-  #     - to a different built-in font
-  #     - to one of your sideloaded custom fonts
-  #
-  #- ReplaceString: {Offset: 54, Find: "Georgia   ", Replace: "sans-serif", MustMatchLength: yes}
-  #- ReplaceString: {Offset: 54, Find: "Georgia    ", Replace: "'Gill Sans'", MustMatchLength: yes}
-  #- ReplaceString: {Offset: 54, Find: "Georgia      ", Replace: "'Kobo Nickel'", MustMatchLength: yes}
-  #- ReplaceString: {Offset: 54, Find: "Georgia ", Replace: "Bookerly", MustMatchLength: yes}
-  #
-  # Un-comment and edit next line to change font-size
-  #- ReplaceString: {Offset: 15, Find: "%1px", Replace: "32px", MustMatchLength: yes}
-  #
-  # Un-comment and edit next line to change line spacing
-  #- ReplaceString: {Offset: 34, Find: "1.40em", Replace: "1.30em", MustMatchLength: yes}
+# WAITING(@jackiew1): Dictionary text font-family/font-size/line-height
 
 Custom navigation menu page number text:
   - Enabled: no
@@ -852,14 +778,6 @@ Both page turn sides go next:
   - ReplaceBytes: {Offset: 10, FindH: 3B 62, ReplaceH: 3A 62}
   # This patch could have also been done later on where the tap point is checked against different
   # QRects, but that's a lot more complicated due to the use of QHash s of pointers to functions.
-
-Increase page navigation history:
-  - Enabled: no
-  - Description: Increases the number of dots marking navigation history on the scrubber.
-  # Replace the immediate value for the cmp r1, #2 before the bgt to the inlined
-  # QVector::removeFirst() (i e. QVector::erase(start, start+1)):
-  - BaseAddress: "BookmarkHistoryMixin::pushBookmark(Bookmark const&)"
-  - ReplaceInt: {Offset: 18, Find: 2, Replace: 4} # note: you can set thr replacement to whatever you want, but it MUST be > 1 or bad things will happen
 
 Replace adobe page numbers toggle with invert screen:
   - Enabled: no
@@ -1148,37 +1066,16 @@ Never show Kobo Plus, wishlist, and points SmartLinks:
 
 ###
 
-Increase TOC level indentation:
-  - Enabled: no
-  - PatchGroup: TOC Indentation
-  - Description: |
-      The space indented Table of Contents levels are quite hard to see, as the
-      difference is almost too small to easily notice.
-  - ReplaceBytes:
-      Base:     {Sym: "N3TableOfContentsWidget::setContent(Shortcover const&)"}
-      Offset:   198
-      FindH:    42 00 # left shift by 1 (i.e. multiply by 2) (LSLS r2, r0, #1)
-      ReplaceH: 82 00 # left shift by 2 (i.e. multiply by 4) (LSLS r2, r0, #2)
-
-Increase TOC level indentation and fix extra indentation bug:
-  - Enabled: no
-  - PatchGroup: TOC Indentation
-  - Description: |
-      The space indented Table of Contents levels are quite hard to see, as the
-      difference is almost too small to easily notice. In addition, this fixes
-      the bug where all TOC entries are indented by 1 level extra.
-  - BaseAddress: {Sym: "N3TableOfContentsWidget::setContent(Shortcover const&)", Rel: 194}
-  # Clear out existing instructions with NOPs
-  - ReplaceBytes: {Offset:  0, FindH: 07 F1 0C 0B, ReplaceH: 00 20 00 20} # put string address in fp
-  - ReplaceBytes: {Offset:  4, FindH: 42 00,       ReplaceH: 00 20}       # shift level by 1 (multiply by 2) into r2
-  - ReplaceBytes: {Offset:  6, FindH: 4F F0 20 01, ReplaceH: 00 20 00 20} # set r1 to 0x20 (space char)
-  - ReplaceBytes: {Offset: 10, FindH: 58 46,       ReplaceH: 00 20}       # put fp in r0
-  # Put new instructions
-  - ReplaceBytes: {Offset:  0, FindH: 00 20,       ReplaceH: 40 1E}       # decrease level by 1
-  - ReplaceBytes: {Offset:  2, FindH: 00 20,       ReplaceH: 82 00}       # shift level by 2 (multiply by 4) into r2
-  - ReplaceBytes: {Offset:  4, FindH: 00 20,       ReplaceH: 20 21}       # set r1 to 0x20 (space char)
-  - ReplaceBytes: {Offset:  6, FindH: 00 20 00 20, ReplaceH: 07 F1 0C 0B} # put string address into fp
-  - ReplaceBytes: {Offset: 10, FindH: 00 20,       ReplaceH: 58 46}       # put fp in r0
+# Note: The "Increase TOC level indentation" and "Increase TOC level indentation
+# and fix extra indentation bug" patches are not necessary anymore in firmware
+# 4.24.15672+ and have been removed since the fixes have been integrated into
+# the original firmware. The default indentation is now around 3x larger than it
+# was before (and it scales for each device), and the firmware will always
+# subtract 1 from the depth before applying the indentation (since it's indexed
+# from 1+ rather than 0+).
+#
+# If you are not happy with the new defaults, see the new "Change TOC level
+# indentation" patch in nickel.yaml.
 
 Allow showing info panel on random screensaver:
   - Enabled: no
@@ -1279,13 +1176,13 @@ Allow rotation on all devices:
       Unlike only the DeveloperSettings ForceAllowLandscape option, this patch
       also makes the rotation icon show on the new reader as well.
   # Always return true for ForceAllowLandscape:
-  - ReplaceBytes: {Offset: 0x77887E, FindInstBLX: {SymPLT: "QVariant::toBool() const"}, ReplaceH: 4F F0 01 00}
+  - ReplaceBytes: {Offset: 0x77B3AE, FindInstBLX: {SymPLT: "QVariant::toBool() const"}, ReplaceH: 4F F0 01 00}
   # In ReadingMenuView::ReadingMenuView, replace the value of Device::hasOrientationSensor,
   # which is passed to a function to hide/show the rotate icon:
-  - ReplaceBytes: {Offset: 0xBA6B2C, FindInstBLX: {SymPLT: "Device::hasOrientationSensor() const"}, ReplaceH: 4F F0 01 00}
+  - ReplaceBytes: {Offset: 0xBA8324, FindInstBLX: {SymPLT: "Device::hasOrientationSensor() const"}, ReplaceH: 4F F0 01 00}
   # Also fix sizing of popup by doing the same in RotatePopup::RotatePopup, but
   # note that this will make the Automatic option show too (and do nothing):
-  - ReplaceBytes: {Offset: 0xBC340E, FindInstBLX: {SymPLT: "Device::hasOrientationSensor() const"}, ReplaceH: 4F F0 01 00}
+  - ReplaceBytes: {Offset: 0xBC54E6, FindInstBLX: {SymPLT: "Device::hasOrientationSensor() const"}, ReplaceH: 4F F0 01 00}
 
 Don't uppercase header/footer text:
   - Enabled: no
@@ -1409,7 +1306,7 @@ Customize ComfortLight settings:
   # In an unnamed subroutine two layers into FrontLightPopupController::loadView
   # (find it by going back from QTime::addSecs), the times for the dropdown are
   # generated into a QVector<QPair<QString, QTime>> with a simple loop.
-  - BaseAddress: 0xAEA5C0 # find the base of the unnamed subroutine with the x-ref to _ZN5QTimeC1Eiiii
+  - BaseAddress: 0xAEC020 # find the base of the unnamed subroutine with the x-ref to _ZN5QTimeC1Eiiii
   #
   # Change the initial hour / first bedtime dropdown item passed to the QTime
   # constructor (mov r1, #21):
@@ -1484,7 +1381,7 @@ FeatureSettings - ExportHighlights:
 DeveloperSettings - AutoUsbGadget:
   - Enabled: no
   - Description: Automatically enable USB Storage mode when connected.
-  - ReplaceBytes: {Offset: 0x77891E, FindInstBLX: {SymPLT: "QVariant::toBool() const"}, ReplaceH: 4F F0 01 00}
+  - ReplaceBytes: {Offset: 0x77B44E, FindInstBLX: {SymPLT: "QVariant::toBool() const"}, ReplaceH: 4F F0 01 00}
 
 PowerSettings - UnlockEnabled:
   - Enabled: no

@@ -1,5 +1,5 @@
-version: 4.23.15548
-in: src/kobo7-update-4.23.15548.zip
+version: 4.24.15672
+in: src/kobo7-update-4.24.15672.zip
 out: KoboRoot.tgz
 log: log.txt
 
@@ -45,7 +45,6 @@ overrides:
 #   Hide browser from beta features: yes
     Only show stats SmartLink: yes
     Remove recommendations (row1col2) from home screen: yes
-    Increase TOC level indentation and fix extra indentation bug: yes
     FeatureSettings - BookSpecificStats: yes
     FeatureSettings - MyWords: yes
     FeatureSettings - ExportHighlights: yes
@@ -56,8 +55,8 @@ overrides:
     Change Browse Kobo home screen link target - Activity: yes
     Remove line from bottom tab bar: yes
     Customize ComfortLight settings: yes
-    Allow searches on Extra dictionaries: yes
-    Increase page navigation history: yes
+#   Allow searches on Extra dictionaries: yes
+#   Increase page navigation history: yes
 
   src/libnickel.so.1.0.0_custom.yaml:
     Rename new home screen footer: yes

@@ -188,24 +188,25 @@ Increase library cover size:
       Increase the cover thumbnail size in My Books main book list
       See screenshots - https://www.mobileread.com/forums/showpost.php?p=3241532&postcount=82
       fw 4.17 - rewritten by jackie_w to replace oren64's patch
+      fw 4.24 - updated patch "width" values to maintain aspect ratio of original value
   - FindZlib: "#coverPixmapView"
   - ReplaceZlibGroup:
       Replacements:
         # coverPixmapView increase cover thumbnail width/height:
         # Touch/Mini (Trilogy)
-        - {Find: "width: 60px;",   Replace: "width: 85px;"}
+        - {Find: "width: 60px;",   Replace: "width: 66px;"}
         - {Find: "height: 90px;",  Replace: "height: 100px;"}
         # Glo/Aura/Aura2 (Phoenix)
-        - {Find: "width: 70px;",   Replace: "width: 100px;"}
+        - {Find: "width: 70px;",   Replace: "width: 82px;"}
         - {Find: "height: 110px;", Replace: "height: 130px;"}
         # AuraHD/H2O/H2O2/GloHD/ClaraHD (Dragon)
-        - {Find: "width: 108px;",  Replace: "width: 140px;"}
+        - {Find: "width: 108px;",  Replace: "width: 122px;"}
         - {Find: "height: 168px;", Replace: "height: 190px;"}
         # AuraOne/Forma (Daylight)
-        - {Find: "width: 140px;",  Replace: "width: 190px;"}
+        - {Find: "width: 140px;",  Replace: "width: 164px;"}
         - {Find: "height: 218px;", Replace: "height: 255px;"}
         # LibraH2O (Storm)
-        - {Find: "width: 126px;",  Replace: "width: 165px;"}
+        - {Find: "width: 126px;",  Replace: "width: 144px;"}
         - {Find: "height: 196px;", Replace: "height: 225px;"}
 
 Custom collection/author header title font:
@@ -444,7 +445,8 @@ Customise Header back button:
 Series list increase cover thumbnails:
   - Enabled: no
   - Description: |
-        Series list view (not Series cover view). Increase cover thumbnail size.
+      Series list view (not Series cover view). Increase cover thumbnail size.
+      fw 4.24 - updated patch "width" values to maintain aspect ratio of original value
   - FindZlib: "#seriesCoverPack"
   - ReplaceZlibGroup:
       Replacements:
@@ -469,19 +471,19 @@ Series list increase cover thumbnails:
         #
         # Part 2: #seriesCoverPack - Increase cover thumbnail size
           # Touch/Mini
-        - {Find: "width: 60px;",   Replace: "width: 85px;"}
+        - {Find: "width: 60px;",   Replace: "width: 65px;"}
         - {Find: "height: 94px;",  Replace: "height: 102px;"}
           # Glo/Aura6"/Aurav2
-        - {Find: "width: 70px;",   Replace: "width: 100px;"}
+        - {Find: "width: 70px;",   Replace: "width: 83px;"}
         - {Find: "height: 115px;", Replace: "height: 137px;"}
           # AuraHD/H2O/H2Ov2/GloHD/ClaraHD
-        - {Find: "width: 108px;",  Replace: "width: 141px;"}
+        - {Find: "width: 108px;",  Replace: "width: 120px;"}
         - {Find: "height: 175px;", Replace: "height: 195px;"}
           # AuraOne/Forma
-        - {Find: "width: 140px;",  Replace: "width: 190px;"}
+        - {Find: "width: 140px;",  Replace: "width: 164px;"}
         - {Find: "height: 222px;", Replace: "height: 260px;"}
           # LibraH2O
-        - {Find: "width: 126px;",  Replace: "width: 165px;"}
+        - {Find: "width: 126px;",  Replace: "width: 141px;"}
         - {Find: "height: 205px;", Replace: "height: 229px;"}
         #
         # Part 3: All models: #hBooks - Move bookcount up & away from horizontal gridline
@@ -519,7 +521,7 @@ New home screen subtitle custom font:
   - Description: |
       Increase subtitle font size, font color black. Works best when used
       with with patch `New home screen increasing cover size`
-  - BaseAddress: 0x14BA095 # FindZlib: "MetaDataLabel {\n  color: #666666;\n  qproperty-indent: 0;\n}"
+  - BaseAddress: 0x14BB79B # FindZlib: "MetaDataLabel {\n  color: #666666;\n  qproperty-indent: 0;\n}"
   - ReplaceZlib: {Find: "MetaDataLabel {\n  color: #666666;\n  qproperty-indent: 0;\n}", Replace: "MetaDataLabel {\n  color: #000000;\n  qproperty-indent: 0;\n}"}
   - ReplaceZlib:
       Find:    "MetaDataLabel[qApp_deviceIsTrilogy=true] {\n  font-size: 13px;\n}"
@@ -534,7 +536,7 @@ New home screen subtitle custom font:
       Find:    "MetaDataLabel[qApp_deviceIsDaylight=true] {\n  font-size: 31px;\n}"
       Replace: "MetaDataLabel[qApp_deviceIsDaylight=true] {\n  font-size: 34px;\n}"
   # duplicate
-  - BaseAddress: 0x14C3975
+  - BaseAddress: 0x14BE7DD
   - ReplaceZlib: {Find: "MetaDataLabel {\n  color: #666666;\n  qproperty-indent: 0;\n}", Replace: "MetaDataLabel {\n  color: #000000;\n  qproperty-indent: 0;\n}"}
   - ReplaceZlib:
       Find:    "MetaDataLabel[qApp_deviceIsTrilogy=true] {\n  font-size: 13px;\n}"
@@ -593,11 +595,11 @@ Remove forgot pin button from lock screen:
       Removes the Forgot PIN -> Sign Out button from the lock screen.
       If this is enabled and you forget your pin, you will need to
       hard reset your Kobo.
-  - BaseAddress: 0x14AE879
+  - BaseAddress: 0x14B4879
   - ReplaceZlib:
       Find: "#lblForgotPin[qApp_deviceIsDragon=true],\n#lblSignOut[qApp_deviceIsDragon=true] {\n  font-size: 26px;\n}"
       Replace: "#lblForgotPin,#lblSignOut{qproperty-visible:false;}"
-  - BaseAddress: 0x14B5543
+  - BaseAddress: 0x14AB23F
   - ReplaceZlib:
       Find: "#lblForgotPin[qApp_deviceIsDragon=true],\n#lblSignOut[qApp_deviceIsDragon=true] {\n  font-size: 26px;\n}"
       Replace: "#lblForgotPin,#lblSignOut{qproperty-visible:false;}"
@@ -618,4 +620,20 @@ Increase size of kepub chapter progress chart:
         Replace: "#chapterSizes[qApp_deviceIsDragon=true] {\n  max-height: 170px;\n  min-height: 170px;\n  min-width: 678px;\n  max-width: 678px;\n}"
       - Find:    "#chapterSizes[qApp_deviceIsDaylight=true] {\n  max-height: 130px;\n  min-height: 130px;\n}"
         Replace: "#chapterSizes[qApp_deviceIsDaylight=true] {\n  max-height: 215px;\n  min-height: 215px;\n  min-width: 865px;\n  max-width: 865px;\n}"
+
+Change TOC level indentation:
+  - Enabled: no
+  - Description: |
+      Changes the size of indentation for each level in the TOC. This patch
+      replaces the old "Increase TOC level indentation" patch from firmware
+      versions before 4.24.15672 (see the note in libnickel.so.1.0.0.yaml).
+  - FindZlib: "qproperty-indentUnit"
+  - ReplaceZlibGroup:
+      Replacements:
+      # Change the replacement values to your desired width (I've made it half the default width as an example).
+      - {Find: "qproperty-indentUnit: 30;", Replace: "qproperty-indentUnit: 15;"} # trilogy
+      - {Find: "qproperty-indentUnit: 38;", Replace: "qproperty-indentUnit: 19;"} # phoenix
+      - {Find: "qproperty-indentUnit: 58;", Replace: "qproperty-indentUnit: 29;"} # dragon
+      - {Find: "qproperty-indentUnit: 72;", Replace: "qproperty-indentUnit: 36;"} # storm
+      - {Find: "qproperty-indentUnit: 76;", Replace: "qproperty-indentUnit: 38;"} # daylight
 
