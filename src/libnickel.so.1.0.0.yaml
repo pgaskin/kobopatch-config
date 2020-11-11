@@ -317,8 +317,8 @@ Set KePub hyphenation:
       will always be turned on, regardless of justification button setting.
 
       (The publisher can still turn hyphenation off/on in the book's stylesheet.)
-  - ReplaceBytes: {Offset: 0xB911A2, FindInstBLX: {SymPLT: "QString::operator==(QLatin1String) const"}, ReplaceH: 01 20 01 20} # Alternative 1: Always turn KePub hyphenation on
-# - ReplaceBytes: {Offset: 0xB911A2, FindInstBLX: {SymPLT: "QString::operator==(QLatin1String) const"}, ReplaceH: 00 20 00 20} # Alternative 2: Never turn KePub hyphenation on
+  - ReplaceBytes: {Offset: 0xB8E556, FindInstBLX: {SymPLT: "QString::operator==(QLatin1String) const"}, ReplaceH: 01 20 01 20} # Alternative 1: Always turn KePub hyphenation on
+# - ReplaceBytes: {Offset: 0xB8E556, FindInstBLX: {SymPLT: "QString::operator==(QLatin1String) const"}, ReplaceH: 00 20 00 20} # Alternative 2: Never turn KePub hyphenation on
 
 Force user line spacing in KePubs:
   - Enabled: no
@@ -528,8 +528,8 @@ Set font scale factor:
   # Original value X=14, so original scale factor is (font size slider) / 46.
   # Allowed replacement values for X: 0-15 (smaller X --> larger scale factor)
   # Note: vmov.f32 s1, #15.0 before getReadingFontSizeScaleFactor
-  - ReplaceInt: {Offset: 0x589544, Find: 14, Replace: 4} # ePub
-  - ReplaceInt: {Offset: 0xB90D74, Find: 14, Replace: 4} # KePub
+  - ReplaceInt: {Offset: 0x58F3F4, Find: 14, Replace: 4} # ePub
+  - ReplaceInt: {Offset: 0xB8E128, Find: 14, Replace: 4} # KePub
 
 # The following patch(es) were made by jackie_w
 
@@ -540,12 +540,11 @@ Dictionary text font-family/font-size/line-height:
       in the pop-up and full-screen dictionary widgets.
       4.17.13651: improved to also reduce the blank lines displayed in many
                   sideloaded custom dictionaries which contain <blockquote>.
-      4.24.15672: enforced update to accommodate Kobo changes related to new
+      4.24.15676: enforced update to accommodate Kobo changes related to new
                   dictionaries being released Oct 1st 2020
-      #
       See https://www.mobileread.com/forums/showpost.php?p=3521137&postcount=48
       for screenshots
-      .
+      #
       You can change one or more of the following properties:
       - font-family
       - font-size
@@ -559,21 +558,23 @@ Dictionary text font-family/font-size/line-height:
 
   # Stage 1: Change DictionaryView to remove %variables
   # from:
-  #   body { font: %1px %2; line-height: 1.4em; }
-  #   span.word { font-weight: bold; font-size: 130%; margin-left: -%5px; }
-  #   div.descriptionFont { font-family: %3; }
-  #   ol { font-size: %1px; margin-left: %4em; margin-top: 0px; }
+  #   body { padding-left: %3px; }
+  #   body { font: %1px serif; line-height: 1.4em; }
+  #   span.word { font-weight: bold; font-size: 130%; margin-left: -%3px; }
+  #   div.descriptionFont { font-family: serif; }
+  #   ol { font-size: %1px; margin-left: %2em; margin-top: 0px; }
   #   ol p { font-size: %1px; }
   #   i, i * { font-style: italic; }
   #   b, b * { font-weight: bold; }
   #   .sc, .sc * { font-variant: small-caps; }
   #   .block, .border { border-radius: 3px; padding: 0em .2em; font-size: 90%; }
   # to:
-  #   body {font-size:%1px; line-height:1.40em; font-family:Georgia                ;}
-  #   ol {margin-left:.5em; margin-top:0}
+  #   body {font-size:%1px; line-height:1.40em; font-family:Georgia                         ;}
+  #   body {padding-left:0.5em}
+  #   span.word {font-weight:bold; font-size:130%; margin-left:-0.3em}
+  #   ol {margin-left:1em; margin-top:0}
   #   blockquote {margin:.3em 0 .3em 1em}
   #   blockquote>blockquote {margin:-.3em 0 0 2em}
-  #   span.word {font-weight:bold; font-size:130%; margin-left:-.5em}
   #   i, i * {font-style:italic}
   #   b, b * {font-weight:bold}
   #   .sc, .sc * {font-variant:small-caps}
@@ -581,8 +582,8 @@ Dictionary text font-family/font-size/line-height:
 
   # ##### N.B. Do not change the next 4 lines #####
   - FindReplaceString:
-      Find:    "body { font: %1px %2; line-height: 1.4em; }\nspan.word { font-weight: bold; font-size: 130%; margin-left: -%5px; }\ndiv.descriptionFont { font-family: %3; }\nol { font-size: %1px; margin-left: %4em; margin-top: 0px; }\nol p { font-size: %1px; }\ni, i * { font-style: italic; }\nb, b * { font-weight: bold; }\n.sc, .sc * { font-variant: small-caps; }\n.block, .border { border-radius: 3px; padding: 0em .2em; font-size: 90%; }\n"
-      Replace: "body {font-size:%1px; line-height:1.40em; font-family:Georgia                  ;}\nol {margin-left:1em; margin-top:0}\nblockquote {margin:.3em 0 .3em 1em}\nblockquote>blockquote {margin:-.3em 0 0 2em}\nspan.word {font-weight:bold; font-size:130%; margin-left:-1em}\ni, i * {font-style:italic}\nb, b * {font-weight:bold}\n.sc, .sc * {font-variant:small-caps}\n.block, .border {border-radius:3px; padding:0 .2em; font-size:90%}\n"
+      Find:    "body { padding-left: %3px; }\nbody { font: %1px serif; line-height: 1.4em; }\nspan.word { font-weight: bold; font-size: 130%; margin-left: -%3px; }\ndiv.descriptionFont { font-family: serif; }\nol { font-size: %1px; margin-left: %2em; margin-top: 0px; }\nol p { font-size: %1px; }\ni, i * { font-style: italic; }\nb, b * { font-weight: bold; }\n.sc, .sc * { font-variant: small-caps; }\n.block, .border { border-radius: 3px; padding: 0em .2em; font-size: 90%; }\n"
+      Replace: "body {font-size:%1px; line-height:1.40em; font-family:Georgia                         ;}\nbody {padding-left:0.5em}\nspan.word {font-weight:bold; font-size:130%; margin-left:-0.3em}\nol {margin-left:1em; margin-top:0}\nblockquote {margin:.3em 0 .3em 1em}\nblockquote>blockquote {margin:-.3em 0 0 2em}\ni, i * {font-style:italic}\nb, b * {font-weight:bold}\n.sc, .sc * {font-variant:small-caps}\n.block, .border {border-radius:3px; padding:0 .2em; font-size:90%}\n"
       MustMatchLength: yes
   # ##### N.B. Do not change anything above this line #####
 
@@ -592,7 +593,7 @@ Dictionary text font-family/font-size/line-height:
   #   1.  Pad the shorter of the old/new strings with spaces to
   #       keep same length for both strings (see examples below)
   #
-  #   2.  If the new font-family name (max. 25 chars) contains any spaces it
+  #   2.  If the new font-family name (max. 32 chars) contains any spaces it
   #       should be wrapped in 'single quotes' (see examples 2, 3)
   #
   #   3.  To change from Georgia to the Kobo default sans-serif font, Avenir,
@@ -849,7 +850,7 @@ Both page turn sides go next:
   - Enabled: no
   - Description: Make both page turn sides go next in the reader.
   # In ReadingView::processTap(TapGesture*) where the page direction is checked:
-  - BaseAddress:  {Sym: "ReadingView::processTap(TapGesture*)", Rel: 390}
+  - BaseAddress:  {Sym: "ReadingView::processTap(TapGesture*)", Rel: 402}
   - ReplaceBytes: {Offset:  0, FindInstBLX: {SymPLT: "ReadingView::leftToRightPageProgressDirection() const"}, CheckOnly: true}
   # nop the branch for checking if left-to-right (so it always runs the swap of back/forward)
   - ReplaceBytes: {Offset:  4, FindH: 18 B9, ReplaceInstNOP: true}
@@ -1257,13 +1258,13 @@ Allow rotation on all devices:
       Unlike only the DeveloperSettings ForceAllowLandscape option, this patch
       also makes the rotation icon show on the new reader as well.
   # Always return true for ForceAllowLandscape:
-  - ReplaceBytes: {Offset: 0x77B5EE, FindInstBLX: {SymPLT: "QVariant::toBool() const"}, ReplaceH: 4F F0 01 00}
+  - ReplaceBytes: {Offset: 0x77B396, FindInstBLX: {SymPLT: "QVariant::toBool() const"}, ReplaceH: 4F F0 01 00}
   # In ReadingMenuView::ReadingMenuView, replace the value of Device::hasOrientationSensor,
   # which is passed to a function to hide/show the rotate icon:
-  - ReplaceBytes: {Offset: 0xBA8564, FindInstBLX: {SymPLT: "Device::hasOrientationSensor() const"}, ReplaceH: 4F F0 01 00}
+  - ReplaceBytes: {Offset: 0xBA55E4, FindInstBLX: {SymPLT: "Device::hasOrientationSensor() const"}, ReplaceH: 4F F0 01 00}
   # Also fix sizing of popup by doing the same in RotatePopup::RotatePopup, but
   # note that this will make the Automatic option show too (and do nothing):
-  - ReplaceBytes: {Offset: 0xBC5726, FindInstBLX: {SymPLT: "Device::hasOrientationSensor() const"}, ReplaceH: 4F F0 01 00}
+  - ReplaceBytes: {Offset: 0xBC2DDE, FindInstBLX: {SymPLT: "Device::hasOrientationSensor() const"}, ReplaceH: 4F F0 01 00}
 
 Don't uppercase header/footer text:
   - Enabled: no
@@ -1363,7 +1364,7 @@ Enable advanced settings for all fonts:
       to work with sideloaded fonts too. (KEPUB - OTF and TTF. EPUB - TTF only.)
   - ReplaceBytes:
       Base:           "AdvancedFontSettingsController::loadView()"                                      # font dropdown in advanced font settings dialog
-      Offset:         144
+      Offset:         132
       FindInstBLX:    {SymPLT: "N3FontTypeUtil::setupMonotypeDropdown(TouchDropDown*, QString const&)"} # monotype fonts only
       ReplaceInstBLX: {SymPLT: "N3FontTypeUtil::setupDropdown(TouchDropDown*, QString const&)"}         # all fonts
   - ReplaceBytes:
@@ -1387,7 +1388,7 @@ Customize ComfortLight settings:
   # In an unnamed subroutine two layers into FrontLightPopupController::loadView
   # (find it by going back from QTime::addSecs), the times for the dropdown are
   # generated into a QVector<QPair<QString, QTime>> with a simple loop.
-  - BaseAddress: 0xAEC260 # find the base of the unnamed subroutine with the x-ref to _ZN5QTimeC1Eiiii
+  - BaseAddress: 0xAE7708 # find the base of the unnamed subroutine with the x-ref to _ZN5QTimeC1Eiiii
   #
   # Change the initial hour / first bedtime dropdown item passed to the QTime
   # constructor (mov r1, #21):
@@ -1462,7 +1463,7 @@ FeatureSettings - ExportHighlights:
 DeveloperSettings - AutoUsbGadget:
   - Enabled: no
   - Description: Automatically enable USB Storage mode when connected.
-  - ReplaceBytes: {Offset: 0x77B68E, FindInstBLX: {SymPLT: "QVariant::toBool() const"}, ReplaceH: 4F F0 01 00}
+  - ReplaceBytes: {Offset: 0x77B436, FindInstBLX: {SymPLT: "QVariant::toBool() const"}, ReplaceH: 4F F0 01 00}
 
 PowerSettings - UnlockEnabled:
   - Enabled: no
