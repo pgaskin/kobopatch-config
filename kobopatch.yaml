@@ -38,11 +38,9 @@ overrides:
     Allow rotation on all devices: yes
     Both page turn buttons go next: yes
     My 24 line spacing values: yes
-#   Replace adobe page numbers toggle with invert screen: yes
     Always show confirmation dialog before upgrading: yes
     Remove beta features not supported text: yes
     Disable all tutorial dialogs: yes
-#   Hide browser from beta features: yes
     Only show stats SmartLink: yes
     Remove recommendations (row1col2) from home screen: yes
     FeatureSettings - BookSpecificStats: yes
@@ -55,8 +53,7 @@ overrides:
     Change Browse Kobo home screen link target - Activity: yes
     Remove line from bottom tab bar: yes
     Customize ComfortLight settings: yes
-#   Allow searches on Extra dictionaries: yes
-#   Increase page navigation history: yes
+    Increase page navigation history: yes
 
   src/libnickel.so.1.0.0_custom.yaml:
     Rename new home screen footer: yes
