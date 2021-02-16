@@ -1,5 +1,5 @@
-version: 4.25.15875
-in: src/kobo7-update-4.25.15875.zip
+version: 4.26.16704
+in: src/kobo7-update-4.26.16704.zip
 out: KoboRoot.tgz
 log: log.txt
 
@@ -25,6 +25,7 @@ overrides:
     Reduce new header/footer height: yes
     Reduce top/bottom page spacer: yes
     Series list increase cover thumbnails: yes
+    Dictionary pop-up - increase available text area: yes
 
   src/nickel_dev.yaml:
 
