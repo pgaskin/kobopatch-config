@@ -317,8 +317,9 @@ Set KePub hyphenation:
       will always be turned on, regardless of justification button setting.
 
       (The publisher can still turn hyphenation off/on in the book's stylesheet.)
-  - ReplaceBytes: {Offset: 0xB8AD96, FindInstBLX: {SymPLT: "QString::operator==(QLatin1String) const"}, ReplaceH: 01 20 01 20} # Alternative 1: Always turn KePub hyphenation on
-# - ReplaceBytes: {Offset: 0xB8AD96, FindInstBLX: {SymPLT: "QString::operator==(QLatin1String) const"}, ReplaceH: 00 20 00 20} # Alternative 2: Never turn KePub hyphenation on
+    # == "justify"
+  - ReplaceBytes: {Base: "KepubBookReader::pageStyleCss(bool)", Offset: 1432, FindInstBLX: {SymPLT: "QString::operator==(QLatin1String) const"}, ReplaceH: 01 20 01 20} # Alternative 1: Always turn KePub hyphenation on
+# - ReplaceBytes: {Base: "KepubBookReader::pageStyleCss(bool)", Offset: 1432, FindInstBLX: {SymPLT: "QString::operator==(QLatin1String) const"}, ReplaceH: 00 20 00 20} # Alternative 2: Never turn KePub hyphenation on
 
 Force user line spacing in KePubs:
   - Enabled: no
@@ -471,34 +472,6 @@ Un-force link decoration in KePubs:
   - ReplaceString: {Offset: 0x27, Find: "b", Replace: "_"} # Disable border-bottom style
   - ReplaceString: {Offset: 0x53, Find: "c", Replace: "_"} # Disable color style
 
-KePub stylesheet additions:
-  - Enabled: no
-  - Description: Makes room to add some additional CSS to the default KePub stylesheet.
-    # See replacement CSS below for examples.
-  - FindBaseAddressString: ".KBHighlighting, .KBSearchResult {"
-  - ReplaceString: {Offset:   0, Find: ".KBHighlighting, .KBSearchResult { background-color: #C6C6C6 !important; } \t",                                                                         Replace: ".KBHighlighting,.KBSearchResult{background-color:#C6C6C6!important}.KBSearch", MustMatchLength: yes}
-  - ReplaceString: {Offset:  76, Find: ".KBSearchResult, .KBAnnotation, .KBHighlighting { font-size: 100% !important; -webkit-text-combine: inherit !important; } \t",                          Replace: "Result,.KBAnnotation,.KBHighlighting{font-size:100%!important;-webkit-text-combine:inherit!important}.KBAnnotation[writingM", MustMatchLength: yes}
-  - ReplaceString: {Offset: 199, Find: ".KBAnnotation[writingMode=\"horizontal-tb\"] { border-bottom: 2px solid black !important; } \t", Replace: "ode=\"horizontal-tb\"]{border-bottom:2px solid black!important}.KBAnnotation[writingMode=\"ver", MustMatchLength: yes}
-  - ReplaceString: {Offset: 290, Find: ".KBAnnotation[writingMode=\"vertical-rl\"] { border-right: 2px solid black !important; } \t",      Replace: "tical-rl\"]{border-right:2px solid black!important}.KBAnnotation[writingMode=\"vertical-lr", MustMatchLength: yes}
-  - ReplaceString: {Offset: 378, Find: ".KBAnnotation[writingMode=\"vertical-lr\"] { border-left: 2px solid black !important; }",          Replace: "\"]{border-left:2px solid black!important}/******************************************/", MustMatchLength: yes}
-    #
-    # Replacement value: CSS string of exactly 44 characters in length:
-    #
-    # Example 1: Make full justification the default:
-# - FindReplaceString: {Find: "/******************************************/", Replace: "body{text-align:justify                    }", MustMatchLength: yes}
-    #
-    # Example 2: text-rendering:optimizeSpeed: Disables kerning, but fixes some
-    # rendering problems that affect fully justified text.
-# - FindReplaceString: {Find: "/******************************************/", Replace: "body{text-rendering:optimizeSpeed          }", MustMatchLength: yes}
-    #
-    # Example 3: text-rendering:optimizeLegibility: Enables ligatures, but causes
-    # some additional rendering problems for fully justified text.
-# - FindReplaceString: {Find: "/******************************************/", Replace: "body{text-rendering:optimizeLegibility     }", MustMatchLength: yes}
-    #
-    # Example 4: Make KePub font sizes match ePub font sizes: ePubs render with
-    # 1.5 times the font size of KePubs by default. With this enabled they match.
-# - FindReplaceString: {Find: "/******************************************/", Replace: "#book-inner{font-size:1.5em                }", MustMatchLength: yes}
-
 Ignore .otf fonts:
   - Enabled: no
   - Description:
@@ -506,16 +479,6 @@ Ignore .otf fonts:
       (Currently the only pre-installed .otf font is OpenDyslexic.)
       Embedded .otf fonts should continue to work as normal.
   - FindReplaceString: {Find: "*.otf", Replace: "_.otf"}
-
-ePub uniform font scale:
-  - Enabled: no
-  - Description: |
-      Unlike the KePub reader, the ePub reader uses a ~50% larger font scale on
-      dragon (AuraHD/H2O/GloHD/H2O2/Clara/Libra) devices. This patch changes
-      changes the ePub reader to match the KePub reader in having the same font
-      scale on all devices.
-  - FindBaseAddressHex: 00 00 C0 42 00 00 10 43
-  - ReplaceBytes: {Offset: 6, FindH: 10 43, ReplaceH: C0 42}
 
 Set font scale factor:
   - Enabled: no
@@ -528,8 +491,8 @@ Set font scale factor:
   # Original value X=14, so original scale factor is (font size slider) / 46.
   # Allowed replacement values for X: 0-15 (smaller X --> larger scale factor)
   # Note: vmov.f32 s1, #15.0 before getReadingFontSizeScaleFactor
-  - ReplaceInt: {Offset: 0x58D63C, Find: 14, Replace: 4} # ePub
-  - ReplaceInt: {Offset: 0xB8A968, Find: 14, Replace: 4} # KePub
+  - ReplaceInt: {Offset: 0x5E73FE, Find: 14, Replace: 4} # ePub
+  - ReplaceInt: {Offset: 0xC5CB82, Find: 14, Replace: 4} # KePub
 
 # The following patch(es) were made by jackie_w
 
@@ -621,6 +584,39 @@ Custom navigation menu page number text:
   - Enabled: no
   - Description: Changes the page number text format in the reading navigation menu
   - FindReplaceString: {Find: "Page %1 of %2", Replace: "%1 / %2"}
+
+# The next 2 patches are alternatives. Enable ONE ONLY.
+# They have replaced the old patch named 'KePub stylesheet additions'
+
+KePub stylesheet additions - text justify:
+  - Enabled: no
+  - PatchGroup: KePub stylesheet additions alternatives
+  - Description: Make full justification the default in KePubs
+  - FindBaseAddressString: ".KBSearchResult, .KBAnnotation, .KBHighlighting {"
+  # *** Don't change anything in the 4 ReplaceString lines below ***
+  - ReplaceString: {Find: ".KBSearchResult, .KBAnnotation, .KBHighlighting { font-size: 100% !important; -webkit-text-combine: inherit !important; }\n", Replace: ".KBSearchResult,.KBAnnotation,.KBHighlighting{font-size:100%!important;-webkit-text-combine:inherit!important}.KBAnnotatio", MustMatchLength: yes}
+  - ReplaceString: {Offset: 122, Find: ".KBAnnotation[writingMode=\"horizontal-tb\"] { border-bottom: 2px solid black !important; }\n", Replace: "n[writingMode=\"horizontal-tb\"]{border-bottom:2px solid #000!important}.KBAnnotation[writin", MustMatchLength: yes}
+  - ReplaceString: {Offset: 212, Find: ".KBAnnotation[writingMode=\"vertical-rl\"] { border-right: 2px solid black !important; }\n", Replace: "gMode=\"vertical-rl\"]{border-right:2px solid #000!important}.KBAnnotation[writingMode=\"v", MustMatchLength: yes}
+  - ReplaceString: {Offset: 299, Find: ".KBAnnotation[writingMode=\"vertical-lr\"] { border-left: 2px solid black !important; }", Replace: "ertical-lr\"]{border-left:2px solid #000!important}/*********************************/", MustMatchLength: yes}
+  # *** Don't change anything in the 4 ReplaceString lines above ***
+  #
+  - FindReplaceString: {Find: "/*********************************/", Replace: "body{text-align:justify           }", MustMatchLength: yes}
+
+KePub stylesheet additions - optimizeSpeed:
+  - Enabled: no
+  - PatchGroup: KePub stylesheet additions alternatives
+  - Description: |
+      Disables ligatures/kerning, but fixes some rendering problems that affect
+      fully justified text in KePubs
+  - FindBaseAddressString: ".KBSearchResult, .KBAnnotation, .KBHighlighting {"
+  # *** Don't change anything in the 4 ReplaceString lines below ***
+  - ReplaceString: {Find: ".KBSearchResult, .KBAnnotation, .KBHighlighting { font-size: 100% !important; -webkit-text-combine: inherit !important; }\n", Replace: ".KBSearchResult,.KBAnnotation,.KBHighlighting{font-size:100%!important;-webkit-text-combine:inherit!important}.KBAnnotatio", MustMatchLength: yes}
+  - ReplaceString: {Offset: 122, Find: ".KBAnnotation[writingMode=\"horizontal-tb\"] { border-bottom: 2px solid black !important; }\n", Replace: "n[writingMode=\"horizontal-tb\"]{border-bottom:2px solid #000!important}.KBAnnotation[writin", MustMatchLength: yes}
+  - ReplaceString: {Offset: 212, Find: ".KBAnnotation[writingMode=\"vertical-rl\"] { border-right: 2px solid black !important; }\n", Replace: "gMode=\"vertical-rl\"]{border-right:2px solid #000!important}.KBAnnotation[writingMode=\"v", MustMatchLength: yes}
+  - ReplaceString: {Offset: 299, Find: ".KBAnnotation[writingMode=\"vertical-lr\"] { border-left: 2px solid black !important; }", Replace: "ertical-lr\"]{border-left:2px solid #000!important}/*********************************/", MustMatchLength: yes}
+  # *** Don't change anything in the 4 ReplaceString lines above ***
+  #
+  - FindReplaceString: {Find: "/*********************************/", Replace: "body{text-rendering:optimizeSpeed }", MustMatchLength: yes}
 
 # The following patch(es) are ported from jcn363's patches
 
@@ -850,7 +846,7 @@ Both page turn sides go next:
   - Enabled: no
   - Description: Make both page turn sides go next in the reader.
   # In ReadingView::processTap(TapGesture*) where the page direction is checked:
-  - BaseAddress:  {Sym: "ReadingView::processTap(TapGesture*)", Rel: 402}
+  - BaseAddress:  {Sym: "ReadingView::processTap(TapGesture*)", Rel: 652}
   - ReplaceBytes: {Offset:  0, FindInstBLX: {SymPLT: "ReadingView::leftToRightPageProgressDirection() const"}, CheckOnly: true}
   # nop the branch for checking if left-to-right (so it always runs the swap of back/forward)
   - ReplaceBytes: {Offset:  4, FindH: 18 B9, ReplaceInstNOP: true}
@@ -876,11 +872,11 @@ Replace adobe page numbers toggle with invert screen:
       screen one.
   # Settings page
   - BaseAddress:  "N3SettingsReadingView::N3SettingsReadingView(QWidget*)"
-  - ReplaceBytes: {Offset: 876, FindInstBLX: {SymPLT: "ReadingSettings::getShowAdobePageNumbers()"},     ReplaceInstBLX: {SymPLT: "FeatureSettings::invertScreen()"}}
+  - ReplaceBytes: {Offset: 914, FindInstBLX: {SymPLT: "ReadingSettings::getShowAdobePageNumbers()"},     ReplaceInstBLX: {SymPLT: "FeatureSettings::invertScreen()"}}
   # Settings page controller
   - BaseAddress:  {Sym: "N3SettingsReadingController::showAdobePageNumbersToggled()"}
-  - ReplaceBytes: {Offset:  62, FindInstBLX: {SymPLT: "ReadingSettings::getShowAdobePageNumbers()"},     ReplaceInstBLX: {SymPLT: "FeatureSettings::invertScreen()"}}
-  - ReplaceBytes: {Offset:  74, FindInstBLX: {SymPLT: "ReadingSettings::setShowAdobePageNumbers(bool)"}, ReplaceInstBLX: {SymPLT: "FeatureSettings::setInvertScreen(bool)"}}
+  - ReplaceBytes: {Offset:  74, FindInstBLX: {SymPLT: "ReadingSettings::getShowAdobePageNumbers()"},     ReplaceInstBLX: {SymPLT: "FeatureSettings::invertScreen()"}}
+  - ReplaceBytes: {Offset:  86, FindInstBLX: {SymPLT: "ReadingSettings::setShowAdobePageNumbers(bool)"}, ReplaceInstBLX: {SymPLT: "FeatureSettings::setInvertScreen(bool)"}}
   # Settings page text
   - FindReplaceString: {Find: "Show Adobe EPUB page numbers", Replace: "Invert screen"}
 
@@ -915,12 +911,12 @@ Hide browser from beta features:
   - Description: Hides the built-in browser from beta features.
   - ReplaceBytes:
       Base:        "N3SettingsExtrasView::N3SettingsExtrasView(QWidget*)"
-      Offset:      1426
+      Offset:      1474
       FindInstBLX: {SymPLT: "Device::isParentalControlEnabled() const"}
       ReplaceH:    4F F0 01 00
   - ReplaceBytes:
       Base:        {Sym: "SelectionMenuController::setupMainOptions()"}
-      Offset:      396
+      Offset:      308
       FindInstBLX: {SymPLT: "Device::isParentalControlEnabled() const"}
       ReplaceH:    4F F0 01 00
 
@@ -1000,7 +996,7 @@ Remove line from bottom tab bar:
   # Instead of setting the minimum size of the QFrame for the line, hide it.
   - ReplaceBytes:
       Base:           "Ui_MainNavView::setupUi(QWidget*)"
-      Offset:         322
+      Offset:         326
       FindInstBLX:    {SymPLT: "QWidget::setMinimumSize(int, int)"}
       ReplaceInstBLX: {SymPLT: "QWidget::hide()"}
 
@@ -1266,13 +1262,13 @@ Allow rotation on all devices:
       Unlike only the DeveloperSettings ForceAllowLandscape option, this patch
       also makes the rotation icon show on the new reader as well.
   # Always return true for ForceAllowLandscape:
-  - ReplaceBytes: {Offset: 0x7784EE, FindInstBLX: {SymPLT: "QVariant::toBool() const"}, ReplaceH: 4F F0 01 00}
+  - ReplaceBytes: {Base: "DevSettings::forceAllowLandscape()", Offset: 54, FindInstBLX: {SymPLT: "QVariant::toBool() const"}, ReplaceH: 4F F0 01 00}
   # In ReadingMenuView::ReadingMenuView, replace the value of Device::hasOrientationSensor,
   # which is passed to a function to hide/show the rotate icon:
-  - ReplaceBytes: {Offset: 0xBA2BE4, FindInstBLX: {SymPLT: "Device::hasOrientationSensor() const"}, ReplaceH: 4F F0 01 00}
+  - ReplaceBytes: {Base: "ReadingMenuView::ReadingMenuView(QWidget*)", Offset: 486, FindInstBLX: {SymPLT: "Device::hasOrientationSensor() const"}, ReplaceH: 4F F0 01 00}
   # Also fix sizing of popup by doing the same in RotatePopup::RotatePopup, but
   # note that this will make the Automatic option show too (and do nothing):
-  - ReplaceBytes: {Offset: 0xBC03DE, FindInstBLX: {SymPLT: "Device::hasOrientationSensor() const"}, ReplaceH: 4F F0 01 00}
+  - ReplaceBytes: {Base: "RotatePopup::RotatePopup(QWidget*)", Offset: 190, FindInstBLX: {SymPLT: "Device::hasOrientationSensor() const"}, ReplaceH: 4F F0 01 00}
 
 Don't uppercase header/footer text:
   - Enabled: no
@@ -1381,6 +1377,39 @@ Enable advanced settings for all fonts:
       FindInstBLX:    {SymPLT: "N3FontTypeUtil::isMonotypeFont(QString const&)"}
       ReplaceH:       4F F0 01 00
 
+ePub uniform font scale:
+  - Enabled: no
+  - Description: |
+      By default, the EPUB reader uses larger fonts than the KEPUB reader. This
+      patch forces the EPUB reader to always render fonts at 96dpi so the font
+      sizes match. This is a rewritten version of GeoffR's patch, which stopped
+      working on 4.28.17820 since the dpi was changed to use QScreen instead of
+      144dpi on dragon and 96dpi on other devices (GeoffR's patch forced it to
+      always be 96dpi). This patch has not been tested on the Elipsa.
+  - BaseAddress: 0x5E7426
+  - ReplaceBytes:
+      Offset:      0
+      FindInstBLX: {SymPLT: "QGuiApplication::primaryScreen()"} # unused
+      ReplaceH:    4F F0 60 00 # mov r0, #96 (int32 r0 = 96)
+  - ReplaceBytes:
+      Offset:      4
+      FindInstBLX: {SymPLT: "QScreen::logicalDotsPerInchX() const"} # unused
+      ReplaceH:    00 EE 10 0A # vmov s0, r0 (int32 s0 = r0)
+  - ReplaceBytes:
+      Offset:      16
+      FindH:       F7 EE E7 0A # vcvt.f64.f32 d16, s15 (s15 is a float32 from getReadingFontSizeScaleFactor())
+      ReplaceH:    B8 EE C0 0A # vcvt.f32.s32 s0, s0 (float32 s0)
+  - ReplaceBytes:
+      Offset:      20
+      FindH:       20 EE 20 0B # vmul.f64 d0, d0, d16
+      ReplaceH:    20 EE 27 0A # vmul.f32 s0, s0, s15
+  - ReplaceBytes:
+      Offset:      24
+      FindH:       BD EE C0 0B # vcvt.s32.f64 s0, d0 (s0 is the int32 output)
+      ReplaceH:    BD EE C0 0A # vcvt.s32.f32 s0, s0
+  # optional: manually set the multiplier (change the replacement if the font is too large/small)
+  - ReplaceInt: {Offset: 2, Find: 96, Replace: 96}
+
 Customize ComfortLight settings:
   - Enabled: no
   - Description: |
@@ -1396,7 +1425,7 @@ Customize ComfortLight settings:
   # In an unnamed subroutine two layers into FrontLightPopupController::loadView
   # (find it by going back from QTime::addSecs), the times for the dropdown are
   # generated into a QVector<QPair<QString, QTime>> with a simple loop.
-  - BaseAddress: 0xAE4C40 # find the base of the unnamed subroutine with the x-ref to _ZN5QTimeC1Eiiii
+  - BaseAddress: 0xBAF248 # find the base of the unnamed subroutine with the x-ref to _ZN5QTimeC1Eiiii
   #
   # Change the initial hour / first bedtime dropdown item passed to the QTime
   # constructor (mov r1, #21):
@@ -1471,11 +1500,11 @@ FeatureSettings - ExportHighlights:
 DeveloperSettings - AutoUsbGadget:
   - Enabled: no
   - Description: Automatically enable USB Storage mode when connected.
-  - ReplaceBytes: {Offset: 0x77858E, FindInstBLX: {SymPLT: "QVariant::toBool() const"}, ReplaceH: 4F F0 01 00}
+  - ReplaceBytes: {Base: "DevSettings::autoUsbGadget()", Offset: 54, FindInstBLX: {SymPLT: "QVariant::toBool() const"}, ReplaceH: 4F F0 01 00}
 
 PowerSettings - UnlockEnabled:
   - Enabled: no
   - Description: Disables/enables the slide to unlock feature.
-  - ReplaceBytes: {Base: "PowerSettings::getUnlockEnabled()", Offset: 62, FindInstBLX: {SymPLT: "QVariant::toBool() const"}, ReplaceH: 4F F0 00 00} # disable
-# - ReplaceBytes: {Base: "PowerSettings::getUnlockEnabled()", Offset: 62, FindInstBLX: {SymPLT: "QVariant::toBool() const"}, ReplaceH: 4F F0 01 00} # enable
+  - ReplaceBytes: {Base: "PowerSettings::getUnlockEnabled()", Offset: 120, FindInstBLX: {SymPLT: "QVariant::toBool() const"}, ReplaceH: 4F F0 00 00} # disable
+# - ReplaceBytes: {Base: "PowerSettings::getUnlockEnabled()", Offset: 120, FindInstBLX: {SymPLT: "QVariant::toBool() const"}, ReplaceH: 4F F0 01 00} # enable
 

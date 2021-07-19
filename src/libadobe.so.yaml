@@ -5,5 +5,5 @@ Remove PDF map widget shown during panning:
   - Description: Removes the PDF map widget shown during panning and zooming.
   - BaseAddress:  {Sym: "N3AdobeReader::showMapWidget()"}
   - ReplaceBytes: {Offset:  80, FindInstBW: {SymPLTTail: "N3AdobeReader::updatePanningMap()"}, ReplaceInstBW: {SymPLTTail: "N3AdobeReader::hideMapWidget()"}}
-  - ReplaceBytes: {Offset: 190, FindInstBW: {SymPLTTail: "N3AdobeReader::updatePanningMap()"}, ReplaceInstBW: {SymPLTTail: "N3AdobeReader::hideMapWidget()"}}
+  - ReplaceBytes: {Offset: 192, FindInstBW: {SymPLTTail: "N3AdobeReader::updatePanningMap()"}, ReplaceInstBW: {SymPLTTail: "N3AdobeReader::hideMapWidget()"}}
 
