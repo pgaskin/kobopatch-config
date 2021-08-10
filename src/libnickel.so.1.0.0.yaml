@@ -157,8 +157,6 @@ Custom left & right margins:
   - ReplaceInt: {Offset: 0x1C, Find: 14, Replace: 7}
   - ReplaceInt: {Offset: 0x20, Find: 16, Replace: 8}
 
-# WAITING(geek1011): Custom font sizes (it may not be needed anymore, but if it is, it'll need a rewrite)
-
 ePub fixed top/bottom margins:
   - Enabled: no
   - PatchGroup: ePub padding-bottom alternatives
@@ -434,8 +432,6 @@ Ignore .otf fonts:
       (Currently the only pre-installed .otf font is OpenDyslexic.)
       Embedded .otf fonts should continue to work as normal.
   - FindReplaceString: {Find: "*.otf", Replace: "_.otf"}
-
-# WAITING(geek1011): Set font scale factor (this one may not be necessary anymore; see the note on `ePub uniform font scale`)
 
 # The following patch(es) were made by jackie_w
 
@@ -1319,8 +1315,6 @@ Enable advanced settings for all fonts:
       Offset:         112
       FindInstBLX:    {SymPLT: "N3FontTypeUtil::isMonotypeFont(QString const&)"}
       ReplaceH:       4F F0 01 00
-
-# WAITING(geek1011): ePub uniform font scale (this one probably isn't necessary anymore due to Kobo's changes)
 
 Customize ComfortLight settings:
   - Enabled: no

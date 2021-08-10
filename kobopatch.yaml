@@ -32,7 +32,6 @@ overrides:
   src/libadobe.so.yaml:
 
   src/libnickel.so.1.0.0.yaml:
-    #Custom font sizes: yes
     Enable advanced settings for all fonts: yes
     Custom Sleep/Power-off timeouts: yes
     Custom kepub default margins: yes
