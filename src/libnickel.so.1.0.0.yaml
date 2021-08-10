@@ -157,52 +157,7 @@ Custom left & right margins:
   - ReplaceInt: {Offset: 0x1C, Find: 14, Replace: 7}
   - ReplaceInt: {Offset: 0x20, Find: 16, Replace: 8}
 
-Custom font sizes:
-  - Enabled: no
-  - Description: |
-      Changes the range of sizes on the font size slider so that there are more of
-      the small sizes and fewer of the large sizes.
-      With this patch enabled you will not be able to select the very large font
-      sizes, but will be able to make finer adjustment to the smaller sizes.
-    # Font sizes depend on the device's screen density. Unpatched, the sizes
-    # increase in steps of 1 from the smallest size up to size 22, then in steps
-    # of 2 up to size 50, then in steps of 4 up to the largest size:
-    #
-    #  AuraOne/Forma:       18px - 194px (55 sizes)
-    #  GloHD/ClaraHD/Libra: 14px - 150px (48 sizes)
-    #  AuraHD/H2O:          12px - 150px (50 sizes)
-    #  Glo/Aura:            12px - 122px (43 sizes)
-    #  Touch/Mini:          12px - 90px  (35 sizes)
-    #
-    # The example replacement values in this patch result in the following ranges,
-    # with increases in steps of 1 from the smallest size up to size 44, then
-    # steps of 2 up to size 68, then steps of 4 up to the largest size:
-    #
-    #  AuraOne/Forma:       18px - 132px (55 sizes)
-    #  GloHD/ClaraHD/Libra: 14px - 108px (53 sizes)
-    #  AuraHD/H2O:          12px - 108px (55 sizes)
-    #  Glo/Aura:            12px - 88px (50 sizes)
-    #  Touch/Mini:          12px - 80px (48 sizes)
-  #
-  # Note (pgaskin): The device values can be determined with info from
-  #    https://gist.github.com/pgaskin/613b34c23f026f7c39c50ee32f5e167e and
-  #    the Device::is* calls.
-  #
-  - BaseAddress: "N3FontTypeUtil::fontSizes()"
-  # Initial font size:
-  - ReplaceInt: {Offset: 400, Find: 18, Replace: 18} # AuraOne/Forma
-  - ReplaceInt: {Offset:  36, Find: 14, Replace: 14} # GloHD/ClaraHD/Libra
-  - ReplaceInt: {Offset: 376, Find: 12, Replace: 12} # Others
-  # Increment:
-  - ReplaceInt: {Offset:  76, Find: 21, Replace: 43} # Add font sizes in increments of 1 until this size exceeded}
-  - ReplaceInt: {Offset:  84, Find: 22, Replace: 44} # Continue from this font size}
-  - ReplaceInt: {Offset: 244, Find: 49, Replace: 67} # Add font sizes in increments of 2 until this size exceeded}
-  - ReplaceInt: {Offset: 250, Find: 50, Replace: 68} # Continue from this font size}
-  # Now increment by +4 until final font size:
-  - ReplaceInt: {Offset: 404, Find: 195, Replace: 132} # AuraOne/Forma
-  - ReplaceInt: {Offset:  52, Find: 150, Replace: 108} # AuraHD/H2O/GloHD/ClaraHD/Libra
-  - ReplaceInt: {Offset: 434, Find: 122, Replace: 88}  # Glo/Aura
-  - ReplaceInt: {Offset: 430, Find: 90,  Replace: 80}  # Touch/Mini
+# WAITING(geek1011): Custom font sizes (it may not be needed anymore, but if it is, it'll need a rewrite)
 
 ePub fixed top/bottom margins:
   - Enabled: no
@@ -480,19 +435,7 @@ Ignore .otf fonts:
       Embedded .otf fonts should continue to work as normal.
   - FindReplaceString: {Find: "*.otf", Replace: "_.otf"}
 
-Set font scale factor:
-  - Enabled: no
-  - Description: |
-      This patch sets the font scale factor for ePub and KePub readers.
-
-      See also `ePub uniform font scale` and `Custom font sizes` patches.
-      Note: This patch can be at the same time as the others.
-  # Font scale factor is calculated as (font size slider) / (X+32)
-  # Original value X=14, so original scale factor is (font size slider) / 46.
-  # Allowed replacement values for X: 0-15 (smaller X --> larger scale factor)
-  # Note: vmov.f32 s1, #15.0 before getReadingFontSizeScaleFactor
-  - ReplaceInt: {Offset: 0x5E73FE, Find: 14, Replace: 4} # ePub
-  - ReplaceInt: {Offset: 0xC5CB82, Find: 14, Replace: 4} # KePub
+# WAITING(geek1011): Set font scale factor (this one may not be necessary anymore; see the note on `ePub uniform font scale`)
 
 # The following patch(es) were made by jackie_w
 
@@ -1377,38 +1320,7 @@ Enable advanced settings for all fonts:
       FindInstBLX:    {SymPLT: "N3FontTypeUtil::isMonotypeFont(QString const&)"}
       ReplaceH:       4F F0 01 00
 
-ePub uniform font scale:
-  - Enabled: no
-  - Description: |
-      By default, the EPUB reader uses larger fonts than the KEPUB reader. This
-      patch forces the EPUB reader to always render fonts at 96dpi so the font
-      sizes match. This is a rewritten version of GeoffR's patch, which stopped
-      working on 4.28.17820 since the dpi was changed to use QScreen instead of
-      144dpi on dragon and 96dpi on other devices (GeoffR's patch forced it to
-      always be 96dpi). This patch has not been tested on the Elipsa.
-  - BaseAddress: 0x5E7426
-  - ReplaceBytes:
-      Offset:      0
-      FindInstBLX: {SymPLT: "QGuiApplication::primaryScreen()"} # unused
-      ReplaceH:    4F F0 60 00 # mov r0, #96 (int32 r0 = 96)
-  - ReplaceBytes:
-      Offset:      4
-      FindInstBLX: {SymPLT: "QScreen::logicalDotsPerInchX() const"} # unused
-      ReplaceH:    00 EE 10 0A # vmov s0, r0 (int32 s0 = r0)
-  - ReplaceBytes:
-      Offset:      16
-      FindH:       F7 EE E7 0A # vcvt.f64.f32 d16, s15 (s15 is a float32 from getReadingFontSizeScaleFactor())
-      ReplaceH:    B8 EE C0 0A # vcvt.f32.s32 s0, s0 (float32 s0)
-  - ReplaceBytes:
-      Offset:      20
-      FindH:       20 EE 20 0B # vmul.f64 d0, d0, d16
-      ReplaceH:    20 EE 27 0A # vmul.f32 s0, s0, s15
-  - ReplaceBytes:
-      Offset:      24
-      FindH:       BD EE C0 0B # vcvt.s32.f64 s0, d0 (s0 is the int32 output)
-      ReplaceH:    BD EE C0 0A # vcvt.s32.f32 s0, s0
-  # optional: manually set the multiplier (change the replacement if the font is too large/small)
-  - ReplaceInt: {Offset: 2, Find: 96, Replace: 96}
+# WAITING(geek1011): ePub uniform font scale (this one probably isn't necessary anymore due to Kobo's changes)
 
 Customize ComfortLight settings:
   - Enabled: no
@@ -1425,7 +1337,7 @@ Customize ComfortLight settings:
   # In an unnamed subroutine two layers into FrontLightPopupController::loadView
   # (find it by going back from QTime::addSecs), the times for the dropdown are
   # generated into a QVector<QPair<QString, QTime>> with a simple loop.
-  - BaseAddress: 0xBAF248 # find the base of the unnamed subroutine with the x-ref to _ZN5QTimeC1Eiiii
+  - BaseAddress: 0xBAF2C8 # find the base of the unnamed subroutine with the x-ref to _ZN5QTimeC1Eiiii
   #
   # Change the initial hour / first bedtime dropdown item passed to the QTime
   # constructor (mov r1, #21):
