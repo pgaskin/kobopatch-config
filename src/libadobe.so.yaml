@@ -4,6 +4,8 @@ Remove PDF map widget shown during panning:
   - Enabled: no
   - Description: Removes the PDF map widget shown during panning and zooming.
   - BaseAddress:  {Sym: "N3AdobeReader::showMapWidget()"}
-  - ReplaceBytes: {Offset:  80, FindInstBW: {SymPLTTail: "N3AdobeReader::updatePanningMap()"}, ReplaceInstBW: {SymPLTTail: "N3AdobeReader::hideMapWidget()"}}
-  - ReplaceBytes: {Offset: 192, FindInstBW: {SymPLTTail: "N3AdobeReader::updatePanningMap()"}, ReplaceInstBW: {SymPLTTail: "N3AdobeReader::hideMapWidget()"}}
+  # tail: N3AdobeReader::updatePanningMap() -> N3AdobeReader::hideMapWidget()
+  # TODO: figure out what broke the plt parsing in kobopatch for libadobe in 18730+
+  - ReplaceBytes: {Offset:  80, FindInstBW: 0x1BF94, ReplaceInstBW: 0x1B2F8}
+  - ReplaceBytes: {Offset: 192, FindInstBW: 0x1BF94, ReplaceInstBW: 0x1B2F8}
 

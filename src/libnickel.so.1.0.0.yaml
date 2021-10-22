@@ -157,6 +157,58 @@ Custom left & right margins:
   - ReplaceInt: {Offset: 0x1C, Find: 14, Replace: 7}
   - ReplaceInt: {Offset: 0x20, Find: 16, Replace: 8}
 
+Custom font sizes:
+  - Enabled: no
+  - Description: |
+      Changes the range of sizes on the font size slider so that there are more of
+      the small sizes and fewer of the large sizes.
+      With this patch enabled you will not be able to select the very large font
+      sizes, but will be able to make finer adjustment to the smaller sizes.
+  # Font sizes depend on the device's screen density. Unpatched, the sizes
+  # increase in steps of 1 from the smallest size up to size 44, then in steps
+  # of 2 up to size 68, then in steps of 4 up to the largest size:
+  #
+  #                     Touch/Mini:    8px -  90px  (39 steps)
+  #          AuraHD/AuraH2O/Libra2:    8px - 150px  (54 steps)
+  #                  GloHD/ClaraHD:   10px - 150px  (52 steps)
+  #                       LibraH2O:   11px - 150px  (51 steps)
+  #      AuraOne/Forma/Elipsa/Sage:   14px - 195px  (59 steps)
+  #                   Aura/Glo/Nia:    8px - 122px  (47 steps)
+  #
+  # The example replacement values in this patch result in the following ranges,
+  # with increases in steps of 1 from the smallest size up to size 44, then
+  # steps of 2 up to size 68, then steps of 4 up to the largest size:
+  #
+  #                     Touch/Mini:    8px -  80px  (52 steps)
+  #          AuraHD/AuraH2O/Libra2:    8px - 108px  (59 steps)
+  #                  GloHD/ClaraHD:   10px - 108px  (57 steps)
+  #                       LibraH2O:   11px - 108px  (56 steps)
+  #      AuraOne/Forma/Elipsa/Sage:   14px - 132px  (59 steps)
+  #                   Aura/Glo/Nia:    8px -  88px  (54 steps)
+  #
+  # Note (pgaskin): The device values can be determined with info from
+  #    https://gist.github.com/pgaskin/613b34c23f026f7c39c50ee32f5e167e and
+  #    the Device::is* calls.
+  #
+  # This patch was rewritten for 18220 by @shermp.
+  #
+  - BaseAddress: "N3FontTypeUtil::fontSizes()"
+  # Initial font size:
+  - ReplaceInt: {Offset: 364, Find:   8, Replace:   8} # Other devices
+  - ReplaceInt: {Offset: 360, Find:  11, Replace:  11} # LibraH2O
+  - ReplaceInt: {Offset:  36, Find:  10, Replace:  10} # GloHD/ClaraHD
+  - ReplaceInt: {Offset: 392, Find:  14, Replace:  14} # Forma/AuraOne/Sage/Elipsa
+  # Increment:
+  - ReplaceInt: {Offset:  78, Find:  21, Replace:  43} # Add font sizes in increments of 1 until this size exceeded
+  - ReplaceInt: {Offset:  88, Find:  22, Replace:  44} # Continue from this font size
+  - ReplaceInt: {Offset: 218, Find:  49, Replace:  67} # Add font sizes in increments of 2 until this size exceeded
+  - ReplaceInt: {Offset: 224, Find:  50, Replace:  68} # Continue from this font size
+  # Now increment by +4 until final font size:
+  - ReplaceInt: {Offset: 410, Find:  90, Replace:  80} # Other devices
+  - ReplaceInt: {Offset: 414, Find: 122, Replace:  88} # Aura/Glo/Nia
+  - ReplaceInt: {Offset:  50, Find: 150, Replace: 108} # LibraH2O/AuraHD/ClaraHD/GloHD/AuraH2O/Libra2
+  - ReplaceInt: {Offset: 388, Find: 195, Replace: 132} # Forma/AuraOne/Sage/Elipsa
+
 ePub fixed top/bottom margins:
   - Enabled: no
   - PatchGroup: ePub padding-bottom alternatives
@@ -432,6 +484,10 @@ Ignore .otf fonts:
       (Currently the only pre-installed .otf font is OpenDyslexic.)
       Embedded .otf fonts should continue to work as normal.
   - FindReplaceString: {Find: "*.otf", Replace: "_.otf"}
+
+# MISSING: Set font scale factor (this will need a complete rewrite for 18220+
+# since the logic has been completely reworked; also note that it may not be
+# necessary on certain devices anymore)
 
 # The following patch(es) were made by jackie_w
 
@@ -777,7 +833,7 @@ Both page turn buttons go next:
   - Description: Make both page turn buttons on the Forma go next in the reader.
   - ReplaceBytes:
       Base:          "ReadingView::keyPressEvent(QKeyEvent*)"
-      Offset:        54
+      Offset:        82
       FindInstBW:    {SymPLTTail: "ReadingView::prevPageWithTimer()"}
       ReplaceInstBW: {SymPLTTail: "ReadingView::nextPageWithTimer()"}
 
@@ -850,7 +906,7 @@ Hide browser from beta features:
   - Description: Hides the built-in browser from beta features.
   - ReplaceBytes:
       Base:        "N3SettingsExtrasView::N3SettingsExtrasView(QWidget*)"
-      Offset:      1474
+      Offset:      1482
       FindInstBLX: {SymPLT: "Device::isParentalControlEnabled() const"}
       ReplaceH:    4F F0 01 00
   - ReplaceBytes:
@@ -987,31 +1043,6 @@ Change Browse Kobo home screen link target - Activity:
       FindInstBLX:    {SymPLT: "GenericHomeWidget::setMetaText(QString)"} # "OverDrive"
       ReplaceInstNOP: true
 
-Change Browse Kobo home screen link target - Articles:
-  - Enabled: no
-  - PatchGroup: Browse Kobo link target
-  - Description: See the comment above.
-  - ReplaceBytes:
-      Base:          "BrowseKoboWidget::tapped()"
-      Offset:        22
-      FindInstBW:    {SymPLTTail: "DiscoverNavMixin::storefront()"} # Store
-      ReplaceInstBW: {SymPLTTail: "MoreController::articles()"}     # Articles
-  - ReplaceBytes:
-      Base:          "BrowseKoboWidget::tapped()"
-      Offset:        32
-      FindInstBW:    {SymPLTTail: "StoreNavMixin::overDriveFeaturedLists()"} # OverDrive
-      ReplaceInstBW: {SymPLTTail: "MoreController::articles()"}              # Articles
-  - ReplaceBytes:
-      Base:           "BrowseKoboWidget::BrowseKoboWidget(QWidget*)"
-      Offset:         196
-      FindInstBLX:    {SymPLT: "N3DeviceCharm::shopName()"}           # "Shop Kobo" or "Walmart"
-      ReplaceInstBLX: {SymPLT: "N3DeviceCharm::articlesSearchName()"} # "My Articles"
-  - ReplaceBytes:
-      Base:          "HomePageView::setOverDriveUser(OverDriveUser const&)"
-      Offset:         114
-      FindInstBLX:    {SymPLT: "GenericHomeWidget::setMetaText(QString)"} # "OverDrive"
-      ReplaceInstNOP: true
-
 ###
 
 ### Smartlink patches ###
@@ -1043,6 +1074,7 @@ Set visible SmartLink:
   # 16 - ReadingStats    - books finished > 0 && hours read rounded to .5 > 0  - READING STATS: You've finished %n books and read for %n hours    - reading life -> stats
   # 17 - SuperPoints     - participating in super points && points > 2400      - KOBO SUPER POINTS: You have %0 Super Points to redeem            - kobo store
   # 18 - PocketUser      - unread pocket articles > 0                          - POCKET: Catch up on the %n article(s) you added recently         - library -> pocket
+  # 19 - Audiobooks      - supports audiobooks && audiobooks enabled           - AUDIOBOOKS: Get started with Audiobooks on your eReader          - kobo store -> audiobooks
   #
   - BaseAddress:  {Sym: "SmartLinkWidget::showRotationMessage(Device const&)", Rel: 20}
   - ReplaceBytes: {FindInstBLX: {SymPLT: "ActivityManager::smartLinkGeneralMessage(Device const&)"}, ReplaceH: 4F F0 04 00} # MOV.W r0, #4
@@ -1080,14 +1112,14 @@ Never show Kobo Plus, wishlist, and points SmartLinks:
   - Description: Removes Kobo Plus, wishlist, and points SmartLinks from the rotation.
   - BaseAddress: "ActivityManager::smartLinkGeneralMessage(Device const&)"
   # NOP Kobo Plus (2):
-  - ReplaceBytes: {Offset: 292, FindH: 02 23, CheckOnly: true} # MOVS r3, #2
-  - ReplaceBytes: {Offset: 302, FindInstBLX: {SymPLT: "QVector<SmartLinkType>::append(SmartLinkType const&)"}, ReplaceInstNOP: true}
+  - ReplaceBytes: {Offset: 286, FindH: 02 23, CheckOnly: true} # MOVS r3, #2
+  - ReplaceBytes: {Offset: 296, FindInstBLX: {SymPLT: "QVector<SmartLinkType>::append(SmartLinkType const&)"}, ReplaceInstNOP: true}
   # NOP wishlist (14):
-  - ReplaceBytes: {Offset: 266, FindH: 0E 23, CheckOnly: true} # MOVS r3, #14
-  - ReplaceBytes: {Offset: 276, FindInstBLX: {SymPLT: "QVector<SmartLinkType>::append(SmartLinkType const&)"}, ReplaceInstNOP: true}
+  - ReplaceBytes: {Offset: 260, FindH: 0E 23, CheckOnly: true} # MOVS r3, #14
+  - ReplaceBytes: {Offset: 270, FindInstBLX: {SymPLT: "QVector<SmartLinkType>::append(SmartLinkType const&)"}, ReplaceInstNOP: true}
   # NOP super points (17):
-  - ReplaceBytes: {Offset: 1540, FindH: 11 23, CheckOnly: true} # MOVS r3, #17
-  - ReplaceBytes: {Offset: 1552, FindInstBLX: {SymPLT: "QVector<SmartLinkType>::append(SmartLinkType const&)"}, ReplaceInstNOP: true}
+  - ReplaceBytes: {Offset: 1570, FindH: 11 23, CheckOnly: true} # MOVS r3, #17
+  - ReplaceBytes: {Offset: 1582, FindInstBLX: {SymPLT: "QVector<SmartLinkType>::append(SmartLinkType const&)"}, ReplaceInstNOP: true}
 
 ###
 
@@ -1204,7 +1236,7 @@ Allow rotation on all devices:
   - ReplaceBytes: {Base: "DevSettings::forceAllowLandscape()", Offset: 54, FindInstBLX: {SymPLT: "QVariant::toBool() const"}, ReplaceH: 4F F0 01 00}
   # In ReadingMenuView::ReadingMenuView, replace the value of Device::hasOrientationSensor,
   # which is passed to a function to hide/show the rotate icon:
-  - ReplaceBytes: {Base: "ReadingMenuView::ReadingMenuView(QWidget*)", Offset: 486, FindInstBLX: {SymPLT: "Device::hasOrientationSensor() const"}, ReplaceH: 4F F0 01 00}
+  - ReplaceBytes: {Base: "ReadingMenuView::updateReadingMenu()", Offset: 236, FindInstBLX: {SymPLT: "Device::hasOrientationSensor() const"}, ReplaceH: 4F F0 01 00}
   # Also fix sizing of popup by doing the same in RotatePopup::RotatePopup, but
   # note that this will make the Automatic option show too (and do nothing):
   - ReplaceBytes: {Base: "RotatePopup::RotatePopup(QWidget*)", Offset: 190, FindInstBLX: {SymPLT: "Device::hasOrientationSensor() const"}, ReplaceH: 4F F0 01 00}
@@ -1276,7 +1308,12 @@ Swap reading header/footer:
       ReplaceH: C0 69 # LDR r0, [r0, #0x1C]
   - ReplaceBytes:
       Base:     "ReadingView::updatePercentageFooter(QString const&)"
-      Offset:   158
+      Offset:   172
+      FindH:    C0 69 # LDR r0, [r0, #0x1C]
+      ReplaceH: 00 69 # LDR r0, [r0, #0x10]
+  - ReplaceBytes:
+      Base:     "ReadingView::updatePercentageFooter(QString const&)"
+      Offset:   286
       FindH:    C0 69 # LDR r0, [r0, #0x1C]
       ReplaceH: 00 69 # LDR r0, [r0, #0x10]
   - ReplaceBytes:
@@ -1316,6 +1353,10 @@ Enable advanced settings for all fonts:
       FindInstBLX:    {SymPLT: "N3FontTypeUtil::isMonotypeFont(QString const&)"}
       ReplaceH:       4F F0 01 00
 
+# MISSING: ePub uniform font scale (this will need a complete rewrite for 18220+
+# since the logic has been completely reworked; also note that it may not be
+# necessary on certain devices anymore)
+
 Customize ComfortLight settings:
   - Enabled: no
   - Description: |
@@ -1331,7 +1372,7 @@ Customize ComfortLight settings:
   # In an unnamed subroutine two layers into FrontLightPopupController::loadView
   # (find it by going back from QTime::addSecs), the times for the dropdown are
   # generated into a QVector<QPair<QString, QTime>> with a simple loop.
-  - BaseAddress: 0xBAF2C8 # find the base of the unnamed subroutine with the x-ref to _ZN5QTimeC1Eiiii
+  - BaseAddress: 0xBFFC68 # find the base of the unnamed subroutine with the x-ref to _ZN5QTimeC1Eiiii
   #
   # Change the initial hour / first bedtime dropdown item passed to the QTime
   # constructor (mov r1, #21):
