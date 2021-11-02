@@ -84,3 +84,22 @@
 #      Offset:      172
 #      FindInstBLX: {SymPLT: "QLabel::setText(QString const&)"}
 #      CheckOnly:   true
+
+
+Always exit to home page from reader:
+  - Enabled: no
+  - Description: Makes the reader always exit to the home page.
+  # Back button label
+  - BaseAddress: "ReadingMenuController::getBackButtonText()"
+  - ReplaceBytes: {Offset:  14, FindInstBLX: {SymPLT: "MainWindowController::sharedInstance()"},               ReplaceH:  00 F0 2D B8} # b.w #(108-14) (skip directly to the "Back to Home" block)
+  - ReplaceBytes: {Offset: 108, FindH: 69 49,                                                                  CheckOnly: true}        # ldr r1, [pc, #0x1a4] (start of the block which loads, translates, and returns the "Back to Home" text)
+  - ReplaceBytes: {Offset: 126, FindInstBLX: {SymPLT: "QMetaObject::tr(char const*, char const*, int) const"}, CheckOnly: true}        # translate
+  - ReplaceBytes: {Offset: 136, FindH: BD E8 F0 83,                                                            CheckOnly: true}        # pop.w {r4, r5, r6, r7, r8, sb, pc} (return)
+  # On back, book finished, subscription expired, etc:
+  # TODO: finish figuring this out
+  - BaseAddress: "ReadingController::closeReadingView()"
+  - ReplaceBytes: {Offset:  12, FindInstBLX: {SymPLT: "MainWindowController::sharedInstance()"},           CheckOnly: true}
+  - ReplaceBytes: {Offset: 142, FindInstBLX: {SymPLT: "MainWindowController::popTo(AbstractController*)"}, ReplaceInstNOP: true}
+  - ReplaceBytes: {Offset: 146, FindH: 29 46,                                                              ReplaceH: 00 21} # movs r1, #0
+  - ReplaceBytes: {Offset: 148, FindH: 30 46,                                                              ReplaceH: 00 22} # movs r2, #0
+  - ReplaceBytes: {Offset: 150, FindInstBLX: {SymPLT: "MainWindowController::pop(AbstractController*)"},   ReplaceInstBLX: {SymPLT: "MainWindowController::clear(AbstractController*, bool)"}}

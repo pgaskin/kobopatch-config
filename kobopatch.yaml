@@ -1,5 +1,5 @@
-version: 4.29.18730
-in: src/kobo8-update-4.29.18730.zip
+version: 4.30.18838
+in: src/kobo7-update-4.30.18838.zip
 out: KoboRoot.tgz
 log: log.txt
 
@@ -55,6 +55,7 @@ overrides:
     Remove line from bottom tab bar: yes
     Customize ComfortLight settings: yes
     Increase page navigation history: yes
+    Unify font sizes: yes
 
   src/libnickel.so.1.0.0_custom.yaml:
     Rename new home screen footer: yes
