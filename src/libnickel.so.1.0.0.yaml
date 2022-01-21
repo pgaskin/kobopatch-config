@@ -485,10 +485,6 @@ Ignore .otf fonts:
       Embedded .otf fonts should continue to work as normal.
   - FindReplaceString: {Find: "*.otf", Replace: "_.otf"}
 
-# MISSING: Set font scale factor (this will need a complete rewrite for 18220+
-# since the logic has been completely reworked; also note that it may not be
-# necessary on certain devices anymore)
-
 # The following patch(es) were made by jackie_w
 
 Dictionary text font-family/font-size/line-height:
@@ -613,6 +609,28 @@ KePub stylesheet additions - optimizeSpeed:
   #
   - FindReplaceString: {Find: "/*********************************/", Replace: "body{text-rendering:optimizeSpeed }", MustMatchLength: yes}
 
+KePub stylesheet additions - optimizeLegibility:
+  - Enabled: no
+  - PatchGroup: KePub stylesheet additions alternatives
+  - Description: |
+        Enables ligatures/kerning in KePubs, but may cause some additional
+        rendering problems for fully justified text.
+        N.B. May have unexpected side effects when highlighting text in languages
+             which display vertical text, e.g. Chinese/Japanese
+  - FindBaseAddressString: ".KBSearchResult, .KBAnnotation, .KBHighlighting {"
+  # *** Don't change anything in the 4 ReplaceString lines below ***
+  # Create some room to add the extra CSS
+  - ReplaceString: {Find: ".KBSearchResult, .KBAnnotation, .KBHighlighting { font-size: 100% !important; -webkit-text-combine: inherit !important; }\n", Replace: ".KBSearchResult,.KBAnnotation,.KBHighlighting{font-size:100%!important;-webkit-text-combine:inherit!important}.KBAnnotatio", MustMatchLength: yes}
+  - ReplaceString: {Offset: 122, Find: ".KBAnnotation[writingMode=\"horizontal-tb\"] { border-bottom: 2px solid black !important; }\n", Replace: "n[writingMode=\"horizontal-tb\"]{border-bottom:2px solid #000!important}.KBAnnotation[writin", MustMatchLength: yes}
+  - ReplaceString: {Offset: 212, Find: ".KBAnnotation[writingMode=\"vertical-rl\"] { border-right: 2px solid black !important; }\n", Replace: "gMode=\"vertical-rl\"]{border-right:2px solid #000!important}.KBAnnotation[writingMode=\"v", MustMatchLength: yes}
+  - ReplaceString: {Offset: 299, Find: ".KBAnnotation[writingMode=\"vertical-lr\"] { border-left: 2px solid black !important; }", Replace: "ertical-lr\"]{border-left:2px solid #000}/*******************************************/", MustMatchLength: yes}
+  # *** Don't change anything in the 4 ReplaceString lines above ***
+  #
+  - FindReplaceString:
+        Find:    "/*******************************************/"
+        Replace: "body{text-rendering:optimizeLegibility      }"
+        MustMatchLength: yes
+
 # The following patch(es) are ported from jcn363's patches
 
 Shorten dictionary entry not found message:
@@ -703,7 +721,7 @@ Greek Keyboard (GloHD/ClaraHD/AuraOne/H2O2):
   - Enabled: no
   - PatchGroup: Keyboard alternatives
   - Description: |
-      Replaces keys on the Extended Latin keypad with Cyrillic alternatives.
+      Replaces keys on the Extended Latin keypad with Greek alternatives.
 
       Note that after the device boots, the keypad might just show blank squares
       until after the first book has been opened.
@@ -841,7 +859,7 @@ Both page turn sides go next:
   - Enabled: no
   - Description: Make both page turn sides go next in the reader.
   # In ReadingView::processTap(TapGesture*) where the page direction is checked:
-  - BaseAddress:  {Sym: "ReadingView::processTap(TapGesture*)", Rel: 652}
+  - BaseAddress:  {Sym: "ReadingView::processTap(TapGesture*)", Rel: 560}
   - ReplaceBytes: {Offset:  0, FindInstBLX: {SymPLT: "ReadingView::leftToRightPageProgressDirection() const"}, CheckOnly: true}
   # nop the branch for checking if left-to-right (so it always runs the swap of back/forward)
   - ReplaceBytes: {Offset:  4, FindH: 18 B9, ReplaceInstNOP: true}
@@ -869,7 +887,7 @@ Replace adobe page numbers toggle with invert screen:
       See https://github.com/pgaskin/NickelMenu/issues/111 for more information.
   # Settings page
   - BaseAddress:  "N3SettingsReadingView::N3SettingsReadingView(QWidget*)"
-  - ReplaceBytes: {Offset: 914, FindInstBLX: {SymPLT: "ReadingSettings::getShowAdobePageNumbers()"},     ReplaceInstBLX: {SymPLT: "FeatureSettings::invertScreen()"}}
+  - ReplaceBytes: {Offset: 900, FindInstBLX: {SymPLT: "ReadingSettings::getShowAdobePageNumbers()"},     ReplaceInstBLX: {SymPLT: "FeatureSettings::invertScreen()"}}
   # Settings page controller
   - BaseAddress:  {Sym: "N3SettingsReadingController::showAdobePageNumbersToggled()"}
   - ReplaceBytes: {Offset:  74, FindInstBLX: {SymPLT: "ReadingSettings::getShowAdobePageNumbers()"},     ReplaceInstBLX: {SymPLT: "FeatureSettings::invertScreen()"}}
@@ -1355,10 +1373,6 @@ Enable advanced settings for all fonts:
       FindInstBLX:    {SymPLT: "N3FontTypeUtil::isMonotypeFont(QString const&)"}
       ReplaceH:       4F F0 01 00
 
-# MISSING: ePub uniform font scale (this will need a complete rewrite for 18220+
-# since the logic has been completely reworked; also note that it may not be
-# necessary on certain devices anymore)
-
 Customize ComfortLight settings:
   - Enabled: no
   - Description: |
@@ -1374,7 +1388,7 @@ Customize ComfortLight settings:
   # In an unnamed subroutine two layers into FrontLightPopupController::loadView
   # (find it by going back from QTime::addSecs), the times for the dropdown are
   # generated into a QVector<QPair<QString, QTime>> with a simple loop.
-  - BaseAddress: 0xC104A0 # find the base of the unnamed subroutine with the x-ref to _ZN5QTimeC1Eiiii
+  - BaseAddress: 0xCB22A4 # find the base of the unnamed subroutine with the x-ref to _ZN5QTimeC1Eiiii
   #
   # Change the initial hour / first bedtime dropdown item passed to the QTime
   # constructor (mov r1, #21):
@@ -1403,21 +1417,21 @@ Customize ComfortLight settings:
   # Change the sunset time (the transition to a warmer temperature starts here
   # and transitions until the bedtime chosen) (this should be 1-3 hours before
   # the minimum bedtime from the first replacement above) (mov r1, #18):
-  - ReplaceInt: {Offset: 158, Find: 18, Replace: 16} # 18:00 (9PM-3=6PM) -> 16:00 (5PM-1=4PM)
+  - ReplaceInt: {Offset: 228, Find: 18, Replace: 16} # 18:00 (9PM-3=6PM) -> 16:00 (5PM-1=4PM)
   #
   # Change the time for the sunset timer to fire at (this is passed to a QTime
   # constructor which is passed to PowerTime::fireAt) (mov r1, #18):
-  - ReplaceInt: {Offset: 438, Find: 18, Replace: 16} # should match the sunset time above
+  - ReplaceInt: {Offset: 508, Find: 18, Replace: 16} # should match the sunset time above
   #
   # Optional: Change the sunrise start time (the transition back to a cooler
   # temperature starts here) (this should be sometime after the last bedtime,
   # but before the sunset time) (mov r1, #5):
-  - ReplaceInt: {Offset: 192, Find: 5, Replace: 5} # 5AM
+  - ReplaceInt: {Offset: 262, Find: 5, Replace: 5} # 5AM
   #
   # Optional: Change the sunrise end time (the transition back to a cooler
   # temperature ends here) (this should be 1-3 hours after the sunrise start but
   # before the sunset time or bad things will happen with negative values) (mov r1, #7):
-  - ReplaceInt: {Offset: 138, Find: 7, Replace: 7} # 5AM+2=7AM
+  - ReplaceInt: {Offset: 208, Find: 7, Replace: 7} # 5AM+2=7AM
 
 # The following patches allow you to enable a config file option with a patch.
 
@@ -1469,7 +1483,9 @@ Unify font sizes:
     # 25.0. It seems RMSDK must be handling DPI elsewhere however, because the
     # DPI multiplication here seems to have a detrimental effect, and behaves
     # differently on different devices. This patch changes the 'scale_factor' to
-    # 1.0, and replaces the call to get DPI with a constant multiplier (6.5).
+    # 2.5, and replaces the call to get DPI with a constant multiplier (16).
+    # The results of using these values are equivalent to  
+    # ( font_size / 15.0 ) * 96 which is what I suspect the kepub formula is.
     # Note, that the replacement values are limited to 0.25 - 31.0 in 0.25
     # increments.
     #
@@ -1479,14 +1495,14 @@ Unify font sizes:
   - BaseAddress:
       Sym: "AdobeStyling::update(QString const&)"
       Rel: 5800 # at ReadingSettings::getReadingFontSizeScaleFactor(float, float)
-  # Negate the scale factor by setting it to 1.0
+  # Set the scale factor to 2.5
   - ReplaceBytes:
       Offset:   -20
       FindH:    F3 EE 09 0A # vmov.f32 s1, #25.0
-      ReplaceH: F7 EE 00 0A # vmov.f32 s1, #1.0
-  # Replace QScreen::logicalDotsPerInchX() with our own multiplier
+      ReplaceH: F0 EE 04 0A # vmov.f32 s1, #2.5
+  # Replace QScreen::logicalDotsPerInchX() with our own multiplier of 16.0
   - ReplaceBytes:
       Offset:      26
       FindInstBLX: {SymPLT: "QScreen::logicalDotsPerInchX() const"}
-      ReplaceH:    B1 EE 0A 0B # vmov.f64 d0, #6.5
+      ReplaceH:    B3 EE 00 0B # vmov.f64 d0, #16.0
 
