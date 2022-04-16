@@ -47,18 +47,24 @@ My 24 line spacing values:
     # basically rewrite the entire code starting where values are added:
     # save r5, initialise loop counter
   - BaseAddress:  {Sym: "ReadingSettings::lineHeightScalars() const", Rel: 84} # starting at first QList<double>::append(double const&)
-  - ReplaceBytes: {Offset:  0, FindInstBLX: {SymPLT: "QList<double>::append(double const&)"}, ReplaceH: A9 46 00 25}              # mov sb, r5       mov r5, #0
-  - ReplaceBytes: {Offset:  4, FindH: 6D A3, ReplaceH: ED 00}                         # lsls r5, r5, #3
+  - ReplaceBytes: {Offset:  0, FindInstBLX: {SymPLT: "QList<double>::append(double const&)"}, ReplaceH: 00 00 00 00} # clear out the BLX
+  - ReplaceBytes: {Offset: 20, FindInstBLX: {SymPLT: "QList<double>::append(double const&)"}, ReplaceH: 00 00 00 00} # clear out the BLX
+  - ReplaceBytes: {Offset:  0, FindH: 00 00, ReplaceH: A9 46} # mov  sb, r5
+  - ReplaceBytes: {Offset:  2, FindH: 00 00, ReplaceH: 00 25} # mov  r5, #0
+  - ReplaceBytes: {Offset:  4, FindH: 6C A3, ReplaceH: ED 00} # lsls r5, r5, #3
     # loop to load 14 vals from new table
-  - ReplaceBytes: {Offset:  6, FindH: D3 E9 00 23 07 F1, ReplaceH: 20 46 04 A1 29 44} # mov r0, r4   adr r1, #0x10  add r1, r5
-  - ReplaceBytes: {Offset: 12, FindH: 80 01 20 46,       ReplaceInstBLX: {SymPLT: "QList<double>::append(double const&)"}}
-  - ReplaceBytes: {Offset: 16, FindH: 61 E9 1C 23,       ReplaceH: 08 35 70 2D}       # add r5, #8   cmp r5, 112 ## NOTE: 14*8=112
-  - ReplaceBytes: {Offset: 20, FindInstBLX: {SymPLT: "QList<double>::append(double const&)"}, ReplaceH: 00 00 00 00}       # clear out the BLX in the way of the next two replacements
-  - ReplaceBytes: {Offset: 20, FindH: 00 00,             ReplaceH: F7 D1}             # bne #-10
-    # jump over new table
-  - ReplaceBytes: {Offset: 22, FindH: 00 00 6A A3 D3 E9, ReplaceH: 7C E0 00 BF 00 BF} # b #0xFC
+  - ReplaceBytes: {Offset:  6, FindH: D3 E9, ReplaceH: 20 46} # mov  r0, r4
+  - ReplaceBytes: {Offset:  8, FindH: 00 23, ReplaceH: 04 A1} # adr  r1, #0x10
+  - ReplaceBytes: {Offset: 10, FindH: 07 F1, ReplaceH: 29 44} # add  r1, r5
+  - ReplaceBytes: {Offset: 12, FindH: 80 01 20 46, ReplaceInstBLX: {SymPLT: "QList<double>::append(double const&)"}}
+  - ReplaceBytes: {Offset: 16, FindH: 61 E9, ReplaceH: 08 35} # add  r5, #8 (sizeof(double))
+  - ReplaceBytes: {Offset: 18, FindH: 1C 23, ReplaceH: 70 2D} # cmp  r5, 112 (14*sizeof(double))
+  - ReplaceBytes: {Offset: 20, FindH: 00 00, ReplaceH: F7 D1} # bne  #-10
+    # jump to the rest of the new code
+  - ReplaceBytes: {Offset: 22, FindH: 00 00, ReplaceH: 7B E0} # b #250 (356 − (84 + 22))
+  - ReplaceBytes: {Offset: 24, FindH: 69 A3 D3 E9, ReplaceInstNOP: true} # unused
     # new table: 14 8-aligned doubles
-  - BaseAddress:  {Sym: "ReadingSettings::lineHeightScalars() const", Rel: 112} # right after previous instruction
+  - BaseAddress:  {Sym: "ReadingSettings::lineHeightScalars() const", Rel: 112} # right after previous instruction (84 + 24 + 4)
   - ReplaceBytes: {Offset:  12, FindInstBLX: {SymPLT: "QList<double>::append(double const&)"}, ReplaceH: 00 00 00 00} # first, clear out the BLXs in the way
   - ReplaceBytes: {Offset:  32, FindInstBLX: {SymPLT: "QList<double>::append(double const&)"}, ReplaceH: 00 00 00 00}
   - ReplaceBytes: {Offset:  58, FindInstBLX: {SymPLT: "QList<double>::append(double const&)"}, ReplaceH: 00 00 00 00}
@@ -66,29 +72,33 @@ My 24 line spacing values:
   - ReplaceBytes: {Offset: 100, FindInstBLX: {SymPLT: "QList<double>::append(double const&)"}, ReplaceH: 00 00 00 00}
   - ReplaceBytes: {Offset:   0, FindH: 00 23 07 F1 80 01 20 46, ReplaceH: 00 00 00 00 00 00 F0 3F} # table of 1.0f values, to be replaced later
   - ReplaceBytes: {Offset:   8, FindH: 61 E9 1A 23 00 00 00 00, ReplaceH: 00 00 00 00 00 00 F0 3F}
-  - ReplaceBytes: {Offset:  16, FindH: 67 A3 D3 E9 00 23 07 F1, ReplaceH: 00 00 00 00 00 00 F0 3F}
+  - ReplaceBytes: {Offset:  16, FindH: 66 A3 D3 E9 00 23 07 F1, ReplaceH: 00 00 00 00 00 00 F0 3F}
   - ReplaceBytes: {Offset:  24, FindH: 80 01 20 46 61 E9 18 23, ReplaceH: 00 00 00 00 00 00 F0 3F}
   - ReplaceBytes: {Offset:  32, FindH: 00 00 00 00 43 F2 33 33, ReplaceH: 00 00 00 00 00 00 F0 3F}
   - ReplaceBytes: {Offset:  40, FindH: 4F F0 33 32 C3 F6 F3 73, ReplaceH: 00 00 00 00 00 00 F0 3F}
   - ReplaceBytes: {Offset:  48, FindH: 07 F1 80 01 20 46 61 E9, ReplaceH: 00 00 00 00 00 00 F0 3F}
-  - ReplaceBytes: {Offset:  56, FindH: 16 23 00 00 00 00 5E A3, ReplaceH: 00 00 00 00 00 00 F0 3F}
+  - ReplaceBytes: {Offset:  56, FindH: 16 23 00 00 00 00 5D A3, ReplaceH: 00 00 00 00 00 00 F0 3F}
   - ReplaceBytes: {Offset:  64, FindH: D3 E9 00 23 07 F1 80 01, ReplaceH: 00 00 00 00 00 00 F0 3F}
   - ReplaceBytes: {Offset:  72, FindH: 20 46 61 E9 14 23 00 00, ReplaceH: 00 00 00 00 00 00 F0 3F}
   - ReplaceBytes: {Offset:  80, FindH: 00 00 00 23 00 22 C3 F6, ReplaceH: 00 00 00 00 00 00 F0 3F}
   - ReplaceBytes: {Offset:  88, FindH: F8 73 07 F1 80 01 20 46, ReplaceH: 00 00 00 00 00 00 F0 3F}
   - ReplaceBytes: {Offset:  96, FindH: 61 E9 12 23 00 00 00 00, ReplaceH: 00 00 00 00 00 00 F0 3F}
-  - ReplaceBytes: {Offset: 104, FindH: 55 A3 D3 E9 00 23 07 F1, ReplaceH: 00 00 00 00 00 00 F0 3F}
+  - ReplaceBytes: {Offset: 104, FindH: 54 A3 D3 E9 00 23 07 F1, ReplaceH: 00 00 00 00 00 00 F0 3F}
     # jump target after table
-  - BaseAddress:  {Sym: "ReadingSettings::lineHeightScalars() const", Rel: 356} # starting at first QList<double>::append(double const&)
+  - BaseAddress:  {Sym: "ReadingSettings::lineHeightScalars() const", Rel: 356} # starting right after the second-last QList<double>::append(double const&)
+  - ReplaceBytes: {Offset: 18, FindInstBLX: {SymPLT: "QList<double>::append(double const&)"}, ReplaceH: 00 00 00 00} # clear the BLX in the way of the last two replacements
     # initialise loop counter
-  - ReplaceBytes: {Offset:  0, FindH: 00 23 00 22,       ReplaceH: 00 BF 00 25}       # nop   movs r5, #0
-    # loop to load 10 vals from old table
-  - ReplaceBytes: {Offset:  4, FindH: C4 F2 08 03 07 F1, ReplaceH: 20 46 29 A1 29 44} # mov r0, r4   adr r1, #0xA4   add r1, r5 ## NOTE: adr r1, #0xA4 sets r1 to the beginning of the old table
+  - ReplaceBytes: {Offset:  0, FindH: 00 23,             ReplaceH: 00 25}       # movs  r5, #0
+    # loop to load 10 vals from old table (CDCC CCCC CCCC F03F 1F85)
+  - ReplaceBytes: {Offset:  2, FindH: 00 22,             ReplaceH: 20 46}       # mov   r0, r4
+  - ReplaceBytes: {Offset:  4, FindH: C4 F2 08 03,       ReplaceH: 0F F2 A0 01} # adr.w r1, #164 (old_table_start - (356 + 4) = 524 - 360)
+  - ReplaceBytes: {Offset:  8, FindH: 07 F1,             ReplaceH: 29 44}       # add   r1, r5
   - ReplaceBytes: {Offset: 10, FindH: 80 01 20 46,       ReplaceInstBLX: {SymPLT: "QList<double>::append(double const&)"}}
-  - ReplaceBytes: {Offset: 18, FindInstBLX: {SymPLT: "QList<double>::append(double const&)"}, ReplaceH: 00 00 00 00}       # clear out the BLX in the way of the next two replacements
-  - ReplaceBytes: {Offset: 14, FindH: 61 E9 02 23 00 00, ReplaceH: 08 35 50 2D F7 D1} # adds r5, #8   cmp r5, #80   bne #-10 ## NOTE: 8*10=80
+  - ReplaceBytes: {Offset: 14, FindH: 61 E9,             ReplaceH: 08 35}       # adds  r5, #8 (sizeof(double))
+  - ReplaceBytes: {Offset: 16, FindH: 02 23,             ReplaceH: 50 2D}       # cmp   r5, #80 (sizeof(double) * 10)
+  - ReplaceBytes: {Offset: 18, FindH: 00 00,             ReplaceH: F6 D1}       # bne   #-12 (18 - 2)
     # restore r5
-  - ReplaceBytes: {Offset: 20, FindH: 00 00,             ReplaceH: 4D 46}             # mov r5, sb
+  - ReplaceBytes: {Offset: 20, FindH: 00 00,             ReplaceH: 4D 46}       # mov   r5, sb
     # finished replacements
   - BaseAddress: 0
     #
@@ -194,20 +204,20 @@ Custom font sizes:
   #
   - BaseAddress: "N3FontTypeUtil::fontSizes()"
   # Initial font size:
-  - ReplaceInt: {Offset: 364, Find:   8, Replace:   8} # Other devices
-  - ReplaceInt: {Offset: 360, Find:  11, Replace:  11} # LibraH2O
-  - ReplaceInt: {Offset:  36, Find:  10, Replace:  10} # GloHD/ClaraHD
-  - ReplaceInt: {Offset: 392, Find:  14, Replace:  14} # Forma/AuraOne/Sage/Elipsa
+  - ReplaceInt: {Offset:  378, Find:   8, Replace:   8} # Other devices
+  - ReplaceInt: {Offset:  374, Find:  11, Replace:  11} # LibraH2O (storm)
+  - ReplaceInt: {Offset:   36, Find:  10, Replace:  10} # GloHD/ClaraHD (alyssum nova)
+  - ReplaceInt: {Offset:  404, Find:  14, Replace:  14} # Forma/AuraOne/Sage/Elipsa (daylight)
   # Increment:
-  - ReplaceInt: {Offset:  78, Find:  21, Replace:  43} # Add font sizes in increments of 1 until this size exceeded
-  - ReplaceInt: {Offset:  88, Find:  22, Replace:  44} # Continue from this font size
-  - ReplaceInt: {Offset: 218, Find:  49, Replace:  67} # Add font sizes in increments of 2 until this size exceeded
-  - ReplaceInt: {Offset: 224, Find:  50, Replace:  68} # Continue from this font size
+  - ReplaceInt: {Offset:  222, Find:  21, Replace:  43} # Add font sizes in increments of 1 until this size exceeded
+  - ReplaceInt: {Offset:  228, Find:  22, Replace:  44} # Continue from this font size
+  - ReplaceInt: {Offset:  250, Find:  49, Replace:  67} # Add font sizes in increments of 2 until this size exceeded
+  - ReplaceInt: {Offset:  256, Find:  50, Replace:  68} # Continue from this font size
   # Now increment by +4 until final font size:
-  - ReplaceInt: {Offset: 410, Find:  90, Replace:  80} # Other devices
-  - ReplaceInt: {Offset: 414, Find: 122, Replace:  88} # Aura/Glo/Nia
-  - ReplaceInt: {Offset:  50, Find: 150, Replace: 108} # LibraH2O/AuraHD/ClaraHD/GloHD/AuraH2O/Libra2
-  - ReplaceInt: {Offset: 388, Find: 195, Replace: 132} # Forma/AuraOne/Sage/Elipsa
+  - ReplaceInt: {Offset:  420, Find:   90, Replace:   80} # Other devices
+  - ReplaceInt: {Offset:  422, Find:  122, Replace:   88} # Aura/Glo/Nia (phoenix)
+  - ReplaceInt: {Offset:   48, Find:  150, Replace:  108} # LibraH2O/AuraHD/ClaraHD/GloHD/AuraH2O/Libra2 (dragon)
+  - ReplaceInt: {Offset:  400, Find:  195, Replace:  132} # Forma/AuraOne/Sage/Elipsa (daylight)
 
 ePub fixed top/bottom margins:
   - Enabled: no
@@ -323,8 +333,8 @@ Set KePub hyphenation:
 
       (The publisher can still turn hyphenation off/on in the book's stylesheet.)
     # == "justify"
-  - ReplaceBytes: {Base: "KepubBookReader::pageStyleCss(bool)", Offset: 1432, FindInstBLX: {SymPLT: "QString::operator==(QLatin1String) const"}, ReplaceH: 01 20 01 20} # Alternative 1: Always turn KePub hyphenation on
-# - ReplaceBytes: {Base: "KepubBookReader::pageStyleCss(bool)", Offset: 1432, FindInstBLX: {SymPLT: "QString::operator==(QLatin1String) const"}, ReplaceH: 00 20 00 20} # Alternative 2: Never turn KePub hyphenation on
+  - ReplaceBytes: {Base: "KepubBookReader::pageStyleCss(bool)", Offset: 1960, FindInstBLX: {SymPLT: "QString::operator==(QLatin1String) const"}, ReplaceH: 01 20 01 20} # Alternative 1: Always turn KePub hyphenation on
+# - ReplaceBytes: {Base: "KepubBookReader::pageStyleCss(bool)", Offset: 1960, FindInstBLX: {SymPLT: "QString::operator==(QLatin1String) const"}, ReplaceH: 00 20 00 20} # Alternative 2: Never turn KePub hyphenation on
 
 Force user line spacing in KePubs:
   - Enabled: no
@@ -397,23 +407,7 @@ ePub constant font sharpness:
   - FindBaseAddressString: "\0\0 -kobo-font-sharpness: %1;"
   - ReplaceString: {Offset: 3, Find: "-kobo-font-sharpness: %1", Replace: "-kobo-font-sharpness:0.2", MustMatchLength: yes}
 
-KePub constant font sharpness:
-  - Enabled: no
-  - Description: |
-      With this patch the KePub reader will use a constant sharpness value of 0.2,
-      instead of the value set by the advanced font sharpness/weight slider. The
-      slider sharpness values range from -0.4(min.) to 0.2(max.), default -0.0666.
-    #     body { -kobo-font-sharpness: %1; -kobo-font-thickness: %2; }\n
-    # --> body{-kobo-font-sharpness:0.0/*%1*/;-kobo-font-thickness:%2}\n
-  - FindReplaceString:
-      Find:    "body { -kobo-font-sharpness: %1; -kobo-font-thickness: %2; }\n"
-      Replace: "body{-kobo-font-sharpness:0.0/*%1*/;-kobo-font-thickness:%2}\n"
-      MustMatchLength: yes
-  - ReplaceString:
-      Offset: 5
-      Find:    "-kobo-font-sharpness:0.0"
-      Replace: "-kobo-font-sharpness:0.2" # Replacement sharpness value
-      MustMatchLength: yes
+# MISSING: KePub constant font sharpness (not enough room for neutralizing the QString arg; we will probably need to patch that one out)
 
 Un-Force user text-align in div,p tags in KePubs:
   - Enabled: no
@@ -477,13 +471,7 @@ Un-force link decoration in KePubs:
   - ReplaceString: {Offset: 0x27, Find: "b", Replace: "_"} # Disable border-bottom style
   - ReplaceString: {Offset: 0x53, Find: "c", Replace: "_"} # Disable color style
 
-Ignore .otf fonts:
-  - Enabled: no
-  - Description:
-      Ignores all sideloaded and pre-installed .otf fonts.
-      (Currently the only pre-installed .otf font is OpenDyslexic.)
-      Embedded .otf fonts should continue to work as normal.
-  - FindReplaceString: {Find: "*.otf", Replace: "_.otf"}
+# MISSING: Ignore .otf fonts (this will probably need to become a fontickle patch)
 
 # The following patch(es) were made by jackie_w
 
@@ -576,7 +564,7 @@ Custom navigation menu page number text:
   - Description: Changes the page number text format in the reading navigation menu
   - FindReplaceString: {Find: "Page %1 of %2", Replace: "%1 / %2"}
 
-# The next 2 patches are alternatives. Enable ONE ONLY.
+# The next 3 patches are alternatives. Enable ONE ONLY.
 # They have replaced the old patch named 'KePub stylesheet additions'
 
 KePub stylesheet additions - text justify:
@@ -887,7 +875,7 @@ Replace adobe page numbers toggle with invert screen:
       See https://github.com/pgaskin/NickelMenu/issues/111 for more information.
   # Settings page
   - BaseAddress:  "N3SettingsReadingView::N3SettingsReadingView(QWidget*)"
-  - ReplaceBytes: {Offset: 900, FindInstBLX: {SymPLT: "ReadingSettings::getShowAdobePageNumbers()"},     ReplaceInstBLX: {SymPLT: "FeatureSettings::invertScreen()"}}
+  - ReplaceBytes: {Offset: 902, FindInstBLX: {SymPLT: "ReadingSettings::getShowAdobePageNumbers()"},     ReplaceInstBLX: {SymPLT: "FeatureSettings::invertScreen()"}}
   # Settings page controller
   - BaseAddress:  {Sym: "N3SettingsReadingController::showAdobePageNumbersToggled()"}
   - ReplaceBytes: {Offset:  74, FindInstBLX: {SymPLT: "ReadingSettings::getShowAdobePageNumbers()"},     ReplaceInstBLX: {SymPLT: "FeatureSettings::invertScreen()"}}
@@ -1044,17 +1032,17 @@ Change Browse Kobo home screen link target - Activity:
   - Description: See the comment above.
   - ReplaceBytes:
       Base:          "BrowseKoboWidget::tapped()"
-      Offset:        22
+      Offset:        26
       FindInstBW:    {SymPLTTail: "DiscoverNavMixin::storefront()"}        # Store
       ReplaceInstBW: {SymPLTTail: "ReadingLifeNavMixin::chooseActivity()"} # Activity
   - ReplaceBytes:
       Base:          "BrowseKoboWidget::tapped()"
-      Offset:        32
+      Offset:        36
       FindInstBW:    {SymPLTTail: "StoreNavMixin::overDriveFeaturedLists()"} # OverDrive
       ReplaceInstBW: {SymPLTTail: "ReadingLifeNavMixin::chooseActivity()"}   # Activity
   - ReplaceBytes:
       Base:           "BrowseKoboWidget::BrowseKoboWidget(QWidget*)"
-      Offset:         196
+      Offset:         206
       FindInstBLX:    {SymPLT: "N3DeviceCharm::shopName()"}   # "Shop Kobo" or "Walmart"
       ReplaceInstBLX: {SymPLT: "N3DeviceCharm::extrasName()"} # "Activity"
   - ReplaceBytes:
@@ -1357,21 +1345,8 @@ Swap reading header/footer:
       FindH:    DE F8 1C 40 # LDR.W r4, [lr, #0x1C]
       ReplaceH: DE F8 10 40 # LDR.W r4, [lr, #0x10]
 
-Enable advanced settings for all fonts:
-  - Enabled: no
-  - Description: |
-      This patch allows the advanced font options (weight/sharpness adjustments)
-      to work with sideloaded fonts too. (KEPUB - OTF and TTF. EPUB - TTF only.)
-  - ReplaceBytes:
-      Base:           "AdvancedFontSettingsController::loadView()"                                      # font dropdown in advanced font settings dialog
-      Offset:         132
-      FindInstBLX:    {SymPLT: "N3FontTypeUtil::setupMonotypeDropdown(TouchDropDown*, QString const&)"} # monotype fonts only
-      ReplaceInstBLX: {SymPLT: "N3FontTypeUtil::setupDropdown(TouchDropDown*, QString const&)"}         # all fonts
-  - ReplaceBytes:
-      Base:           "ReadingMenuFontSettingsController::setupAdvancedOption(QString const&)"
-      Offset:         112
-      FindInstBLX:    {SymPLT: "N3FontTypeUtil::isMonotypeFont(QString const&)"}
-      ReplaceH:       4F F0 01 00
+# Note: The "Enable advanced settings for all fonts" patch is no longer
+# necessary since the advanced font settings are now available for all fonts.
 
 Customize ComfortLight settings:
   - Enabled: no
@@ -1388,7 +1363,7 @@ Customize ComfortLight settings:
   # In an unnamed subroutine two layers into FrontLightPopupController::loadView
   # (find it by going back from QTime::addSecs), the times for the dropdown are
   # generated into a QVector<QPair<QString, QTime>> with a simple loop.
-  - BaseAddress: 0xCB22A4 # find the base of the unnamed subroutine with the x-ref to _ZN5QTimeC1Eiiii
+  - BaseAddress: 0xCCEFAC # find the base of the unnamed subroutine with the x-ref to _ZN5QTimeC1Eiiii
   #
   # Change the initial hour / first bedtime dropdown item passed to the QTime
   # constructor (mov r1, #21):
@@ -1494,7 +1469,7 @@ Unify font sizes:
   # EPUB settings:
   - BaseAddress:
       Sym: "AdobeStyling::update(QString const&)"
-      Rel: 5800 # at ReadingSettings::getReadingFontSizeScaleFactor(float, float)
+      Rel: 5796 # at ReadingSettings::getReadingFontSizeScaleFactor(float, float)
   # Set the scale factor to 2.5
   - ReplaceBytes:
       Offset:   -20

@@ -1,5 +1,5 @@
-version: 4.31.19086
-in: src/kobo7-update-4.31.19086.zip
+version: 4.32.19501
+in: src/kobo7-update-4.32.19501.zip
 out: KoboRoot.tgz
 log: log.txt
 
@@ -33,7 +33,6 @@ overrides:
 
   src/libnickel.so.1.0.0.yaml:
     Custom font sizes: yes
-    Enable advanced settings for all fonts: yes
     Custom Sleep/Power-off timeouts: yes
     Custom kepub default margins: yes
     Allow rotation on all devices: yes

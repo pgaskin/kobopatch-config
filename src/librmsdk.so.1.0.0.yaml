@@ -23,10 +23,10 @@ Default ePub serif font (Amasis):
     # To use a different font, change "Amasis" in each of the replacement strings
     # to another font name prefix (7 letters max.). For example, change "Amasis"
     # to "Times" to use a sideloaded Times New Roman font.
-  - FindReplaceString: {Find: "/normal/georgia", Replace: "/normal/Amasis"}
-  - FindReplaceString: {Find: "/bold/georgia", Replace: "/bold/Amasis"}
-  - FindReplaceString: {Find: "/italic/georgia", Replace: "/italic/Amasis"}
-  - FindReplaceString: {Find: "/bolditalic/georgia", Replace: "/bolditalic/Amasis"}
+  - FindReplaceString: {Find: "/normal/Georgia", Replace: "/normal/Amasis"}
+  - FindReplaceString: {Find: "/bold/Georgia", Replace: "/bold/Amasis"}
+  - FindReplaceString: {Find: "/italic/Georgia", Replace: "/italic/Amasis"}
+  - FindReplaceString: {Find: "/bolditalic/Georgia", Replace: "/bolditalic/Amasis"}
 
 Default ePub sans-serif font (Gill Sans):
   - Enabled: no
