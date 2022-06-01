@@ -333,8 +333,8 @@ Set KePub hyphenation:
 
       (The publisher can still turn hyphenation off/on in the book's stylesheet.)
     # == "justify"
-  - ReplaceBytes: {Base: "KepubBookReader::pageStyleCss(bool)", Offset: 1960, FindInstBLX: {SymPLT: "QString::operator==(QLatin1String) const"}, ReplaceH: 01 20 01 20} # Alternative 1: Always turn KePub hyphenation on
-# - ReplaceBytes: {Base: "KepubBookReader::pageStyleCss(bool)", Offset: 1960, FindInstBLX: {SymPLT: "QString::operator==(QLatin1String) const"}, ReplaceH: 00 20 00 20} # Alternative 2: Never turn KePub hyphenation on
+  - ReplaceBytes: {Base: "KepubBookReader::pageStyleCss(bool)", Offset: 1904, FindInstBLX: {SymPLT: "QString::operator==(QLatin1String) const"}, ReplaceH: 01 20 01 20} # Alternative 1: Always turn KePub hyphenation on
+# - ReplaceBytes: {Base: "KepubBookReader::pageStyleCss(bool)", Offset: 1904, FindInstBLX: {SymPLT: "QString::operator==(QLatin1String) const"}, ReplaceH: 00 20 00 20} # Alternative 2: Never turn KePub hyphenation on
 
 Force user line spacing in KePubs:
   - Enabled: no
@@ -486,17 +486,18 @@ Dictionary text font-family/font-size/line-height:
                   dictionaries being released Oct 1st 2020
       See https://www.mobileread.com/forums/showpost.php?p=3521137&postcount=48
       for screenshots
+      4.32.19501: major font handling changes. Customising font-family now very limited
       #
       You can change one or more of the following properties:
-      - font-family
+      - font-family (very limited choice from fw >= 4.32.19501)
       - font-size
       - line-height
       #
       These are the Kobo defaults
-                Glo - Georgia  23px  1.4em
-                H2O - Georgia  29px  1.4em
-              GloHD - Georgia  32px  1.4em
-            AuraONE - Georgia  42px  1.4em
+                Glo - serif (Georgia)  23px  1.4em
+                H2O - serif (Georgia)  29px  1.4em
+              GloHD - serif (Georgia)  32px  1.4em
+            AuraONE - serif (Georgia)  42px  1.4em
 
   # Stage 1: Change DictionaryView to remove %variables
   # from:
@@ -511,7 +512,7 @@ Dictionary text font-family/font-size/line-height:
   #   .sc, .sc * { font-variant: small-caps; }
   #   .block, .border { border-radius: 3px; padding: 0em .2em; font-size: 90%; }
   # to:
-  #   body {font-size:%1px; line-height:1.40em; font-family:Georgia                         ;}
+  #   body {font-size:%1px; line-height:1.40em; font-family:serif                           ;}
   #   body {padding-left:0.5em}
   #   span.word {font-weight:bold; font-size:130%; margin-left:-0.3em}
   #   ol {margin-left:1em; margin-top:0}
@@ -525,33 +526,20 @@ Dictionary text font-family/font-size/line-height:
   # ##### N.B. Do not change the next 4 lines #####
   - FindReplaceString:
       Find:    "body { padding-left: %3px; }\nbody { font: %1px serif; line-height: 1.4em; }\nspan.word { font-weight: bold; font-size: 130%; margin-left: -%3px; }\ndiv.descriptionFont { font-family: serif; }\nol { font-size: %1px; margin-left: %2em; margin-top: 0px; }\nol p { font-size: %1px; }\ni, i * { font-style: italic; }\nb, b * { font-weight: bold; }\n.sc, .sc * { font-variant: small-caps; }\n.block, .border { border-radius: 3px; padding: 0em .2em; font-size: 90%; }\n"
-      Replace: "body {font-size:%1px; line-height:1.40em; font-family:Georgia                         ;}\nbody {padding-left:0.5em}\nspan.word {font-weight:bold; font-size:130%; margin-left:-0.3em}\nol {margin-left:1em; margin-top:0}\nblockquote {margin:.3em 0 .3em 1em}\nblockquote>blockquote {margin:-.3em 0 0 2em}\ni, i * {font-style:italic}\nb, b * {font-weight:bold}\n.sc, .sc * {font-variant:small-caps}\n.block, .border {border-radius:3px; padding:0 .2em; font-size:90%}\n"
+      Replace: "body {font-size:%1px; line-height:1.40em; font-family:serif                           ;}\nbody {padding-left:0.5em}\nspan.word {font-weight:bold; font-size:130%; margin-left:-0.3em}\nol {margin-left:1em; margin-top:0}\nblockquote {margin:.3em 0 .3em 1em}\nblockquote>blockquote {margin:-.3em 0 0 2em}\ni, i * {font-style:italic}\nb, b * {font-weight:bold}\n.sc, .sc * {font-variant:small-caps}\n.block, .border {border-radius:3px; padding:0 .2em; font-size:90%}\n"
       MustMatchLength: yes
   # ##### N.B. Do not change anything above this line #####
 
   # Stage 2: N.B. You MUST keep old and new strings EXACTLY the same length
 
-  # Notes for changing font-family:
-  #   1.  Pad the shorter of the old/new strings with spaces to
-  #       keep same length for both strings (see examples below)
-  #
-  #   2.  If the new font-family name (max. 32 chars) contains any spaces it
-  #       should be wrapped in 'single quotes' (see examples 2, 3)
-  #
-  #   3.  To change from Georgia to the Kobo default sans-serif font, Avenir,
-  #       use either one of the following to achieve the same result:
-  #       - sans-serif
-  #       - 'Avenir Next Medium'
-
-  # Un-comment ONE ONLY of the following ReplaceString examples
-  #   to change dictionary font-family from default Georgia:
-  #     - to a different built-in font
-  #     - to one of your sideloaded custom fonts
-
-  #- ReplaceString: {Offset: 54, Find: "Georgia   ", Replace: "sans-serif", MustMatchLength: yes}
-  #- ReplaceString: {Offset: 54, Find: "Georgia    ", Replace: "'Gill Sans'", MustMatchLength: yes}
-  #- ReplaceString: {Offset: 54, Find: "Georgia      ", Replace: "'Kobo Nickel'", MustMatchLength: yes}
-  #- ReplaceString: {Offset: 54, Find: "Georgia ", Replace: "Bookerly", MustMatchLength: yes}
+  # N.B: From fw 4.32.19508 these are the only customised font-family values reported as having any effect
+  #      The first example will use the default sans-serif font, i.e. Avenir for most non-CJK GUI language locales
+  
+  # Un-comment ONE ONLY of the following 4 ReplaceString examples
+  #- ReplaceString: {Offset: 54, Find: "serif     ",             Replace: "sans-serif",             MustMatchLength: yes}
+  #- ReplaceString: {Offset: 54, Find: "serif                 ", Replace: "'KBJ-TsukuMin Pr6N RB'", MustMatchLength: yes}
+  #- ReplaceString: {Offset: 54, Find: "serif                ",  Replace: "'KBJ-UDKakugo Pr6N M'",  MustMatchLength: yes}
+  #- ReplaceString: {Offset: 54, Find: "serif           ",       Replace: "'AR UDJingxihei'",       MustMatchLength: yes}
 
   # Un-comment and edit next line to change font-size
   #- ReplaceString: {Offset: 16, Find: "%1px", Replace: "32px", MustMatchLength: yes}
@@ -559,12 +547,13 @@ Dictionary text font-family/font-size/line-height:
   # Un-comment and edit next line to change line spacing
   #- ReplaceString: {Offset: 34, Find: "1.40em", Replace: "1.30em", MustMatchLength: yes}
 
+
 Custom navigation menu page number text:
   - Enabled: no
   - Description: Changes the page number text format in the reading navigation menu
   - FindReplaceString: {Find: "Page %1 of %2", Replace: "%1 / %2"}
 
-# The next 3 patches are alternatives. Enable ONE ONLY.
+# The next 2 patches are alternatives. Enable ONE ONLY.
 # They have replaced the old patch named 'KePub stylesheet additions'
 
 KePub stylesheet additions - text justify:
@@ -581,12 +570,14 @@ KePub stylesheet additions - text justify:
   #
   - FindReplaceString: {Find: "/*********************************/", Replace: "body{text-align:justify           }", MustMatchLength: yes}
 
-KePub stylesheet additions - optimizeSpeed:
+KePub stylesheet additions - word-spacing:
   - Enabled: no
   - PatchGroup: KePub stylesheet additions alternatives
-  - Description: |
-      Disables ligatures/kerning, but fixes some rendering problems that affect
-      fully justified text in KePubs
+  - Description: | 
+        Reduces the space between words in KePubs. 
+        Probably only useful to those who prefer to read KePubs with left/right full justification, i.e. not ragged-right edge.
+        See https://www.mobileread.com/forums/showpost.php?p=4217711&postcount=28
+            for screenshots showing the effect of enabling this patch.
   - FindBaseAddressString: ".KBSearchResult, .KBAnnotation, .KBHighlighting {"
   # *** Don't change anything in the 4 ReplaceString lines below ***
   - ReplaceString: {Find: ".KBSearchResult, .KBAnnotation, .KBHighlighting { font-size: 100% !important; -webkit-text-combine: inherit !important; }\n", Replace: ".KBSearchResult,.KBAnnotation,.KBHighlighting{font-size:100%!important;-webkit-text-combine:inherit!important}.KBAnnotatio", MustMatchLength: yes}
@@ -595,29 +586,15 @@ KePub stylesheet additions - optimizeSpeed:
   - ReplaceString: {Offset: 299, Find: ".KBAnnotation[writingMode=\"vertical-lr\"] { border-left: 2px solid black !important; }", Replace: "ertical-lr\"]{border-left:2px solid #000!important}/*********************************/", MustMatchLength: yes}
   # *** Don't change anything in the 4 ReplaceString lines above ***
   #
-  - FindReplaceString: {Find: "/*********************************/", Replace: "body{text-rendering:optimizeSpeed }", MustMatchLength: yes}
+  # Customise the -0.05 value if you prefer.
+  # N.B. Be careful, if it's too big some words may get joined together.
+  - FindReplaceString: {Find: "/*********************************/", Replace: "body{word-spacing:-0.05em         }", MustMatchLength: yes}
 
-KePub stylesheet additions - optimizeLegibility:
-  - Enabled: no
-  - PatchGroup: KePub stylesheet additions alternatives
-  - Description: |
-        Enables ligatures/kerning in KePubs, but may cause some additional
-        rendering problems for fully justified text.
-        N.B. May have unexpected side effects when highlighting text in languages
-             which display vertical text, e.g. Chinese/Japanese
-  - FindBaseAddressString: ".KBSearchResult, .KBAnnotation, .KBHighlighting {"
-  # *** Don't change anything in the 4 ReplaceString lines below ***
-  # Create some room to add the extra CSS
-  - ReplaceString: {Find: ".KBSearchResult, .KBAnnotation, .KBHighlighting { font-size: 100% !important; -webkit-text-combine: inherit !important; }\n", Replace: ".KBSearchResult,.KBAnnotation,.KBHighlighting{font-size:100%!important;-webkit-text-combine:inherit!important}.KBAnnotatio", MustMatchLength: yes}
-  - ReplaceString: {Offset: 122, Find: ".KBAnnotation[writingMode=\"horizontal-tb\"] { border-bottom: 2px solid black !important; }\n", Replace: "n[writingMode=\"horizontal-tb\"]{border-bottom:2px solid #000!important}.KBAnnotation[writin", MustMatchLength: yes}
-  - ReplaceString: {Offset: 212, Find: ".KBAnnotation[writingMode=\"vertical-rl\"] { border-right: 2px solid black !important; }\n", Replace: "gMode=\"vertical-rl\"]{border-right:2px solid #000!important}.KBAnnotation[writingMode=\"v", MustMatchLength: yes}
-  - ReplaceString: {Offset: 299, Find: ".KBAnnotation[writingMode=\"vertical-lr\"] { border-left: 2px solid black !important; }", Replace: "ertical-lr\"]{border-left:2px solid #000}/*******************************************/", MustMatchLength: yes}
-  # *** Don't change anything in the 4 ReplaceString lines above ***
-  #
-  - FindReplaceString:
-        Find:    "/*******************************************/"
-        Replace: "body{text-rendering:optimizeLegibility      }"
-        MustMatchLength: yes
+# KePub stylesheet additions - optimizeSpeed: retired
+# KePub stylesheet additions - optimizeLegibility: retired
+# Edit Kobo config (.kobo/Kobo/Kobo eReader.conf) to achieve same result.
+# For more detail, see MR post https://www.mobileread.com/forums/showpost.php?p=4215805&postcount=40
+
 
 # The following patch(es) are ported from jcn363's patches
 
@@ -914,7 +891,7 @@ Hide browser from beta features:
   - Description: Hides the built-in browser from beta features.
   - ReplaceBytes:
       Base:        "N3SettingsExtrasView::N3SettingsExtrasView(QWidget*)"
-      Offset:      1482
+      Offset:      1372
       FindInstBLX: {SymPLT: "Device::isParentalControlEnabled() const"}
       ReplaceH:    4F F0 01 00
   - ReplaceBytes:
@@ -1173,8 +1150,8 @@ Remove title from reading header/footer:
   # easy-to-update way by replacing the first QString::append (the dash) with a
   # QString::resize to zero (I would have done a QString::clear, but that symbol
   # isn't imported):
-  - BaseAddress:  {Sym: "ReadingFooter::update(QString const&, QString const&, QString const&, bool)", Rel: 298}
-  - ReplaceBytes: {Offset: 0, FindH: F9 68, ReplaceH: 00 21} # replace LDR r1, [...] with MOV r1, #0 (the LDR doesn't matter, but may to be updated to match)
+  - BaseAddress:  {Sym: "ReadingFooter::update(QString const&, QString const&, QString const&, bool)", Rel: 190}
+  - ReplaceBytes: {Offset: 0, FindH: 49 46, ReplaceH: 00 21} # replace MOV r1, sb with MOV r1, #0 (the MOV doesn't matter, but may to be updated to match, ensuring nothing after depends on it)
   - ReplaceBytes: {Offset: 4, FindInstBLX: {SymPLT: "QString::append(QString const&)"}, ReplaceInstBLX: {SymPLT: "QString::resize(int)"}}
 
 # Prevent Kobo from scanning dotfiles/folders (since 4.17.13651): See https://www.mobileread.com/forums/showthread.php?t=323083.
@@ -1363,7 +1340,7 @@ Customize ComfortLight settings:
   # In an unnamed subroutine two layers into FrontLightPopupController::loadView
   # (find it by going back from QTime::addSecs), the times for the dropdown are
   # generated into a QVector<QPair<QString, QTime>> with a simple loop.
-  - BaseAddress: 0xCCEFAC # find the base of the unnamed subroutine with the x-ref to _ZN5QTimeC1Eiiii
+  - BaseAddress: 0xCD7164 # find the base of the unnamed subroutine with the x-ref to _ZN5QTimeC1Eiiii
   #
   # Change the initial hour / first bedtime dropdown item passed to the QTime
   # constructor (mov r1, #21):
