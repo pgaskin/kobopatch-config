@@ -102,6 +102,11 @@ files:
   # kobo-dotfile-hack-ng
   pkg/kobo-dotfile-hack-ng-3c786e4/libdfh.so: usr/local/Kobo/imageformats/libdfh.so
 
+  # NickelClock
+  src/nc: mnt/onboard/.adds/nickelclock/settings.ini
+  pkg/nickelclock-602b7f3/uninstall: mnt/onboard/.adds/nickelclock/uninstall
+  pkg/nickelclock-602b7f3/libnickelclock.so: usr/local/Kobo/imageformats/libnickelclock.so
+
 #config:
   ##[DeveloperSettings]
   ##EnableDebugServices=true
