@@ -104,8 +104,8 @@ files:
 
   # NickelClock
   src/nc: mnt/onboard/.adds/nickelclock/settings.ini
-  pkg/nickelclock-602b7f3/uninstall: mnt/onboard/.adds/nickelclock/uninstall
-  pkg/nickelclock-602b7f3/libnickelclock.so: usr/local/Kobo/imageformats/libnickelclock.so
+  pkg/nickelclock-ba2ff94/uninstall: mnt/onboard/.adds/nickelclock/uninstall
+  pkg/nickelclock-ba2ff94/libnickelclock.so: usr/local/Kobo/imageformats/libnickelclock.so
 
 #config:
   ##[DeveloperSettings]
