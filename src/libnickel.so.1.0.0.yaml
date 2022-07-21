@@ -852,7 +852,7 @@ Replace adobe page numbers toggle with invert screen:
       See https://github.com/pgaskin/NickelMenu/issues/111 for more information.
   # Settings page
   - BaseAddress:  "N3SettingsReadingView::N3SettingsReadingView(QWidget*)"
-  - ReplaceBytes: {Offset: 902, FindInstBLX: {SymPLT: "ReadingSettings::getShowAdobePageNumbers()"},     ReplaceInstBLX: {SymPLT: "FeatureSettings::invertScreen()"}}
+  - ReplaceBytes: {Offset: 890, FindInstBLX: {SymPLT: "ReadingSettings::getShowAdobePageNumbers()"},     ReplaceInstBLX: {SymPLT: "FeatureSettings::invertScreen()"}}
   # Settings page controller
   - BaseAddress:  {Sym: "N3SettingsReadingController::showAdobePageNumbersToggled()"}
   - ReplaceBytes: {Offset:  74, FindInstBLX: {SymPLT: "ReadingSettings::getShowAdobePageNumbers()"},     ReplaceInstBLX: {SymPLT: "FeatureSettings::invertScreen()"}}
@@ -933,7 +933,6 @@ Disable all tutorial dialogs:
   - ReplaceBytes: {Base: "ApplicationSettings::libraryFTEShown()",                Offset: 54, FindInstBLX: {SymPLT: "QVariant::toBool() const"}, ReplaceH: 4F F0 01 00}
   - ReplaceBytes: {Base: "ApplicationSettings::zoomFTEShown()",                   Offset: 54, FindInstBLX: {SymPLT: "QVariant::toBool() const"}, ReplaceH: 4F F0 01 00}
   - ReplaceBytes: {Base: "ApplicationSettings::welcomeShown()",                   Offset: 54, FindInstBLX: {SymPLT: "QVariant::toBool() const"}, ReplaceH: 4F F0 01 00}
-  - ReplaceBytes: {Base: "ApplicationSettings::koboPlusPromoShown()",             Offset: 54, FindInstBLX: {SymPLT: "QVariant::toBool() const"}, ReplaceH: 4F F0 01 00}
   - ReplaceBytes: {Base: "ApplicationSettings::syncWarningDialogShown()",         Offset: 54, FindInstBLX: {SymPLT: "QVariant::toBool() const"}, ReplaceH: 4F F0 01 00}
   - ReplaceBytes: {Base: "ApplicationSettings::addedToMyWordsDialogShown()",      Offset: 54, FindInstBLX: {SymPLT: "QVariant::toBool() const"}, ReplaceH: 4F F0 01 00}
   - ReplaceBytes: {Base: "ApplicationSettings::longPressDialogShown()",           Offset: 54, FindInstBLX: {SymPLT: "QVariant::toBool() const"}, ReplaceH: 4F F0 01 00}
@@ -1340,7 +1339,7 @@ Customize ComfortLight settings:
   # In an unnamed subroutine two layers into FrontLightPopupController::loadView
   # (find it by going back from QTime::addSecs), the times for the dropdown are
   # generated into a QVector<QPair<QString, QTime>> with a simple loop.
-  - BaseAddress: 0xCD7164 # find the base of the unnamed subroutine with the x-ref to _ZN5QTimeC1Eiiii
+  - BaseAddress: 0xCD4E34 # find the base of the unnamed subroutine with the x-ref to _ZN5QTimeC1Eiiii
   #
   # Change the initial hour / first bedtime dropdown item passed to the QTime
   # constructor (mov r1, #21):
